@@ -1,0 +1,520 @@
+<script type="text/javascript">
+
+    RED.nodes.registerType('pac-read',{
+        category: 'Opto22',
+        color: '#e87070',
+        defaults: {
+          // This should match the NodeConfiguration interface in the corresponding "ts" file.
+          device: {value:"", type:"pac-device"},
+          dataType: {value:"device-info"},
+          tagName: {value:""},
+          tableStartIndex: {value: null},
+          tableLength: {value: null},
+          name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "pac-read.png",
+        label: function() {
+            return getLabel(this, "snap pac read");
+        },
+        paletteLabel: "snap pac read",
+        oneditprepare: function() {
+            // called when the edit dialog is being built.
+          
+            $("#node-input-dataType").change(function() {
+                updateNameField();
+                updateTableFields();
+          });
+        }
+    });
+
+    RED.nodes.registerType('pac-write',{
+        category: 'Opto22',
+        color: '#e87070',
+        defaults: {
+          // This should match the NodeConfiguration interface in the corresponding "ts" file.
+          device: {value:"", type:"pac-device"},
+          dataType: {value:"dig-output"},
+          tagName: {value:""},
+          tableStartIndex: {value: null},
+          value: {value: ""},
+          valueType: {value: "value"},
+          name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "pac-write.png",
+        align: 'right',
+        label: function() {
+            return getLabel(this, "snap pac write");
+        },
+        paletteLabel: "snap pac write",
+        oneditprepare: function() {
+            // called when the edit dialog is being built.
+          
+            $("#node-input-dataType").change(function() {
+                updateTableFields();
+            });
+
+            $("#node-input-valueType").val(this.valueType);
+
+            $("#node-input-value").typedInput({
+                default: 'value',
+                typeField: $("#node-input-valueType"),
+                types:['msg', {value:"msg.payload", label:"msg.payload", hasValue: false}, {value:"value", label:"Value", hasValue: true}]
+            });
+
+            $("#node-input-value").typedInput('type',this.valueType);
+
+        }
+    });
+
+    RED.nodes.registerType('pac-device',{
+        category: 'config',
+        // The defaults object should match the GroovDevice class in groov.ts.
+        defaults: {
+            address: {value:""},
+            protocol: {value:"https"}
+        },
+        credentials: {
+            key:            {type:"text"},
+            secret:         {type:"password"},
+            publicCertPath: {type:"text"},
+            caCertPath:     {type:"text"}
+        },
+        label: function() {
+            return this.address;
+        },
+        oneditprepare: function() {
+
+            updateSslFields();
+
+            $("#node-config-input-protocol").change(function() {
+                updateSslFields();
+            });
+        }
+
+
+    });
+
+    function updateNameField()
+    {
+        var dataTypeId = $("#node-input-dataType option:selected").val();
+
+        // See if a Table type is selected.
+        if (dataTypeId == 'device-info' || dataTypeId == 'strategy-info')
+            $("#tagNameRow").hide();
+        else
+            $("#tagNameRow").show();
+    }
+
+    function updateTableFields()
+    {
+        var dataTypeId = $("#node-input-dataType option:selected").val();
+
+        // See if a Table type is selected.
+        if (dataTypeId.indexOf('table') >= 0)
+        {
+            $("#tableFields").show();
+            return;
+        }
+
+        $("#tableFields").hide();
+    }
+
+    function updateSslFields()
+    {
+        var protocolType = $("#node-config-input-protocol option:selected").val();
+
+        // See if a Table type is selected.
+        if (protocolType === 'https')
+        {
+            $("#sslFields").show();
+            return;
+        }
+
+        $("#sslFields").hide();
+    }
+
+    
+    function getLabel(node, defaultLabel) {
+       // Always go with a node's name, if it's been configured.
+       if (node.name) {
+           return node.name;
+       }
+
+       // If there's a tag name, use it for the label.
+       var label = tagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
+
+       // Otherwise, use the data type. Only do this if the device has also been configured.
+       // If not, then this is probably a brand new node, and we should just fall through 
+       // and go with the default name.
+       if (!label && node.device !== '') {
+           label = dataTypeToLabel(node.dataType);
+       }
+       
+       // If all else fails, use the default label.
+       if (!label) {
+           label = defaultLabel;
+       }
+
+       return label;
+    }
+
+    function tagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
+        tagName = tagName.trim();
+
+        // First make sure we even have a tag name to work with.
+        if (!tagName)
+            return '';
+
+        var label = '';
+
+        switch (dataType) {
+            case 'dig-input':
+            case 'dig-output':
+            case 'ana-input':
+            case 'ana-output':
+            case 'int32-variable':
+            case 'int64-variable':
+            case 'float-variable':
+            case 'string-variable':
+            case 'down-timer-variable':
+            case 'up-timer-variable':
+                label = tagName;
+                break;
+            case 'int32-table':
+            case 'int64-table':
+            case 'float-table':
+            case 'string-table':
+                // Try to display the starting index and length, it it's available.
+                var index = '[]';
+                var numStartIndex = parseInt(tableStartIndex);
+                var numLength = parseInt(tableLength);
+
+                // First try for the starting index and a length if more than one element (e.g. "[5..8]" ).
+                // Then try for just the starting index (e.g. "[5]").
+                // If none of that is possible, just use "[]".
+                // It's also possible that any of these values are coming in on the message.
+                if (!isNaN(numStartIndex) && numLength > 1) {
+                    index = '[' + numStartIndex + '..' + (numStartIndex + numLength - 1) + ']';
+                }
+                else if (tableStartIndex) {
+                    index = '[' + tableStartIndex + ']';
+                } 
+                label = tagName + index;
+                break;
+        }
+
+        return label; // might still be empty
+    }
+
+    function dataTypeToLabel(dataType) {
+        switch (dataType) {
+            case 'dig-input':
+                return 'digital input';
+            case 'dig-output':
+                return 'digital output';
+            case 'ana-input':
+                return 'analog input';
+            case 'ana-output':
+                return 'analog output';
+            case 'int32-variable':
+                return 'int32 variable';
+            case 'int64-variable':
+                return 'int64 variable';
+            case 'float-variable':
+                return 'float variable';
+            case 'string-variable':
+                return 'string variable';
+            case 'down-timer-variable':
+                return 'down timer';
+            case 'up-timer-variable':
+                return 'up timer';
+            case 'int32-table':
+                return 'int32 table';
+            case 'int64-table':
+                return 'int64 table';
+            case 'float-table':
+                return 'float table';
+            case 'string-table':
+                return 'string table';
+            case 'device-info':
+                return 'device details';
+            case 'strategy-info':
+                return 'strategy details';
+            default:
+                return dataType;
+        }
+    }
+
+</script>
+
+<script type="text/x-red" data-template-name="pac-read">
+   <div class="form-row" id="pacAddressRow">
+        <label for="node-input-device"><i class="fa fa-globe"></i> Controller</label>
+        <input type="text" id="node-input-device">
+   </div>
+   <div class="form-row" id="dataTypeRow">
+       <label for="node-input-dataType"><i class="fa fa-tasks"></i> Data Type</label>
+       <select type="text" id="node-input-dataType">
+           <option value="dig-input">Digital Input</option>
+           <option value="dig-output">Digital Output</option>
+           <option value="ana-input">Analog Input</option>
+           <option value="ana-output">Analog Output</option>
+           <option value="" disabled>————————————————</option>
+           <option value="int32-variable">Int32 Variable</option>
+           <option value="int64-variable">Int64 Variable</option>
+           <option value="float-variable">Float Variable</option>
+           <option value="string-variable">String Variable</option>
+           <option value="down-timer-variable">Down Timer</option>
+           <option value="up-timer-variable">Up Timer</option>
+           <option value="" disabled>————————————————</option>
+           <option value="int32-table">Int32 Table</option>
+           <option value="int64-table">Int64 Table</option>
+           <option value="float-table">Float Table</option>
+           <option value="string-table">String Table</option>
+           <option value="" disabled>————————————————</option>
+           <option value="device-info">Device Details</option>
+           <option value="strategy-info">Strategy Details</option>
+       </select>
+   </div>
+   <div class="form-row" id="tagNameRow">
+        <label for="node-input-tagName"><i class="fa fa-tag"></i> Tag Name</label>
+        <input type="text" id="node-input-tagName" placeholder="Leave blank to get all tags">
+    </div>
+    <div class="form-row hidden" id="tableFields">
+        <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
+        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for all">
+        <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
+        <input type="text" style="width: 6em;" id="node-input-tableLength">
+    </div>
+   <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-template-name="pac-write">
+   <div class="form-row" id="pacAddressRow">
+        <label for="node-input-device"><i class="fa fa-globe"></i> Controller</label>
+        <input type="text" id="node-input-device">
+   </div>
+   <div class="form-row" id="dataTypeRow">
+       <label for="node-input-dataType"><i class="fa fa-tasks"></i> Data Type</label>
+       <select type="text" id="node-input-dataType">
+           <option value="dig-output">Digital Output</option>
+           <option value="ana-output">Analog Output</option>
+           <option value="" disabled>————————————————</option>
+           <option value="int32-variable">Int32 Variable</option>
+           <option value="int64-variable">Int64 Variable</option>
+           <option value="float-variable">Float Variable</option>
+           <option value="string-variable">String Variable</option>
+           <option value="" disabled>————————————————</option>
+           <option value="int32-table">Int32 Table</option>
+           <option value="int64-table">Int64 Table</option>
+           <option value="float-table">Float Table</option>
+           <option value="string-table">String Table</option>
+       </select>
+   </div>
+   <div class="form-row" id="tagNameRow">
+        <label for="node-input-tagName"><i class="fa fa-tag"></i> Tag Name</label>
+        <input type="text" id="node-input-tagName" placeholder="">
+    </div>
+    <div class="form-row hidden" id="tableFields">
+        <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
+        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for 0">
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
+        <input type="text" id="node-input-value" style="width:300px">
+        <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-template-name="pac-device">
+    <div class="form-row">
+        <label for="node-config-input-protocol" style="width: 110px"><i class="fa fa-globe"></i> PAC Address</label>
+        <select type="text" id="node-config-input-protocol" style="width: 6em;">
+           <option value="https">HTTPS</option>
+           <option value="http">HTTP</option>
+       </select>
+        <input type="text" id="node-config-input-address" style="width: 50%" placeholder="IP address">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-key" style="width: 110px"><i class="fa fa-user"></i> API Key ID</label>
+        <input type="text" autocomplete="off" id="node-config-input-key" style="width: 8em" placeholder="ID">
+        <i class="fa fa-lock" style="margin-left: 15px;"></i><span> Value &nbsp;</span>
+        <input type="password" autocomplete="off" id="node-config-input-secret" style="width: 8em" placeholder="Value (secret)">
+    </div>
+    <div id="sslFields"> 
+        <div class="form-row" style="margin-bottom: 0px;" >
+            <label style="width: auto; margin-bottom: 2px:"><i class="fa fa-file-text"></i> SSL Certificates (PEM format)</label>
+        </div>
+        <div class="form-row">
+            <label for="node-config-input-caCertPath" style="width: 135px; text-align: right;"> CA or Self-Signed</label>
+            <input type="text" id="node-config-input-caCertPath" style="width: 65%" placeholder="Path to CA certificate">
+        </div>
+        <div class="form-row">
+            <label for="node-config-input-publicCertPath" style="width: 135px; text-align: right;"> Public Key</label>
+            <input type="text" id="node-config-input-publicCertPath" style="width: 65%" placeholder="Path to certificate (blank for self-signed)">
+        </div>
+    </div>
+        
+</script>
+
+<script type="text/x-red" data-help-name="pac-device">
+    <p>Communication settings for Opto 22 PAC controllers.</p>
+    <h2>Basic Configuration</h2>
+    <p><b>PAC Address</b> - the protocol and IP address for connecting to a SNAP PAC controller.</p>
+    <p><b>API Key ID</b> and <b>Value</b> - must match one of the entries in the controller's API key configuration.</p>
+    <h2>HTTPS Settings</h2>    
+    <p>If HTTPS is selected for the protocol, then the SSL Certificates  fields must also be configured.</p>
+    <p><b>CA or Self-Signed</b> - the full path to either a Certificate Authority (CA) or self-signed certificate.</p>
+    <p><b>Public Key</b> - the full path to the public key certificate. Leave this field blank if using a self-signed certificate.</p>
+    <p>The path to a certificate file must be on the same machine as Node-RED itself. It will be loaded directly from the local file system.</p>
+    <p>The certificates must be in PEM format. The corresponding private key certificate must be installed in the controller.</p>
+
+</script>
+
+<script type="text/x-red" data-help-name="pac-read">
+    <p>A node for reading values from Opto 22 PAC controllers.</p>
+    <h2>Basic Usage</h2>
+    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the controller. If the name is left blank, then all tags of the selected data type are returned in an array.</p>
+    <p>For tables, the <b>start index</b> and <b>length</b> fields control how much of the table is returned. 
+       If both fields are left blank, then the entire table is returned as an array.
+       If only the <b>start index</b> is used, then the remaining part of the table will be returned as an array.
+       If the <b>length</b> field is 1, then a single element is returned as an object.</p> 
+    <h2>Returned Values</h2>
+    <p>The result is placed in <code>msg.payload</code>. If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
+    <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
+    <p>To avoid data loss, <b>Int64</b> variables and table elements are returned as strings.
+    <h2>Dynamic Settings</h2>
+        <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
+        <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
+        <p><code>msg.payload.tableStartIndex</code> - a number for the first index to read in a table.</p>
+        <p><code>msg.payload.tableLength</code> - a number for the number of table elements to read.</p>
+    <h2>Error Handling</h2>
+    <p>If an error occurs, an error will be thrown that can be caught with a Catch node. No output message will be sent, so the flow will not continue.</p>
+    <p>In that case, the Catch node's <code>msg</code> will have <u>one</u> of the following properties:
+    </p>
+    <ul>
+      <li><code>msg.pacError</code>, with the following properties:</li>
+      <ul>
+        <li><code>statusCode</code> - the HTTP status code as a number.</li>
+        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the SNAP-PAC REST API.</li>
+            <p>For example, an invalid tag name might return the following in <code>msg.pacError.body</code>:</p>
+            <pre>
+{ 
+  "errorCode": -28, 
+  "message": "Not found. See Opto 22 documentation for error code descriptions."
+}
+</pre>
+      </ul>
+      <li><code>msg.reqError</code> - an object returned from the HTTP library.</li>
+    </ul>
+
+</script/>
+
+<script type="text/x-red" data-help-name="pac-write">
+    <p>A node for writing values to Opto 22 PAC controllers.</p>
+    <h2>Basic Usage</h2>
+    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the controller.</p>
+    <p>For tables, the <b>start index</b> field sets the first index to be written.
+       If left blank, then 0 is used.
+    <h2>Value to Write - Overview</h2>
+    <p>The <b>value</b> can either come from a property on the incoming message (dynamic) or as entered in the Value field (static).</p>
+    <h2>Value to Write - Dynamic</h2>
+    <p>When the value is coming in a <code>msg</code> property (including <code>msg.payload</code>), the value can be a boolean, number, string, or array.</p>
+    <p>Preferably, the type of the value should match the type of the PAC Control tag. If the types don't match, the node will attempt to convert the value according to the rules in the following Value Type Conversion section.</p>
+    <h2>Value to Write - Static</h2>
+    <p>If the value is entered directly in the Value field, it is processed as a string value, according to the following rules.
+    <h2>Value Type Conversion</h2>
+        <p>The node uses the following rules to convert from JavaScript values to PAC Control tag types. Static values from the Value field all follow the <i>String values</i> rules.</p>
+        <ul>
+            <li><b>Digital Outputs</b></li>
+                <ul>
+                    <li><b>Boolean values:</b> <i>false</i> turns off the digital output, and <i>true</i> turns on the digital output.</li>
+                    <li><b>Numeric values:</b> <i>zero</i> values turn off the digital output, and <i>non-zero</i> values turn on the digital output.</li>
+                    <li><b>String values:</b> <i>'0'</i>, <i>'off'</i>, or <i>'false'</i> will turn off the digital output. <i>'1'</i>, <i>'-1'</i>, <i>'on'</i>, or <i>'true'</i> will turn on the digital point. All other values will throw an error.</li>
+                </ul>
+            <li><b>Analog Ouputs and Numeric Variables</b></li>
+                <ul>
+                    <li><b>Boolean values:</b> <i>false</i> is written as 0 and <i>true</i> is written as 1.
+                    <li><b>Numeric values:</b> Used directly. For Int64 variables, some data precission can be lost. Write from a string value instead.</li>
+                    <li><b>String values:</b> The string value is converted to a number, using standard string-to-number JavaScript conversion. Invalid string values will throw an error from the node. The one exception is that Int64 variables are kept as a string, which ensures that no data is lost.
+                </ul>
+            <li><b>String Variables</b>
+                <ul>
+                    <li><b>Boolean values:</b> <i>false</i> is written as 'false' and <i>true</i> is written as 'true'.
+                    <li><b>Numeric values:</b> Standard number-to-string JavaScript conversion.
+                    <li><b>String values:</b> Used directly.
+                </ul>
+            <li><b>Int32 and Float Tables</b>
+                <ul>
+                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> written as <i>[ 0 ]</i>  and <i>true</i> written as <i>[ 1 ]</i>.
+                    <li><b>Numeric values:</b> Converted to a single-element array containing the value.
+                    <li><b>String values:</b> Should be a comma-separated list of numbers. For example, '0, 1, 2, 3'. Square brackets around the list are optional. The string is parsed as an array using the standard JSON.parse() function.
+                    <li><b>Array objects:</b> Used as-is withouth further processing. The API expects all elements to contain numbers.</li>
+                </ul>
+            <li><b>Int64 Tables</b>
+                <ul>
+                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> written as <i>[ "0" ]</i>  and <i>true</i> written as <i>[ "1" ]</i>.
+                    <li><b>Numeric values:</b> Converted to a single-element array containing the value.
+                    <li><b>String values:</b> Should be a comma-separated list of strings. Strings are used to avoid data loss. For example, <i>"0", "1", "2", "3"</i>. Square brackets around the list are optional. The string is parsed as an array using the standard JSON.parse() function.
+                    <li><b>Array objects:</b> Used as-is withouth further processing. The API expects all elements to contain strings.</li>
+                </ul>
+            <li><b>String Tables</b>
+                <ul>
+                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> written as <i>[ "0" ]</i>  and <i>true</i> written as <i>[ "1" ]</i>.
+                    <li><b>Numeric values:</b> Converted to a single-element array containing the value as a string.
+                    <li><b>String values:</b> The value should be a comma-separated list of strings. The elements must use double-quotes, not single-quotes. For example, as entered for the Value field, <i>"alpha", "beta", "gamma"</i>. From a Function block, the string itself would need single-quotes, e.g. <i>' "alpha", "beta", "gamma" '</i>. Square brackets around the list are optional. It will be processed by the <i>JSON.parse()</i> command.
+                </ul>
+        </ul>
+    <h2>Dynamic Settings</h2>
+        <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
+        <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
+        <p><code>msg.payload.tableStartIndex</code> - a number for the first index to write in the table.</p>
+        <p>As mentioned above, the value itself can also come in on the message, in whatever property you specify.</p>
+        <p>For example, here's how a dynamic payload would look for writing several values to index <i>5</i> in a table called <i>MyTable</i>, with the Value field specified as <i>msg.payload.values</i>:</p>
+<pre>
+msg.payload = {
+  tagName         : "MyTable",
+  tableStartIndex : 5,
+  values          : [ 10, 
+                      20.2,
+                      var1,
+                      var2   ]
+};
+</pre> 
+    <h2>Response</h2>
+    <p>The full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
+    <h2>Error Handling</h2>
+    <p>If an error occurs, an error will be thrown that can be caught with a Catch node. No output message will be sent, so the flow will not continue.</p>
+    <p>The message sent to the Catch node will have <u>one</u> of the following properties:
+    </p>
+    <ul>
+      <li><code>msg.pacError</code>, with the following properties:</li>
+      <ul>
+        <li><code>statusCode</code> - the HTTP status code as a number.</li>
+        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the SNAP-PAC REST API.
+            <p>For example, an invalid tag name might return the following in <code>msg.pacError.body</code>:</p>
+            <pre>
+{ 
+  "errorCode": -28, 
+  "message": "Not found. See Opto 22 documentation for error code descriptions."
+}
+</pre>
+</li>
+      </ul>
+      <li><code>msg.reqError</code> - an object returned from the HTTP library.</li>
+    </ul>
+
+</script/>
+
+
