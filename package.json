@@ -1,5 +1,5 @@
 {
-    "name"         : "@opto22/node-red-contrib-pac",
+    "name"         : "node-red-contrib-pac",
     "version"      : "1.0.0-beta.1",
     "description"  : "Node-RED nodes for Opto 22 programmable automation controllers (PAC).",
     "license"      : "Apache-2.0",
