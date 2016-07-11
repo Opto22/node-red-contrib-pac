@@ -2,6 +2,7 @@
     "name"         : "node-red-contrib-pac",
     "version"      : "1.0.0-beta.1",
     "description"  : "Node-RED nodes for Opto 22 programmable automation controllers (PAC).",
+    "homepage"     : "http://98.112.44.168/nodered/pac/",
     "license"      : "Apache-2.0",
     "dependencies": {
       "simple-node-logger":"0.92.21",
@@ -33,5 +34,9 @@
         "name": "Opto 22",
         "email": "developer@opto22.com",
         "url": "http://developer.opto22.com/Node-RED/PAC"
+    },
+    "repository" : {
+        "type": "git",
+        "url": "https://github.com/Opto22/node-red-contrib-pac.git"
     }
 }
