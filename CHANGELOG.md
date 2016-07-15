@@ -1,5 +1,9 @@
 # Node-RED for SNAP PAC
 
+
+
+ * Added error handling for when a node has a missing controller configuration.
+
 ### 1.0.0-beta.2
 
 July 11, 2016

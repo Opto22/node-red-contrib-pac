@@ -140,9 +140,14 @@ export abstract class PacNodeBaseImpl
         this.deviceConfig = deviceConfig;
         this.node = node;
 
-        var controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
-        this.ctrl = controllerConnection.ctrl;
-        this.ctrlQueue = controllerConnection.queue;
+        if (deviceConfig) {
+            var controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
+            this.ctrl = controllerConnection.ctrl;
+            this.ctrlQueue = controllerConnection.queue;
+        }
+        else {
+            this.node.error('Missing controller configuration', '');
+        }
     }
 
     public abstract onInput(msg: any): void;
@@ -150,6 +155,15 @@ export abstract class PacNodeBaseImpl
     /** Add message to the queue. */
     public addMsg(msg): void
     {
+        // Check that we have a controller connection to use.
+        if (!this.ctrl || !this.ctrlQueue ) {
+            // If there's no controller connection, immediately return and effectively
+            // drop the message. An error is logged when the node is downloaded, which mirrors
+            // what the official nodes do.
+            this.node.status({ fill: "red", shape: "dot", text: 'missing controller configuration' });
+            return;
+        }
+
         // Add the message to the queue.
         var queueLength = this.ctrlQueue.add(msg, this.node, this, this.onInput);
 
