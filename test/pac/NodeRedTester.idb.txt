@@ -1,0 +1,177 @@
+# REV = 1
+
+# PAC CONTROL TAG DATABASE DUMP
+# ----------------------------------------------------------------
+# NAME :         C:\files\git\node\node-red-contrib-pac\test\pac\NodeRedTester.idb
+# VERSION :      R9.4a
+# TIME/DATE :    11:37:23 7/18/2016
+# 
+# INSTRUCTIONS : This file gets written with the corresponding IDB file.
+#                It is not read by PAC Control. It may be used by other programs to 
+#                get basic information about the tag database.
+#                
+#                Each tag (e.g. variables, I/O units and points, charts, etc.) is 
+#                listed here. 
+#                
+#                More columns or tag types (e.g. TAG2) may be added in the future.
+#                
+#                
+# BITMASK INFO:  Here is the list of bitmasks used by PAC Control.
+#                More than one bit may be set for a given tag. Currently, the only types
+#                that can have more than one bit set at a time are digital points with 
+#                features (e.g. digital input with counter) or a pointer.
+#                
+#                BITMASK 0
+#                -------------------------------------------
+#                DIN_SMART                        0x40000000
+#                DIN_COUNTER                      0x00000001
+#                DIN_COUNTER_QUADRATURE           0x00000002
+#                DOUT_SMART                       0x10000000
+#                DOUT_TPO                         0x00010000
+#                DIN_ON_PULSE_MEAS                0x00000010
+#                DIN_OFF_PULSE_MEAS               0x00000020
+#                DIN_FREQUENCY                    0x00000040
+#                DIN_PERIOD                       0x00000080
+#                DIN_ON_TIME_TOTALIZER            0x00000100
+#                DIN_OFF_TIME_TOTALIZER           0x00000200
+#                
+#                BITMASK 1
+#                -------------------------------------------
+#                AIN                              0x00000001
+#                AOUT                             0x00000002
+#                PID_LOOP    (mistic)             0x00000200
+#                PID_LOOP_2  (OptoMMP)            0x00000004
+#                DIGITAL_EVENT_REACTION           0x00000008
+#                ANALOG_EVENT_REACTION            0x00000010
+#                EVENT_REACTION_GROUP             0x00000080
+#                CHART                            0x00000100
+#                
+#                BITMASK 2
+#                -------------------------------------------
+#                BOARD_SMART_DIGITAL              0x00000002
+#                BOARD_REMOTE_SIMPLE_DIGITAL      0x00000004
+#                BOARD_SMART_ANALOG               0x00000008
+#                BOARD_SMART_ANALOG_B200          0x00001000
+#                BOARD_SMART_DIGITAL_SNAP         0x00002000
+#                BOARD_SMART_ANALOG_SNAP          0x00004000
+#                BOARD_SMART_DIGITAL_B100         0X00010000
+#                BOARD_REMOTE_SIMPLE_DIGITAL_SNAP 0X00020000
+#                BOARD_DIGITAL_SNAP_64            0x00040000
+#                BOARD_MIXED_SNAP_64              0x00080000
+#                BOARD_DIGITAL_SNAP_UIO_64        0x00100000
+#                BOARD_MIXED_SNAP_UIO_64          0x00200000
+#                BOARD_MIXED_SNAP_UIO_AD64        0x00400000
+#                BOARD_MIXED_SNAP_SIO_AD64        0x00800000
+#                BOARD_SNAP_PAC_R1                0x10000000
+#                BOARD_SNAP_PAC_R2                0x20000000
+#                BOARD_GENERIC_OPTOMMP            0x40000000
+# 
+#                BITMASK 3
+#                -------------------------------------------
+#                VARIABLE_INTEGER                 0x00000008
+#                VARIABLE_FLOAT                   0x00000010
+#                VARIABLE_TIMER                   0x00000020
+#                VARIABLE_STRING                  0x00000040
+#                VARIABLE_POINTER                 0x80000000
+#                TABLE_INTEGER                    0x00000100
+#                TABLE_FLOAT                      0x00000200
+#                TABLE_STRING                     0x00000800
+#                TABLE_POINTER                    0x00001000
+#                VARIABLE_UP_TIMER                0X00002000
+#                VARIABLE_INTEGER_64              0X00004000
+#                TABLE_INTEGER_64                 0X00010000
+#                TABLE_NULL                       0X00020000
+#                VARIABLE_STREAM                  0x00040000
+
+
+
+
+#  (Please note that the TAG1 definition may have columns added in the future.
+#   Any new columns will be added to the right of the existing ones.)
+#   This file should be parsed accordingly.)
+
+# TAG1,NAME,ID,BITMASK_0,BITMASK_1,BITMASK_2,BITMASK_3,TABLE_LENGTH,STRING_WIDTH
+
+TAG1,Powerup                                           ,0    ,00000000,00000100,00000000,00000000,0    ,0   
+TAG1,Learning_Center                                   ,0    ,00000000,00000000,00200000,00000000,0    ,0   
+TAG1,diButtonD2                                        ,2    ,40000000,00000000,00000000,00000000,0    ,0   
+TAG1,diButtonD3                                        ,3    ,40000001,00000000,00000000,00000000,0    ,0   
+TAG1,diSwitchD0                                        ,0    ,40000000,00000000,00000000,00000000,0    ,0   
+TAG1,diSwitchD1                                        ,1    ,40000000,00000000,00000000,00000000,0    ,0   
+TAG1,doAlarmD4                                         ,4    ,10000000,00000000,00000000,00000000,0    ,0   
+TAG1,doLedD5                                           ,5    ,10000000,00000000,00000000,00000000,0    ,0   
+TAG1,doLedD6                                           ,6    ,10000000,00000000,00000000,00000000,0    ,0   
+TAG1,doLedD7                                           ,7    ,10000000,00000000,00000000,00000000,0    ,0   
+TAG1,aiPotA16                                          ,1    ,00000000,00000001,00000000,00000000,0    ,0   
+TAG1,aiTemperatureA12                                  ,2    ,00000000,00000001,00000000,00000000,0    ,0   
+TAG1,aoMeterA8                                         ,0    ,00000000,00000002,00000000,00000000,0    ,0   
+TAG1,bAlwaysOff                                        ,16   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,bAlwaysOn                                         ,15   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,d1                                                ,0    ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,d2                                                ,1    ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,d3                                                ,2    ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,dt1                                               ,13   ,00000000,00000000,00000000,00000020,0    ,0   
+TAG1,f1                                                ,3    ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,f2                                                ,4    ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,f3                                                ,5    ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlways0                                          ,17   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlways1                                          ,18   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlways123Dot456                                  ,24   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlwaysNan                                        ,19   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlwaysNeg1                                       ,20   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlwaysNeg123Dot456                               ,21   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlwaysNegINF                                     ,22   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,fAlwaysPosINF                                     ,23   ,00000000,00000000,00000000,00000010,0    ,0   
+TAG1,n1                                                ,6    ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n2                                                ,7    ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n3                                                ,8    ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n4                                                ,9    ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n5                                                ,10   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n6                                                ,11   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,n7                                                ,12   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlways0                                          ,25   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlways1                                          ,26   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlways123                                        ,27   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlways2147483647                                 ,30   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlwaysNeg1                                       ,28   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlwaysNeg2147483648                              ,31   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nAlwaysNeg234                                     ,29   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nnAlways0                                         ,32   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlways1                                         ,33   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlways2147483647                                ,35   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlways2147483648                                ,36   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlways9223372036854775807                       ,37   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlwaysNeg                                       ,34   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nnAlwaysNeg9223372036854775808                    ,38   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,ut1                                               ,14   ,00000000,00000000,00000000,00002000,0    ,0   
+TAG1,s1                                                ,0    ,00000000,00000000,00000000,00000040,0    ,1024
+TAG1,s2                                                ,1    ,00000000,00000000,00000000,00000040,0    ,1024
+TAG1,s3                                                ,2    ,00000000,00000000,00000000,00000040,0    ,1024
+TAG1,s4                                                ,3    ,00000000,00000000,00000000,00000040,0    ,1024
+TAG1,s5                                                ,4    ,00000000,00000000,00000000,00000040,0    ,1024
+TAG1,sAlways123CRLF                                    ,6    ,00000000,00000000,00000000,00000040,0    ,10  
+TAG1,sAlways456CR                                      ,7    ,00000000,00000000,00000000,00000040,0    ,10  
+TAG1,sAlways789LF                                      ,8    ,00000000,00000000,00000000,00000040,0    ,10  
+TAG1,sAlwaysABC                                        ,5    ,00000000,00000000,00000000,00000040,0    ,5   
+TAG1,sAlwaysEmpty                                      ,9    ,00000000,00000000,00000000,00000040,0    ,10  
+TAG1,sAlwaysQuoteQwertyQuote                           ,11   ,00000000,00000000,00000000,00000040,0    ,25  
+TAG1,sAlwaysSpace                                      ,10   ,00000000,00000000,00000000,00000040,0    ,10  
+TAG1,ft1                                               ,3    ,00000000,00000000,00000000,00000200,100  ,0   
+TAG1,ft2                                               ,4    ,00000000,00000000,00000000,00000200,50   ,0   
+TAG1,ft3                                               ,6    ,00000000,00000000,00000000,00000200,10   ,0   
+TAG1,nnt1                                              ,0    ,00000000,00000000,00000000,00010000,100  ,0   
+TAG1,nnt2                                              ,1    ,00000000,00000000,00000000,00010000,50   ,0   
+TAG1,nnt3                                              ,2    ,00000000,00000000,00000000,00010000,10   ,0   
+TAG1,nt1                                               ,7    ,00000000,00000000,00000000,00000100,100  ,0   
+TAG1,nt2                                               ,8    ,00000000,00000000,00000000,00000100,50   ,0   
+TAG1,nt3                                               ,9    ,00000000,00000000,00000000,00000100,10   ,0   
+TAG1,st1                                               ,0    ,00000000,00000000,00000000,00000800,100  ,100 
+TAG1,st2                                               ,1    ,00000000,00000000,00000000,00000800,50   ,100 
+TAG1,st3                                               ,2    ,00000000,00000000,00000000,00000800,10   ,1024
+TAG1,pcht1                                             ,0    ,00000000,00000100,00000000,80000000,0    ,0   
+TAG1,pf1                                               ,1    ,00000000,00000000,00000000,80000010,0    ,0   
+TAG1,pn1                                               ,2    ,00000000,00000000,00000000,80000008,0    ,0   
+TAG1,pnt1                                              ,3    ,00000000,00000000,00000000,80000100,0    ,0   
+TAG1,ps1                                               ,4    ,00000000,00000000,00000000,80000040,0    ,0   
+TAG1,pt1                                               ,0    ,00000000,00000000,00000000,00001000,10   ,0   
+TAG1,pt2                                               ,1    ,00000000,00000000,00000000,00001000,20   ,0   

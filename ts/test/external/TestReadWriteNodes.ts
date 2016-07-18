@@ -334,19 +334,19 @@ describe('SNAP PAC Nodes', function()
 
     it('#writeInt32VarFromMsgPayloadNumber', function(done)
     {
-        assertWrite(deviceConfig.id, 'int32-variable', 'n8', 'msg.payload', '',
+        assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'msg.payload', '',
             { payload: 22 }, 22, done);
     });
 
     it('#writeInt32VarFromMsgPayloadString', function(done)
     {
-        assertWrite(deviceConfig.id, 'int32-variable', 'n8', 'msg.payload', '',
+        assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'msg.payload', '',
             { payload: '33' }, 33, done);
     });
 
     it('#writeInt32VarFromMsgPayloadBoolean', function(done)
     {
-        assertWrite(deviceConfig.id, 'int32-variable', 'n8', 'msg.payload', '', { payload: true },
+        assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'msg.payload', '', { payload: true },
             1, done);
     });
 
@@ -371,13 +371,13 @@ describe('SNAP PAC Nodes', function()
     it('#writeVariableFromMsgProperty', function(done)
     {
         var msg = { 'value': { 'whatever': 99 } };
-        assertWrite(deviceConfig.id, 'int32-variable', 'n8', 'msg', 'value.whatever', msg,
+        assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'msg', 'value.whatever', msg,
             99, done);
     });
 
     it('#writeVariableFromUiValue', function(done)
     {
-        assertWrite(deviceConfig.id, 'int32-variable', 'n8', 'value', '88', {}, 88, done);
+        assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'value', '88', {}, 88, done);
     });
 
 });
