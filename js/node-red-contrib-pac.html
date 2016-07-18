@@ -387,13 +387,15 @@
     <h2>Basic Usage</h2>
     <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the controller. If the name is left blank, then all tags of the selected data type are returned in an array.</p>
     <p>For tables, the <b>start index</b> and <b>length</b> fields control how much of the table is returned. 
-       If both fields are left blank, then the entire table is returned as an array.
-       If only the <b>start index</b> is used, then the remaining part of the table will be returned as an array.
-       If the <b>length</b> field is 1, then a single element is returned as an object.</p> 
+       <ul>
+         <li>If both fields are left blank, then the entire table is returned as an array.</li>
+         <li>If only the <b>start index</b> is used, then the remaining part of the table will be returned as an array.</li>
+         <li>If the <b>length</b> field is 1, then a single element is returned as an object.</p> </li>
+       </ul>
     <h2>Returned Values</h2>
     <p>The result is placed in <code>msg.payload</code>. If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
     <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
-    <p>To avoid data loss, <b>Int64</b> variables and table elements are returned as strings.
+    <p>To avoid data loss, <b>Int64</b> variables and <b>Int64</b> table elements are returned as strings.
     <h2>Dynamic Settings</h2>
         <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
         <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
@@ -443,10 +445,10 @@
                     <li><b>Numeric values:</b> <i>zero</i> values turn off the digital output, and <i>non-zero</i> values turn on the digital output.</li>
                     <li><b>String values:</b> <i>'0'</i>, <i>'off'</i>, or <i>'false'</i> will turn off the digital output. <i>'1'</i>, <i>'-1'</i>, <i>'on'</i>, or <i>'true'</i> will turn on the digital point. All other values will throw an error.</li>
                 </ul>
-            <li><b>Analog Ouputs and Numeric Variables</b></li>
+            <li><b>Analog Outputs and Numeric Variables</b></li>
                 <ul>
                     <li><b>Boolean values:</b> <i>false</i> is written as 0 and <i>true</i> is written as 1.
-                    <li><b>Numeric values:</b> Used directly. For Int64 variables, some data precission can be lost. Write from a string value instead.</li>
+                    <li><b>Numeric values:</b> Used directly. For Int64 variables, some data precision can be lost. Write from a string value instead.</li>
                     <li><b>String values:</b> The string value is converted to a number, using standard string-to-number JavaScript conversion. Invalid string values will throw an error from the node. The one exception is that Int64 variables are kept as a string, which ensures that no data is lost.
                 </ul>
             <li><b>String Variables</b>
@@ -460,14 +462,14 @@
                     <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> written as <i>[ 0 ]</i>  and <i>true</i> written as <i>[ 1 ]</i>.
                     <li><b>Numeric values:</b> Converted to a single-element array containing the value.
                     <li><b>String values:</b> Should be a comma-separated list of numbers. For example, '0, 1, 2, 3'. Square brackets around the list are optional. The string is parsed as an array using the standard JSON.parse() function.
-                    <li><b>Array objects:</b> Used as-is withouth further processing. The API expects all elements to contain numbers.</li>
+                    <li><b>Array objects:</b> Used as-is without further processing. The API expects all elements to contain numbers.</li>
                 </ul>
             <li><b>Int64 Tables</b>
                 <ul>
                     <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> written as <i>[ "0" ]</i>  and <i>true</i> written as <i>[ "1" ]</i>.
                     <li><b>Numeric values:</b> Converted to a single-element array containing the value.
                     <li><b>String values:</b> Should be a comma-separated list of strings. Strings are used to avoid data loss. For example, <i>"0", "1", "2", "3"</i>. Square brackets around the list are optional. The string is parsed as an array using the standard JSON.parse() function.
-                    <li><b>Array objects:</b> Used as-is withouth further processing. The API expects all elements to contain strings.</li>
+                    <li><b>Array objects:</b> Used as-is without further processing. The API expects all elements to contain strings.</li>
                 </ul>
             <li><b>String Tables</b>
                 <ul>
@@ -481,7 +483,7 @@
         <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
         <p><code>msg.payload.tableStartIndex</code> - a number for the first index to write in the table.</p>
         <p>As mentioned above, the value itself can also come in on the message, in whatever property you specify.</p>
-        <p>For example, here's how a dynamic payload would look for writing several values to index <i>5</i> in a table called <i>MyTable</i>, with the Value field specified as <i>msg.payload.values</i>:</p>
+        <p>For example, here's how a dynamic payload would look for writing several values starting at index <i>5</i> in a table called <i>MyTable</i>, with the Value field specified as <i>msg.payload.values</i>:</p>
 <pre>
 msg.payload = {
   tagName         : "MyTable",
