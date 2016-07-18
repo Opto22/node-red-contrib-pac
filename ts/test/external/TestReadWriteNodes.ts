@@ -232,10 +232,33 @@ describe('SNAP PAC Nodes', function()
             });
     });
 
-    it('#readVariable', function(done)
+    it('#readInt32Variable', function(done)
     {
         assertRead(deviceConfig.id, 'int32-variable', 'nAlways123', 123, done);
     });
+
+    it('#readInt64Variable', function(done)
+    {
+        assertRead(deviceConfig.id, 'int64-variable', 'nnAlways2147483647', '2147483647', done);
+    });
+
+    it('#readFloatVariable', function(done)
+    {
+        assertRead(deviceConfig.id, 'float-variable', 'fAlways123Dot456', 123.456001);
+        assertRead(deviceConfig.id, 'float-variable', 'fAlwaysNeg1', -1);
+
+        done();
+    });
+
+    it('#readBooleanVariable', function(done)
+    {
+        assertRead(deviceConfig.id, 'int32-variable', 'bAlwaysOn', 1);
+        assertRead(deviceConfig.id, 'int32-variable', 'bAlwaysOff', 0);
+
+        done();
+    });
+
+
 
 
     it('#readVariableFromDynamicMsgProperty', function(done)
@@ -308,18 +331,21 @@ describe('SNAP PAC Nodes', function()
     });
 
     function assertRead(deviceConfigId: string, tagDataType: string, tagName: string,
-        value: any, done: () => any)
+        value: any, done?: () => any)
     {
         testReadNode(deviceConfig.id, tagDataType, tagName, (msg: any) =>
         {
             should(msg.payload).equal(value);
             should(msg.body.value).equal(value);
-            done(); // Tell Mocha that we're done.
+
+            if (done) {
+                done(); // Tell Mocha that we're done.
+            }
         });
     }
 
     function assertWrite(deviceConfigId: string, tagDataType: string, tagName: string,
-        valueType: string, valueProperty, valueObj: any, value: any, done: () => any)
+        valueType: string, valueProperty, valueObj: any, value: any, done?: () => any)
     {
         testWriteNode(deviceConfigId, tagDataType, tagName, valueType, valueProperty, valueObj,
             (msg: any) =>
@@ -347,7 +373,11 @@ describe('SNAP PAC Nodes', function()
     it('#writeInt32VarFromMsgPayloadBoolean', function(done)
     {
         assertWrite(deviceConfig.id, 'int32-variable', 'n1', 'msg.payload', '', { payload: true },
-            1, done);
+            1);
+        assertWrite(deviceConfig.id, 'int32-variable', 'n2', 'msg.payload', '', { payload: false },
+            0);
+
+        done();
     });
 
     it('#writeStringVarFromMsgPayloadNumber', function(done)
@@ -364,8 +394,12 @@ describe('SNAP PAC Nodes', function()
 
     it('#writeStringVarFromMsgPayloadBoolean', function(done)
     {
+        assertWrite(deviceConfig.id, 'string-variable', 's4', 'msg.payload', '',
+            { payload: true }, 'true');
         assertWrite(deviceConfig.id, 'string-variable', 's5', 'msg.payload', '',
-            { payload: true }, 'true', done);
+            { payload: false }, 'false');
+
+        done();
     });
 
     it('#writeVariableFromMsgProperty', function(done)

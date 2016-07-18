@@ -49,6 +49,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-simple-mocha");
   grunt.registerTask("default", ["ts"]);
   grunt.registerTask("test-internal", 'comment', ['simplemocha:internal']);
-  grunt.registerTask("test-all", 'comment', ['copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
+  grunt.registerTask("test-all", 'comment', ['copy:testSettings', 'ts', 'simplemocha:internal', 'simplemocha:external']);
   grunt.registerTask("package", 'comment', ['clean:package', 'copy:package', 'npm-command:pack']);
 };
