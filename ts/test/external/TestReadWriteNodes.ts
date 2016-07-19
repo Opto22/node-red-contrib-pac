@@ -259,6 +259,32 @@ describe('SNAP PAC Nodes', function()
     });
 
 
+    it('#readInt32Variables', function(done)
+    {
+        testReadNode(deviceConfig.id, 'int32-variable', '', (msg: any) =>
+        {
+            // We don't want to be too fragile here. The strategy should be able to be changed a bit
+            // without breaking these tests.
+
+            should(msg.payload).be.Array();
+            should(msg.payload.length).be.greaterThan(10);
+
+            msg.payload.forEach((element, index, array) => {
+                should(element.name).be.String();
+                should(element.value).be.Number();
+            }); 
+
+            // Look for a few known values.
+            should(msg.payload).containEql({ name : 'nAlways0', value : 0});
+            should(msg.payload).containEql({ name : 'nAlways1', value : 1});
+            should(msg.payload).containEql({ name : 'nAlways123', value : 123});
+
+            if (done) {
+                done(); // Tell Mocha that we're done.
+            }
+        });
+    });
+
 
 
     it('#readVariableFromDynamicMsgProperty', function(done)
