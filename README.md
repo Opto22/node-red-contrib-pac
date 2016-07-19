@@ -12,7 +12,7 @@ Run the following command in your Node-RED user directory:
  
     npm install node-red-contrib-pac
 
-For more detailed information, see the [Getting Started](http://98.112.44.168/nodered/pac/getting-started/prerequisites/) documentation.
+For more detailed information, see the [Getting Started](http://98.112.44.168/nodered/pac/getting-started/) documentation.
 
 ## Usage
 
@@ -20,7 +20,7 @@ The SNAP PAC Read node can read variables, tables, and I/O points.
 
 The SNAP PAC Write node can write variables, tables, and I/O points.
 
-For more detailed information, see the [Getting Started](http://98.112.44.168/nodered/pac/getting-started/prerequisites/) documentation.
+For more detailed information, see the [Getting Started](http://98.112.44.168/nodered/pac/getting-started/) documentation.
 
 ## Copyright and License
 
