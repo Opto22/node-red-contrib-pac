@@ -197,6 +197,28 @@ describe('SNAP PAC Nodes', function()
         injectMsg(nodeConfig, deviceConfig, node, msg);
     }
 
+    it('#readStrategyInfo', function(done)
+    {
+        testReadNode(deviceConfig.id, 'strategy-info', '',
+            (msg: any) =>
+            {
+                // Do the actual checks here.
+
+                // Verify that the PAC Control strategy is correct.
+                // It's located in the "test/pac" folder of this repository. 
+                should(msg.payload.strategyName).be.equal('NodeRedTester');
+
+                should.exist(msg.payload);
+                should.exist(msg.payload.strategyName);
+                should.exist(msg.payload.date);
+                should.exist(msg.payload.time);
+                should.exist(msg.payload.crc);
+                should.exist(msg.payload.runningCharts);
+
+                done();// Tell Mocha that we're done.
+            });
+    });
+
     it('#readDeviceInfo', function(done)
     {
         testReadNode(deviceConfig.id, 'device-info', '',
@@ -212,23 +234,6 @@ describe('SNAP PAC Nodes', function()
                 should(msg.payload.upTimeSeconds).be.greaterThan(0);
 
                 done(); // Tell Mocha that we're done.
-            });
-    });
-
-    it('#readStrategyInfo', function(done)
-    {
-        testReadNode(deviceConfig.id, 'strategy-info', '',
-            (msg: any) =>
-            {
-                // Do the actual checks here.
-                should.exist(msg.payload);
-                should.exist(msg.payload.strategyName);
-                should.exist(msg.payload.date);
-                should.exist(msg.payload.time);
-                should.exist(msg.payload.crc);
-                should.exist(msg.payload.runningCharts);
-
-                done();// Tell Mocha that we're done.
             });
     });
 

@@ -58,8 +58,15 @@ grunt test-internal
 
 ### All Tests
 
-To run all the tests, from within _ts/test/exernal_, copy _settings.json.tmpl_ to _settings.json_.
-Then adjust the file to use your PAC's address and API key.
+Running all tests requires the following:
+
+ 1. A PAC controller with:
+    1. 9.5 or greater firmware.
+    1. REST API configured for HTTP access, and at least one API key.
+    1. Running the PAC Control Basic strategy named NodeRedTester, which is located in the _test/pac_ folder.
+ 1. A local copy of the _settings.json_ file.
+    1. From within _ts/test/exernal_, copy _settings.json.tmpl_ to _settings.json_.
+    1. Adjust the file to use your PAC's address and API key.
 
 To run all the tests, run:
 
