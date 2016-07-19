@@ -156,7 +156,7 @@ export abstract class PacNodeBaseImpl
     public addMsg(msg): void
     {
         // Check that we have a controller connection to use.
-        if (!this.ctrl || !this.ctrlQueue ) {
+        if (!this.ctrl || !this.ctrlQueue) {
             // If there's no controller connection, immediately return and effectively
             // drop the message. An error is logged when the node is downloaded, which mirrors
             // what the official nodes do.
