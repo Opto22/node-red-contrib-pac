@@ -87,23 +87,23 @@ export function createSnapPacDeviceNode(config: any)
         if (caCertPath.length === 0) {
             RED.log.error('Missing SSL CA certificate for ' + address);
         }
-    }
 
-    try {
-        if (publicCertPath && publicCertPath.length > 0) {
-            publicCertFile = fs.readFileSync(publicCertPath);
-        }
+        try {
+            if (publicCertPath && publicCertPath.length > 0) {
+                publicCertFile = fs.readFileSync(publicCertPath);
+            }
 
-        if (caCertPath && caCertPath.length > 0) {
-            caCertFile = fs.readFileSync(caCertPath);
+            if (caCertPath && caCertPath.length > 0) {
+                caCertFile = fs.readFileSync(caCertPath);
+            }
         }
-    }
-    catch (err) {
-        if (err.code === 'ENOENT') {
-            RED.log.error('Cannot open certifcate file at ' + err.path); // JSON.stringify(err));
-        }
-        else {
-            RED.log.error(err);
+        catch (err) {
+            if (err.code === 'ENOENT') {
+                RED.log.error('Cannot open certifcate file at ' + err.path);
+            }
+            else {
+                RED.log.error(err);
+            }
         }
     }
 
