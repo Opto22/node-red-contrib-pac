@@ -5,7 +5,8 @@
 
 Julu 20, 2016
 
- * Improved error handling, especially for common configuration errors.
+ * Improved error handling, especially for common configuration errors, including missing API keys and SSL files, and probablems with loading files.
+ * Added caching of SSL certificate files.
 
 ### 1.0.0-beta.3
 

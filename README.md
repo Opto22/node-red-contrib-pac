@@ -6,6 +6,8 @@ Node-RED nodes for Opto 22 SNAP PAC controllers. Allows for the reading and writ
 
 Requires SNAP PAC controllers with firmware 9.5 or later and that have the REST API configured.
 
+Please visit this project's homepage at [http://developer.opto22.com/nodered/pac](http://98.112.44.168/nodered/pac).
+
 ## Install
 
 Run the following command in your Node-RED user directory:
@@ -20,7 +22,7 @@ The SNAP PAC Read node can read variables, tables, and I/O points.
 
 The SNAP PAC Write node can write variables, tables, and I/O points.
 
-For more detailed information, see the [Getting Started](http://98.112.44.168/nodered/pac/getting-started/) documentation.
+For more detailed information, see the [online documentation](http://98.112.44.168/nodered/pac).
 
 ## Copyright and License
 
