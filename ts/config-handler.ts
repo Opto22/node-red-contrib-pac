@@ -79,6 +79,10 @@ export function createSnapPacDeviceNode(config: any)
     var publicCertFile: Buffer;
     var caCertFile: Buffer;
 
+    if (key === '' || secret === '') {
+        RED.log.error('Missing API key for ' + address);
+    }
+
     if (useHttps) {
         if (caCertPath.length === 0) {
             RED.log.error('Missing SSL CA certificate for ' + address);

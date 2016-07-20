@@ -165,8 +165,8 @@ export abstract class PacNodeBaseImpl
         }
         // Check for basic HTTPS configuration errors. If there are any, then don't even try.
         // Drop the message.
-        if (this.ctrl.hasHttpsConfigError()) {
-            this.node.status({ fill: "red", shape: "dot", text: 'SSL configuration error' });
+        if (this.ctrl.hasConfigError()) {
+            this.node.status({ fill: "red", shape: "dot", text: 'Configuration error' });
             return;
         }
 

@@ -64,16 +64,21 @@ class RequestOptionsModifier
 
 export class ControllerApiEx extends ControllerApi
 {
+    private apiKeyId: string;
+    private apiKeyValue: string;
     private https: boolean;
     private publicCertFile: Buffer;
     private caCertFile: Buffer;
     private httpAgent: http.Agent; // TODO: do we need to keep this around?
     private event: events.EventEmitter;
+    private configError: boolean;
 
     constructor(username: string, password: string, basePath: string, https: boolean,
         publicCertFile: Buffer, caCertFile: Buffer)
     {
         super(username, password, basePath);
+        this.apiKeyId = username;
+        this.apiKeyValue = password;
         this.https = https;
         this.publicCertFile = publicCertFile;
         this.caCertFile = caCertFile;
@@ -115,16 +120,26 @@ export class ControllerApiEx extends ControllerApi
         }
     }
 
-    public hasHttpsConfigError(): boolean
+    public hasConfigError(): boolean
     {
-        if (this.https === true) {
-            // Make sure we have at least a CA certificate file, which also covers self-signed certs.
-            if (!this.caCertFile) {
-                return true;
+        if (this.configError === undefined) {
+
+            // Check for bad API keys
+            if (!(this.apiKeyId && this.apiKeyValue)) {
+                this.configError = true; // Bad API key ID or Value
+            }
+            else if (this.https === true) {
+                // Make sure we have at least a CA certificate file, which also covers self-signed certs.
+                if (!this.caCertFile) {
+                    this.configError = true;
+                }
+            }
+            else {
+                this.configError = false;
             }
         }
 
-        return false;
+        return this.configError;
     }
 
 }
