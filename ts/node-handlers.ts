@@ -163,6 +163,13 @@ export abstract class PacNodeBaseImpl
             this.node.status({ fill: "red", shape: "dot", text: 'missing controller configuration' });
             return;
         }
+        // Check for basic HTTPS configuration errors. If there are any, then don't even try.
+        // Drop the message.
+        if (this.ctrl.hasHttpsConfigError()) {
+            this.node.status({ fill: "red", shape: "dot", text: 'SSL configuration error' });
+            return;
+        }
+
 
         // Add the message to the queue.
         var queueLength = this.ctrlQueue.add(msg, this.node, this, this.onInput);

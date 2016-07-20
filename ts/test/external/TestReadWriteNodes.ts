@@ -54,7 +54,7 @@ describe('SNAP PAC Nodes', function()
     before(function()
     {
         ConfigHandler.controllerConnections.createControllerConnection(deviceConfig.address,
-            false, deviceConfig.credentials.key, deviceConfig.credentials.secret, '', '',
+            false, deviceConfig.credentials.key, deviceConfig.credentials.secret, null, null,
             deviceConfig.id);
 
         should.exist(ConfigHandler.controllerConnections.getController(deviceConfig.id));

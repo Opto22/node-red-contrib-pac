@@ -30,18 +30,8 @@ var ControllerApi = ApiLib.AllApi;
 // authentication field which we can override and use it as a general extension point.
 class RequestOptionsModifier
 {
-    private publicCertFile: Buffer;
-    private caCertFile: Buffer;
-
-    constructor(private publicCertPath: string, private caCertPath: string, private agent: https.Agent, private https: boolean)
+    constructor(private publicCertFile: Buffer, private caCertFile: Buffer, private agent: https.Agent, private https: boolean)
     {
-        if (this.publicCertPath && this.publicCertPath.length > 0) {
-            this.publicCertFile = fs.readFileSync(this.publicCertPath);
-        }
-
-        if (this.caCertPath && this.caCertPath.length > 0) {
-            this.caCertFile = fs.readFileSync(this.caCertPath);
-        }
 
     }
 
@@ -75,18 +65,18 @@ class RequestOptionsModifier
 export class ControllerApiEx extends ControllerApi
 {
     private https: boolean;
-    private publicCertPath: string;
-    private caCertPath: string;
+    private publicCertFile: Buffer;
+    private caCertFile: Buffer;
     private httpAgent: http.Agent; // TODO: do we need to keep this around?
     private event: events.EventEmitter;
 
     constructor(username: string, password: string, basePath: string, https: boolean,
-        publicCertPath: string, caCertPath: string)
+        publicCertFile: Buffer, caCertFile: Buffer)
     {
         super(username, password, basePath);
         this.https = https;
-        this.publicCertPath = publicCertPath;
-        this.caCertPath = caCertPath;
+        this.publicCertFile = publicCertFile;
+        this.caCertFile = caCertFile;
 
         this.replaceDefaultAuthWithCustomRequestOptions();
     }
@@ -108,7 +98,7 @@ export class ControllerApiEx extends ControllerApi
             this.httpAgent = <http.Agent>httpsAgent;
 
             // Replace the default authentication handler.
-            this.authentications.default = new RequestOptionsModifier(this.publicCertPath, this.caCertPath,
+            this.authentications.default = new RequestOptionsModifier(this.publicCertFile, this.caCertFile,
                 httpsAgent, this.https);
         }
         else {
@@ -123,6 +113,18 @@ export class ControllerApiEx extends ControllerApi
             // Replace the default authentication handler.
             this.authentications.default = new RequestOptionsModifier(null, null, httpAgent, this.https);
         }
+    }
+
+    public hasHttpsConfigError(): boolean
+    {
+        if (this.https === true) {
+            // Make sure we have at least a CA certificate file, which also covers self-signed certs.
+            if (!this.caCertFile) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

@@ -76,7 +76,34 @@ export function createSnapPacDeviceNode(config: any)
     publicCertPath = publicCertPath ? publicCertPath.trim() : '';
     caCertPath = caCertPath ? caCertPath.trim() : '';
 
-    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret, publicCertPath, caCertPath, config.id);
+    var publicCertFile: Buffer;
+    var caCertFile: Buffer;
+
+    if (useHttps) {
+        if (caCertPath.length === 0) {
+            RED.log.error('Missing SSL CA certificate for ' + address);
+        }
+    }
+
+    try {
+        if (publicCertPath && publicCertPath.length > 0) {
+            publicCertFile = fs.readFileSync(publicCertPath);
+        }
+
+        if (caCertPath && caCertPath.length > 0) {
+            caCertFile = fs.readFileSync(caCertPath);
+        }
+    }
+    catch (err) {
+        if (err.code === 'ENOENT') {
+            RED.log.error('Cannot open certifcate file at ' + err.path); // JSON.stringify(err));
+        }
+        else {
+            RED.log.error(err);
+        }
+    }
+
+    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret, publicCertFile, caCertFile, config.id);
 
     this.on('close', () =>
     {
@@ -101,13 +128,13 @@ export class ControllerConnections
 {
     private controllerCache: ControllerConnection[] = [];
 
-    public createControllerConnection(address: string, useHttps: boolean, key: string, secret: string, publicCertPath: string, caCertPath: string, id: string): ControllerConnection
+    public createControllerConnection(address: string, useHttps: boolean, key: string, secret: string, publicCertFile: Buffer, caCertFile: Buffer, id: string): ControllerConnection
     {
         var scheme = useHttps ? 'https' : 'http';
         var fullAddress = scheme + '://' + address + '/api/v1';
 
         // Create the connection to the controller.
-        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, useHttps, publicCertPath, caCertPath);
+        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, useHttps, publicCertFile, caCertFile);
 
         // Cache it, using the Configuration node's id property.
         this.controllerCache[id] = new ControllerConnection(ctrl, new MessageQueue(500));
