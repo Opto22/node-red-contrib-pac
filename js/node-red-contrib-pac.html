@@ -5,7 +5,7 @@
         color: '#e87070',
         defaults: {
           // This should match the NodeConfiguration interface in the corresponding "ts" file.
-          device: {value:"", type:"pac-device"},
+          device: {value:"", type:"pac-device", required:true},
           dataType: {value:"device-info"},
           tagName: {value:""},
           tableStartIndex: {value: null},
@@ -34,7 +34,7 @@
         color: '#e87070',
         defaults: {
           // This should match the NodeConfiguration interface in the corresponding "ts" file.
-          device: {value:"", type:"pac-device"},
+          device: {value:"", type:"pac-device", required:true},
           dataType: {value:"dig-output"},
           tagName: {value:""},
           tableStartIndex: {value: null},
@@ -74,12 +74,12 @@
         category: 'config',
         // The defaults object should match the GroovDevice class in groov.ts.
         defaults: {
-            address: {value:""},
+            address: {value:"", required:true},
             protocol: {value:"https"}
         },
         credentials: {
-            key:            {type:"text"},
-            secret:         {type:"password"},
+            key:            {type:"text", required:true},
+            secret:         {type:"password", required:true},
             publicCertPath: {type:"text"},
             caCertPath:     {type:"text"}
         },
