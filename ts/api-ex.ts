@@ -30,8 +30,19 @@ var ControllerApi = ApiLib.AllApi;
 // authentication field which we can override and use it as a general extension point.
 class RequestOptionsModifier
 {
+    private publicCertFile: Buffer;
+    private caCertFile: Buffer;
+
     constructor(private publicCertPath: string, private caCertPath: string, private agent: https.Agent, private https: boolean)
     {
+        if (this.publicCertPath && this.publicCertPath.length > 0) {
+            this.publicCertFile = fs.readFileSync(this.publicCertPath);
+        }
+
+        if (this.caCertPath && this.caCertPath.length > 0) {
+            this.caCertFile = fs.readFileSync(this.caCertPath);
+        }
+
     }
 
     applyToRequest(requestOptions: request.Options): void
@@ -40,14 +51,13 @@ class RequestOptionsModifier
             // Add the required options. Wish there was a more official way to do this.
             // An alternative is to customize the template used by the swagger-codegen tool.
             // This is good enough for now.
-            if (this.publicCertPath.length > 0) {
-                // TODO cache the file  
-                requestOptions.cert = fs.readFileSync(this.publicCertPath);
+
+            if (this.publicCertFile) {
+                requestOptions.cert = this.publicCertFile;
             }
 
-            if (this.caCertPath.length > 0) {
-                // TODO cache the file  
-                requestOptions.ca = fs.readFileSync(this.caCertPath);
+            if (this.caCertFile) {
+                requestOptions.ca = this.caCertFile;
             }
 
             requestOptions.port = 443;
