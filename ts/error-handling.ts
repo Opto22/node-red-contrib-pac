@@ -130,7 +130,7 @@ class StatusCodeMessages
     // These will be visible underneath the node.
     static errors = {
         '400': 'Bad request',
-        '401': 'Unauthorized',
+        '401': 'Bad API key',
         '404': 'Not found',
     }
 
@@ -142,7 +142,7 @@ class StatusCodeMessages
             shortError = 'Status code ' + statusCode;
         }
 
-        var longError = 'HTTP response error : ' + statusCode;
+        var longError = shortError + '. HTTP response error : ' + statusCode;
 
         return new ErrorDetails(shortError, longError);
     }
