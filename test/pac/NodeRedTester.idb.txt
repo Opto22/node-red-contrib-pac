@@ -2,9 +2,9 @@
 
 # PAC CONTROL TAG DATABASE DUMP
 # ----------------------------------------------------------------
-# NAME :         C:\files\git\node\node-red-contrib-pac\test\pac\NodeRedTester.idb
+# NAME :         C:\files\github\node\node-red-contrib-pac\test\pac\NodeRedTester.idb
 # VERSION :      R9.4a
-# TIME/DATE :    11:37:23 7/18/2016
+# TIME/DATE :    14:8:0 7/20/2016
 # 
 # INSTRUCTIONS : This file gets written with the corresponding IDB file.
 #                It is not read by PAC Control. It may be used by other programs to 
@@ -136,6 +136,9 @@ TAG1,nAlways2147483647                                 ,30   ,00000000,00000000,
 TAG1,nAlwaysNeg1                                       ,28   ,00000000,00000000,00000000,00000008,0    ,0   
 TAG1,nAlwaysNeg2147483648                              ,31   ,00000000,00000000,00000000,00000008,0    ,0   
 TAG1,nAlwaysNeg234                                     ,29   ,00000000,00000000,00000000,00000008,0    ,0   
+TAG1,nn1                                               ,39   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nn2                                               ,40   ,00000000,00000000,00000000,00004000,0    ,0   
+TAG1,nn3                                               ,41   ,00000000,00000000,00000000,00004000,0    ,0   
 TAG1,nnAlways0                                         ,32   ,00000000,00000000,00000000,00004000,0    ,0   
 TAG1,nnAlways1                                         ,33   ,00000000,00000000,00000000,00004000,0    ,0   
 TAG1,nnAlways2147483647                                ,35   ,00000000,00000000,00000000,00004000,0    ,0   
