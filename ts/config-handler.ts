@@ -99,7 +99,10 @@ export function createSnapPacDeviceNode(config: any)
         }
         catch (err) {
             if (err.code === 'ENOENT') {
-                RED.log.error('Cannot open certifcate file at ' + err.path);
+                RED.log.error('Cannot open certifcate file at \'' + err.path + '\'.');
+            }
+            else if (err.code === 'EACCES') {
+                RED.log.error('Cannot open certifcate file at \'' + err.path + '\' due to file permissions.');
             }
             else {
                 RED.log.error(err);
