@@ -1,6 +1,12 @@
 # Node-RED for SNAP PAC
 
 
+### 1.0.0-rc.2
+
+July 21, 2016
+
+ * Added "node-red" keyword to package.json.
+
 ### 1.0.0-rc.1
 
 July 21, 2016
