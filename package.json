@@ -1,6 +1,6 @@
 {
     "name"         : "node-red-contrib-pac",
-    "version"      : "1.0.0-rc.4",
+    "version"      : "1.0.0",
     "description"  : "Node-RED nodes for Opto 22 SNAP PAC industrial controllers.",
     "homepage"     : "http://developer.opto22.com/nodered/pac/",
     "license"      : "Apache-2.0",
