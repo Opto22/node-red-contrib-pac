@@ -1,6 +1,12 @@
 # Node-RED for SNAP PAC
 
 
+### 1.0.0-rc.1
+
+July 21, 2016
+
+ * Minor documentation changes.
+
 ### 1.0.0-beta.4
 
 Julu 20, 2016
