@@ -1,6 +1,12 @@
 # Node-RED for SNAP PAC
 
 
+### 1.0.0-rc.3
+
+July 21, 2016
+
+ * Removed "node-red" keyword. New site is not public yet.
+
 ### 1.0.0-rc.2
 
 July 21, 2016

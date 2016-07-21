@@ -1,6 +1,6 @@
 {
     "name"         : "node-red-contrib-pac",
-    "version"      : "1.0.0-rc.2",
+    "version"      : "1.0.0-rc.3",
     "description"  : "Node-RED nodes for Opto 22 SNAP PAC industrial controllers.",
     "homepage"     : "http://developer.opto22.com/nodered/pac/",
     "license"      : "Apache-2.0",
@@ -24,7 +24,7 @@
       "typescript-formatter": "2.1.0",
       "node-red": "0.13.0"
     },
-    "keywords": [ "node-red", "Opto 22", "PAC", "PAC Control", "controllers", "programmable automation controller" ],
+    "keywords": [ "Opto 22", "PAC", "PAC Control", "controllers", "programmable automation controller" ],
     "node-red"     : {
         "nodes": {
             "pac": "js/node-red-contrib-pac.js"
