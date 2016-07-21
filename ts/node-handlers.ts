@@ -729,12 +729,15 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
         var writeObj: any = null;
 
         switch (dataType) {
+            case 'ana-output':
+                throw new Error('An array is not a valid value for an analog output.');
             case 'dig-output':
+                throw new Error('An array is not a valid value for a digital output.');
             case 'int32-variable':
             case 'int64-variable':
             case 'float-variable':
             case 'string-variable':
-                throw new Error('"' + value + '" is not a valid value for a digital output.');
+                throw new Error('An array is not a valid value for a variable.');
             case 'int32-table':
             case 'float-table':
             case 'int64-table':
