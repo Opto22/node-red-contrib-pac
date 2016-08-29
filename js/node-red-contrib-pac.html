@@ -10,6 +10,8 @@
           tagName: {value:""},
           tableStartIndex: {value: null},
           tableLength: {value: null},
+          value: {value: ""},
+          valueType: {value: "msg.payload"},
           name: {value:""}
         },
         inputs:1,
@@ -20,12 +22,24 @@
         },
         paletteLabel: "snap pac read",
         oneditprepare: function() {
-            // called when the edit dialog is being built.
+          // called when the edit dialog is being built.
           
-            $("#node-input-dataType").change(function() {
+          $("#node-input-dataType").change(function() {
                 updateNameField();
                 updateTableFields();
           });
+
+          $("#node-input-valueType").val(this.valueType);
+
+          $("#node-input-value").typedInput({
+              default: 'value',
+              typeField: $("#node-input-valueType"),
+              types:[
+                'msg', 
+                {value:"msg.payload", label:"msg.payload", hasValue: false}
+              ]
+          });
+
         }
     });
 
@@ -62,7 +76,11 @@
             $("#node-input-value").typedInput({
                 default: 'value',
                 typeField: $("#node-input-valueType"),
-                types:['msg', {value:"msg.payload", label:"msg.payload", hasValue: false}, {value:"value", label:"Value", hasValue: true}]
+                types: [
+                  'msg', 
+                  {value:"msg.payload", label:"msg.payload", hasValue: false},
+                  {value:"value",       label:"Value",       hasValue: true}
+                ]
             });
 
             $("#node-input-value").typedInput('type',this.valueType);
@@ -289,6 +307,11 @@
         <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for all">
         <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
         <input type="text" style="width: 6em;" id="node-input-tableLength">
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
+        <input type="text" id="node-input-value" style="width:300px">
+        <input type="hidden" id="node-input-valueType">
     </div>
    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>

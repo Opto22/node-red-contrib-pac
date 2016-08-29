@@ -48,10 +48,16 @@ interface NodeBaseConfiguration
     name: string;
 }
 
+interface NodeReadConfiguration extends NodeBaseConfiguration
+{
+    value: string;
+    valueType: string; // 'msg' or 'msg.payload'
+}
+
 interface NodeWriteConfiguration extends NodeBaseConfiguration
 {
     value: string;
-    valueType: string;
+    valueType: string; // 'msg', 'msg.payload', or 'value';
 }
 
 interface PromiseResponse
@@ -229,9 +235,12 @@ export abstract class PacNodeBaseImpl
  */
 export class PacReadNodeImpl extends PacNodeBaseImpl
 {
-    constructor(nodeConfig: NodeBaseConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
+    private nodeReadConfig: NodeReadConfiguration
+
+    constructor(nodeConfig: NodeReadConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
     {
         super(nodeConfig, deviceConfig, node);
+        this.nodeReadConfig = nodeConfig;
     }
 
     // Handler for 'close' events from Node-RED.
@@ -266,27 +275,42 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                 // Always attach the response's body to msg.
                 msg.body = fullfilledResponse.body;
 
+                var newValue;
+
                 // See if we can unwrap the value.
                 if (typeof fullfilledResponse.body === 'object') {
 
                     // If an array, just use it directly.
                     if (Array.isArray(fullfilledResponse.body)) {
-                        msg.payload = fullfilledResponse.body;
+                        newValue = fullfilledResponse.body;
                     }
                     else {
                         // If there's a 'value' property in the body, then go ahead and unwrap
                         // the value in the msg.payload.
                         if (fullfilledResponse.body.value !== undefined) {
-                            msg.payload = fullfilledResponse.body.value;
+                            newValue = fullfilledResponse.body.value;
                         } else {
-                            msg.payload = fullfilledResponse.body;
+                            newValue = fullfilledResponse.body;
                         }
 
                     }
                 } else {
                     // Not an object or array, so just use it directly.
-                    msg.payload = fullfilledResponse.body;
+                    newValue = fullfilledResponse.body;
                 }
+
+                // See where the value should be placed.
+                switch (this.nodeReadConfig.valueType) {
+                    case 'msg':
+                        RED.util.setMessageProperty(msg, this.nodeReadConfig.value, newValue, true);;
+                        break;
+                    case 'msg.payload':
+                        msg.payload = newValue;
+                        break;
+                    default:
+                        throw new Error('Unexpected value type - ' + this.nodeReadConfig.valueType);
+                }
+
 
                 this.node.send(msg)
                 var queueLength = this.ctrlQueue.done(0);
@@ -820,7 +844,7 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
 }
 
 
-export function createSnapPacReadNode(nodeConfig: NodeBaseConfiguration)
+export function createSnapPacReadNode(nodeConfig: NodeReadConfiguration)
 {
     RED.nodes.createNode(this, nodeConfig);
     var deviceConfig: ConfigHandler.DeviceConfiguration = RED.nodes.getNode(nodeConfig.device);
