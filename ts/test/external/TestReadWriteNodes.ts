@@ -104,13 +104,8 @@ describe('SNAP PAC Nodes', function()
     }
 
     function testReadNode(deviceId: string, dataType: string, tagName: string,
-        responseCallback: (msg: any) => void, msg?: any): any
-    {
-        testReadNodeFull(deviceId, dataType, tagName, 'msg.payload', '', responseCallback, msg);
-    }
-
-    function testReadNodeFull(deviceId: string, dataType: string, tagName: string, valueType: string,
-        valueProperty: string, responseCallback: (msg: any) => void, msg?: any): any
+        responseCallback: (msg: any) => void, msg?: any, valueType?: string,
+        valueProperty?: string): any
     {
         // Create a node's configuration.
         var nodeConfig = {
@@ -121,8 +116,8 @@ describe('SNAP PAC Nodes', function()
             "tagName": tagName,
             "tableStartIndex": "",
             "tableLength": "",
-            "valueType": valueType,
-            "value": valueProperty,
+            "valueType": valueType || 'msg.payload',
+            "value": valueProperty || '',
             "name": "",
         };
 
@@ -321,6 +316,42 @@ describe('SNAP PAC Nodes', function()
 
                 done(); // Tell Mocha that we're done.
             }, msg);
+    });
+
+    it('#readVariableIntoCustomMsgPropertySimple', function(done)
+    {
+        // Write the read value into a simple property ('whatever')
+        testReadNode(deviceConfig.id, 'int32-variable', 'nAlways123',
+            (msg: any) =>
+            {
+                // Do the actual checks here.
+                should.exist(msg.whatever);
+                should(msg.whatever).be.type('number');
+                should.exist(msg.body.value);
+                should(msg.whatever).equal(123);
+                should(msg.whatever).equal(msg.body.value);
+
+                done(); // Tell Mocha that we're done.
+            }, undefined, 'msg', 'whatever');
+    });
+
+    it('#readVariableIntoCustomMsgPropertyComplex', function(done)
+    {
+        // Write the read object into a nested property ('data.device.Info')
+        testReadNode(deviceConfig.id, 'device-info', '',
+            (msg: any) =>
+            {
+                // Do the actual checks here.
+                should.exist(msg.data.device.Info);
+                should.exist(msg.data.device.Info.controllerType);
+                should.exist(msg.data.device.Info.firmwareVersion);
+                should.exist(msg.data.device.Info.firmwareDate);
+                should.exist(msg.data.device.Info.firmwareTime);
+                should.exist(msg.data.device.Info.upTimeSeconds);
+                should(msg.data.device.Info.upTimeSeconds).be.greaterThan(0);
+
+                done(); // Tell Mocha that we're done.
+            }, undefined, 'msg', "data.device.Info");
     });
 
     function delayed(done)
