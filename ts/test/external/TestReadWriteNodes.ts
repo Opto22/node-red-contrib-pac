@@ -106,6 +106,12 @@ describe('SNAP PAC Nodes', function()
     function testReadNode(deviceId: string, dataType: string, tagName: string,
         responseCallback: (msg: any) => void, msg?: any): any
     {
+        testReadNodeFull(deviceId, dataType, tagName, 'msg.payload', '', responseCallback, msg);
+    }
+
+    function testReadNodeFull(deviceId: string, dataType: string, tagName: string, valueType: string,
+        valueProperty: string, responseCallback: (msg: any) => void, msg?: any): any
+    {
         // Create a node's configuration.
         var nodeConfig = {
             "id": "930e8d11.9abbf", // This is just an example ID. Nothing special about it.
@@ -115,6 +121,8 @@ describe('SNAP PAC Nodes', function()
             "tagName": tagName,
             "tableStartIndex": "",
             "tableLength": "",
+            "valueType": valueType,
+            "value": valueProperty,
             "name": "",
         };
 
