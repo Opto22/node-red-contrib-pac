@@ -12,6 +12,8 @@
           tableLength: {value: null},
           value: {value: ""},
           valueType: {value: "msg.payload"},
+          topic: {value: ""},
+          topicType: {value: "none"},
           name: {value:""}
         },
         inputs:1,
@@ -37,6 +39,16 @@
               types:[
                 'msg', 
                 {value:"msg.payload", label:"msg.payload", hasValue: false}
+              ]
+          });
+
+          $("#node-input-topic").typedInput({
+              default: 'none',
+              typeField: $("#node-input-topicType"),
+              types:[
+                {value:"none", label:"Do not alter", hasValue: false},
+                {value:"auto", label:"Automatic", hasValue: false},
+                {value:"user", label:"Custom", hasValue: true}
               ]
           });
 
@@ -312,6 +324,11 @@
         <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
         <input type="text" id="node-input-value" style="width:300px">
         <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" style="width:300px">
+        <input type="hidden" id="node-input-topicType">
     </div>
    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
