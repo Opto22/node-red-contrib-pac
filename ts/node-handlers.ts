@@ -52,6 +52,8 @@ interface NodeReadConfiguration extends NodeBaseConfiguration
 {
     value: string;
     valueType: string; // 'msg' or 'msg.payload'
+    topic: string;
+    topicType: string; // 'none', 'auto', or 'user'
 }
 
 interface NodeWriteConfiguration extends NodeBaseConfiguration
@@ -311,6 +313,18 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                         throw new Error('Unexpected value type - ' + this.nodeReadConfig.valueType);
                 }
 
+                switch (this.nodeReadConfig.topicType) {
+                    case 'none':
+                        break;
+                    case 'auto':
+                        msg.topic = 'TODO auto topic';
+                        break;
+                    case 'user':
+                        msg.topic = this.nodeReadConfig.topic;
+                        break;
+                    default:
+                        throw new Error('Unexpected topic type - ' + this.nodeReadConfig.topicType);
+                }
 
                 this.node.send(msg)
                 var queueLength = this.ctrlQueue.done(0);
