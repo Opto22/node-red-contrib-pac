@@ -33,7 +33,7 @@ grunt
 You can also clean out all the output files with:
 
 ```
-grunt clean:build
+grunt clean
 ```
 
 ## Link Nodes

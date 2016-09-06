@@ -23,21 +23,18 @@ module.exports = function(grunt) {
       },
       build: {
         files: [
-          {src: 'package.json',    dest: 'build/'},
           {src: 'src/*.html',      dest: 'build/',       flatten: true, expand:  true},
           {src: 'src/icons/*.png', dest: 'build/icons/', flatten: true, expand:  true},
-          {src: 'README.md',       dest: 'build/'},
-          {src: 'LICENSE',         dest: 'build/'}
          ]
       },
       package: {
         files: [
-          {src: 'build/package.json', dest: 'package/',       flatten: true, expand:  true},
-          {src: 'build/*.html',       dest: 'package/',       flatten: true, expand:  true},
-          {src: 'build/*.js',         dest: 'package/',       flatten: true, expand:  true},
-          {src: 'build/icons/*.png',  dest: 'package/icons/', flatten: true, expand:  true},
-          {src: 'build/README.md',    dest: 'package/',       flatten: true, expand:  true},
-          {src: 'build/LICENSE',      dest: 'package/',       flatten: true, expand:  true}
+          {src: 'package.json',       dest: 'package/'},
+          {src: 'build/*.html',       dest: 'package/'},
+          {src: 'build/*.js',         dest: 'package/'},
+          {src: 'build/icons/*.png',  dest: 'package/build/icons/', flatten: true, expand:  true},
+          {src: 'README.md',          dest: 'package/'},
+          {src: 'LICENSE',            dest: 'package/'}
          ]
       }
     },
