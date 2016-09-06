@@ -4,6 +4,9 @@
     "description"  : "Node-RED nodes for Opto 22 SNAP PAC industrial controllers.",
     "homepage"     : "http://developer.opto22.com/nodered/pac/",
     "license"      : "Apache-2.0",
+    "scripts": {
+      "build": "grunt"
+    },
     "dependencies": {
       "simple-node-logger":"0.92.21",
       "request": ">=2.67.0",
@@ -12,6 +15,7 @@
     },
     "devDependencies": {
       "grunt": "1.0.1",
+      "grunt-cli": "1.2.0",
       "grunt-ts": "5.5.1",
       "grunt-contrib-clean": "1.0.0",
       "grunt-contrib-copy": "1.0.0",
