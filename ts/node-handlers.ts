@@ -277,54 +277,8 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                 // Always attach the response's body to msg.
                 msg.body = fullfilledResponse.body;
 
-                var newValue;
-
-                // See if we can unwrap the value.
-                if (typeof fullfilledResponse.body === 'object') {
-
-                    // If an array, just use it directly.
-                    if (Array.isArray(fullfilledResponse.body)) {
-                        newValue = fullfilledResponse.body;
-                    }
-                    else {
-                        // If there's a 'value' property in the body, then go ahead and unwrap
-                        // the value in the msg.payload.
-                        if (fullfilledResponse.body.value !== undefined) {
-                            newValue = fullfilledResponse.body.value;
-                        } else {
-                            newValue = fullfilledResponse.body;
-                        }
-
-                    }
-                } else {
-                    // Not an object or array, so just use it directly.
-                    newValue = fullfilledResponse.body;
-                }
-
-                // See where the value should be placed.
-                switch (this.nodeReadConfig.valueType) {
-                    case 'msg':
-                        RED.util.setMessageProperty(msg, this.nodeReadConfig.value, newValue, true);;
-                        break;
-                    case 'msg.payload':
-                        msg.payload = newValue;
-                        break;
-                    default:
-                        throw new Error('Unexpected value type - ' + this.nodeReadConfig.valueType);
-                }
-
-                switch (this.nodeReadConfig.topicType) {
-                    case 'none':
-                        break;
-                    case 'auto':
-                        msg.topic = 'TODO auto topic';
-                        break;
-                    case 'user':
-                        msg.topic = this.nodeReadConfig.topic;
-                        break;
-                    default:
-                        throw new Error('Unexpected topic type - ' + this.nodeReadConfig.topicType);
-                }
+                this.setValue(msg, fullfilledResponse);
+                this.setTopic(msg);
 
                 this.node.send(msg)
                 var queueLength = this.ctrlQueue.done(0);
@@ -337,6 +291,60 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                 this.ctrlQueue.done(50);
             }
         );
+    }
+
+    private setValue(msg: any, fullfilledResponse: any) 
+    {
+        var newValue;
+
+        // See if we can unwrap the value.
+        if (typeof fullfilledResponse.body === 'object') {
+
+            // If an array, just use it directly.
+            if (Array.isArray(fullfilledResponse.body)) {
+                newValue = fullfilledResponse.body;
+            }
+            else {
+                // If there's a 'value' property in the body, then go ahead and unwrap
+                // the value in the msg.payload.
+                if (fullfilledResponse.body.value !== undefined) {
+                    newValue = fullfilledResponse.body.value;
+                } else {
+                    newValue = fullfilledResponse.body;
+                }
+            }
+        } else {
+            // Not an object or array, so just use it directly.
+            newValue = fullfilledResponse.body;
+        }
+
+        // See where the value should be placed.
+        switch (this.nodeReadConfig.valueType) {
+            case 'msg':
+                RED.util.setMessageProperty(msg, this.nodeReadConfig.value, newValue, true);;
+                break;
+            case 'msg.payload':
+                msg.payload = newValue;
+                break;
+            default:
+                throw new Error('Unexpected value type - ' + this.nodeReadConfig.valueType);
+        }
+    }
+
+    private setTopic(msg: any)
+    {
+        switch (this.nodeReadConfig.topicType) {
+            case 'none':
+                break;
+            case 'auto':
+                msg.topic = 'TODO auto topic';
+                break;
+            case 'user':
+                msg.topic = this.nodeReadConfig.topic;
+                break;
+            default:
+                throw new Error('Unexpected topic type - ' + this.nodeReadConfig.topicType);
+        }
     }
 
     /**
