@@ -105,7 +105,7 @@ describe('SNAP PAC Nodes', function()
 
     function testReadNode(deviceId: string, dataType: string, tagName: string,
         responseCallback: (msg: any) => void, msg?: any, valueType?: string,
-        valueProperty?: string): any
+        valueProperty?: string, topicType?: string, topicProperty?: string): any
     {
         // Create a node's configuration.
         var nodeConfig = {
@@ -118,6 +118,8 @@ describe('SNAP PAC Nodes', function()
             "tableLength": "",
             "valueType": valueType || 'msg.payload',
             "value": valueProperty || '',
+            "topicType": topicType || 'none',
+            "topic": topicProperty || '',
             "name": "",
         };
 

@@ -27,7 +27,7 @@
     "keywords": [ "node-red", "Opto 22", "PAC", "PAC Control", "controllers", "programmable automation controller" ],
     "node-red"     : {
         "nodes": {
-            "pac": "js/node-red-contrib-pac.js"
+            "pac": "node-red-contrib-pac.js"
         }
     },
     "author": {
