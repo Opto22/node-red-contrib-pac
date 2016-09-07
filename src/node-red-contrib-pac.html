@@ -433,9 +433,12 @@
          <li>If the <b>length</b> field is 1, then a single element is returned as an object.</p> </li>
        </ul>
     <h2>Returned Values</h2>
-    <p>The result is placed in <code>msg.payload</code>. If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
+    <p>By default, the result is placed in <code>msg.payload</code>. The result may also be placed into any property on the <code>msg</code> object.</p>
+    <p>If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
     <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
     <p>To avoid data loss, <b>Int64</b> variables and <b>Int64</b> table elements are returned as strings.
+    <h2>Topic</h2>
+    <p>The node can either leave the <code>msg.topic</code> alone, or set it to any string value.</p>
     <h2>Dynamic Settings</h2>
         <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
         <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
