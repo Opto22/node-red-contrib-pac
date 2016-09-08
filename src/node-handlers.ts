@@ -319,7 +319,10 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
         }
 
         // See where the value should be placed.
-        switch (this.nodeReadConfig.valueType) {
+        // valueType was added in v1.0.1, so will not exist on 1.0.0 nodes.
+        var valueType = this.nodeReadConfig.valueType === undefined ?
+            'msg.payload' : this.nodeReadConfig.valueType;
+        switch (valueType) {
             case 'msg':
                 RED.util.setMessageProperty(msg, this.nodeReadConfig.value, newValue, true);;
                 break;
@@ -327,13 +330,17 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                 msg.payload = newValue;
                 break;
             default:
-                throw new Error('Unexpected value type - ' + this.nodeReadConfig.valueType);
+                throw new Error('Unexpected value type - ' + valueType);
         }
     }
 
     private setTopic(msg: any)
     {
-        switch (this.nodeReadConfig.topicType) {
+        // topicType was added in v1.0.1, so will not exist on 1.0.0 nodes. Use 'none' for default.
+        var topicType = this.nodeReadConfig.topicType === undefined ?
+            'none' : this.nodeReadConfig.topicType;
+
+        switch (topicType) {
             case 'none':
                 break;
             case 'auto':
@@ -343,7 +350,7 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
                 msg.topic = this.nodeReadConfig.topic;
                 break;
             default:
-                throw new Error('Unexpected topic type - ' + this.nodeReadConfig.topicType);
+                throw new Error('Unexpected topic type - ' + topicType);
         }
     }
 
