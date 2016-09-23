@@ -27,6 +27,7 @@ import fs = require('fs');
 import request = require('request');
 import FormData = require('form-data');
 import NodeRed = require('node-red');
+import Promise = require('bluebird');
 
 var RED: NodeRed.RED;
 

@@ -24,15 +24,7 @@
         "test/internal/TestWriteValueToWriteObject.ts",
         "test/node-red/MockNode.ts",
         "test/node-red/MockRed.ts",
-        "typings/bluebird/bluebird.d.ts",
-        "typings/form-data/form-data.d.ts",
-        "typings/mocha/mocha.d.ts",
-        "typings/node-red/node-red.d.ts",
-        "typings/node/node.d.ts",
-        "typings/request/request.d.ts",
-        "typings/semver/semver.d.ts",
-        "typings/should/should.d.ts",
-        "typings/tsd.d.ts"
+        "typings/node-red/node-red.d.ts"
     ],
     "atom": {
         "rewriteTsconfig": true
