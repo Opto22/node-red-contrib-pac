@@ -9,24 +9,7 @@
         "sourceMap": true,
         "outDir": "../build"
     },
-    "filesGlob": [
-        "./**/*.ts"
-    ],
-    "files": [
-        "api-ex.ts",
-        "api.ts",
-        "config-handler.ts",
-        "error-handling.ts",
-        "message-queue.ts",
-        "node-handlers.ts",
-        "node-red-contrib-pac.ts",
-        "test/external/TestReadWriteNodes.ts",
-        "test/internal/TestWriteValueToWriteObject.ts",
-        "test/node-red/MockNode.ts",
-        "test/node-red/MockRed.ts",
-        "typings/node-red/node-red.d.ts"
-    ],
-    "atom": {
-        "rewriteTsconfig": true
-    }
+    "include": [
+      "**/*.ts"
+    ]
 }
