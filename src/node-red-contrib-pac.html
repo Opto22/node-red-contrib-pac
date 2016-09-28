@@ -47,7 +47,7 @@
               typeField: $("#node-input-topicType"),
               types:[
                 {value:"none", label:"Do not alter", hasValue: false},
-                /* {value:"auto", label:"Automatic", hasValue: false}, */
+                {value:"auto", label:"Automatic", hasValue: false},
                 {value:"user", label:"Custom", hasValue: true}
               ]
           });
@@ -415,9 +415,10 @@
     <p><b>API Key ID</b> and <b>Value</b> - must match one of the entries in the controller's API key configuration.</p>
     <h2>HTTPS Settings</h2>    
     <p>If HTTPS is selected for the protocol, then the SSL Certificates  fields must also be configured.</p>
-    <p><b>CA or Self-Signed</b> - the full path to either a Certificate Authority (CA) or self-signed certificate.</p>
-    <p><b>Public Key</b> - the full path to the public key certificate. Leave this field blank if using a self-signed certificate.</p>
+    <p><b>CA or Self-Signed</b> - the full path or filename of either a Certificate Authority (CA) or self-signed certificate.</p>
+    <p><b>Public Key</b> - the full path or filename of the public key certificate. Leave this field blank if using a self-signed certificate.</p>
     <p>The path to a certificate file must be on the same machine as Node-RED itself. It will be loaded directly from the local file system.</p>
+    <p>If using just a filename, it will load from a directory named 'certs' inside the Node-RED user's directory. For example, <i>/home/user/.node-red/certs/filename.crt</i>.
     <p>The certificates must be in PEM format. The corresponding private key certificate must be installed in the controller.</p>
 
 </script>
@@ -523,9 +524,6 @@
         </ul>
     <h2>Dynamic Settings</h2>
         <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
-        <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
-        <p><code>msg.payload.tableStartIndex</code> - a number for the first index to write in the table.</p>
-        <p>As mentioned above, the value itself can also come in on the message, in whatever property you specify.</p>
         <p>For example, here's how a dynamic payload would look for writing several values starting at index <i>5</i> in a table called <i>MyTable</i>, with the Value field specified as <i>msg.payload.values</i>:</p>
 <pre>
 msg.payload = {
