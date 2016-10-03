@@ -20,7 +20,7 @@
         outputs:1,
         icon: "pac-read.png",
         label: function() {
-            return getLabel(this, "snap pac read");
+            return pacGetLabel(this, "snap pac read");
         },
         paletteLabel: "snap pac read",
         oneditprepare: function() {
@@ -73,7 +73,7 @@
         icon: "pac-write.png",
         align: 'right',
         label: function() {
-            return getLabel(this, "snap pac write");
+            return pacGetLabel(this, "snap pac write");
         },
         paletteLabel: "snap pac write",
         oneditprepare: function() {
@@ -168,14 +168,14 @@
     }
 
     
-    function getLabel(node, defaultLabel) {
+    function pacGetLabel(node, defaultLabel) {
        // Always go with a node's name, if it's been configured.
        if (node.name) {
            return node.name;
        }
 
        // If there's a tag name, use it for the label.
-       var label = tagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
+       var label = pacTagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
 
        // Otherwise, use the data type. Only do this if the device has also been configured.
        // If not, then this is probably a brand new node, and we should just fall through 
@@ -192,7 +192,7 @@
        return label;
     }
 
-    function tagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
+    function pacTagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
         tagName = tagName.trim();
 
         // First make sure we even have a tag name to work with.
