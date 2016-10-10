@@ -21,6 +21,7 @@ import MessageQueue from "./message-queue";
 import http = require('http');
 import https = require('https');
 import fs = require('fs');
+import path = require('path');
 import events = require('events');
 import request = require('request');
 import NodeRed = require('node-red');
@@ -89,13 +90,8 @@ export function createSnapPacDeviceNode(config: any)
         }
 
         try {
-            if (publicCertPath && publicCertPath.length > 0) {
-                publicCertFile = fs.readFileSync(publicCertPath);
-            }
-
-            if (caCertPath && caCertPath.length > 0) {
-                caCertFile = fs.readFileSync(caCertPath);
-            }
+            publicCertFile = getCertFile(publicCertPath);
+            caCertFile = getCertFile(caCertPath);
         }
         catch (err) {
             if (err.code === 'ENOENT') {
@@ -116,6 +112,20 @@ export function createSnapPacDeviceNode(config: any)
     {
         ctrl.queue.dump(); // dump all but the current in-progress message for this connection.
     });
+}
+
+
+function getCertFile(certPath: string): Buffer
+{
+    if (certPath && certPath.length > 0) {
+        // See if we have an absolute or relative path
+        if (!path.isAbsolute(certPath)) {
+            // For relative paths, start from Node-RED's userDir + "/certs".
+            certPath = path.join(RED.settings.userDir, 'certs', certPath);
+        }
+
+        return fs.readFileSync(certPath);
+    }
 }
 
 // Holder for controller connections and message queues.

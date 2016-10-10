@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-import  *  as should from 'should';
+import *  as should from 'should';
 
 import NodeRed = require('node-red');
 
@@ -45,14 +45,14 @@ export class MockNode implements NodeRed.Node
         }
         else {
             console.log('Unexpected error: ' + errorText);
-            should.equal(true,false); // fail
+            should.equal(true, false); // fail
         }
     }
 
     public warn(text: string)
     {
         // By default, fail if we get here. Override the method, if needed.
-        should.equal(true,false); // fail
+        should.equal(true, false); // fail
     }
 
     public log(text: string)
