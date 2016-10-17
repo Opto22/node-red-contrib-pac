@@ -2,7 +2,7 @@
 
 ### 1.0.1
 
-October ??, 2016
+October 17, 2016
 
  * Read node:
    * Added option to specify on which ```msg``` property that the response will be placed.
@@ -11,6 +11,7 @@ October ??, 2016
      a full path. If using just a filename, it will load from a directory
      named 'certs' inside the Node-RED user's directory. For example, 
      _/home/user/.node-red/certs/filename.crt_.
+   * Added a timeout of 30 seconds. This affects the nodes once they're connected to the PAC.
 
 
 ### 1.0.0
