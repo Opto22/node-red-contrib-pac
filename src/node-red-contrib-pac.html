@@ -10,22 +10,48 @@
           tagName: {value:""},
           tableStartIndex: {value: null},
           tableLength: {value: null},
+          value: {value: ""},
+          valueType: {value: "msg.payload"},
+          topic: {value: ""},
+          topicType: {value: "none"},
           name: {value:""}
         },
         inputs:1,
         outputs:1,
         icon: "pac-read.png",
         label: function() {
-            return getLabel(this, "snap pac read");
+            return pacGetLabel(this, "snap pac read");
         },
         paletteLabel: "snap pac read",
         oneditprepare: function() {
-            // called when the edit dialog is being built.
+          // called when the edit dialog is being built.
           
-            $("#node-input-dataType").change(function() {
+          $("#node-input-dataType").change(function() {
                 updateNameField();
                 updateTableFields();
           });
+
+          $("#node-input-valueType").val(this.valueType);
+
+          $("#node-input-value").typedInput({
+              default: 'msg.payload',
+              typeField: $("#node-input-valueType"),
+              types:[
+                'msg', 
+                {value:"msg.payload", label:"msg.payload", hasValue: false}
+              ]
+          });
+
+          $("#node-input-topic").typedInput({
+              default: 'none',
+              typeField: $("#node-input-topicType"),
+              types:[
+                {value:"none", label:"Do not alter", hasValue: false},
+                /* {value:"auto", label:"Automatic", hasValue: false}, */
+                {value:"user", label:"Custom", hasValue: true}
+              ]
+          });
+
         }
     });
 
@@ -39,7 +65,7 @@
           tagName: {value:""},
           tableStartIndex: {value: null},
           value: {value: ""},
-          valueType: {value: "value"},
+          valueType: {value: "msg.payload"},
           name: {value:""}
         },
         inputs:1,
@@ -47,7 +73,7 @@
         icon: "pac-write.png",
         align: 'right',
         label: function() {
-            return getLabel(this, "snap pac write");
+            return pacGetLabel(this, "snap pac write");
         },
         paletteLabel: "snap pac write",
         oneditprepare: function() {
@@ -60,9 +86,13 @@
             $("#node-input-valueType").val(this.valueType);
 
             $("#node-input-value").typedInput({
-                default: 'value',
+                default: 'msg.payload',
                 typeField: $("#node-input-valueType"),
-                types:['msg', {value:"msg.payload", label:"msg.payload", hasValue: false}, {value:"value", label:"Value", hasValue: true}]
+                types: [
+                  'msg', 
+                  {value:"msg.payload", label:"msg.payload", hasValue: false},
+                  {value:"value",       label:"Value",       hasValue: true}
+                ]
             });
 
             $("#node-input-value").typedInput('type',this.valueType);
@@ -138,14 +168,14 @@
     }
 
     
-    function getLabel(node, defaultLabel) {
+    function pacGetLabel(node, defaultLabel) {
        // Always go with a node's name, if it's been configured.
        if (node.name) {
            return node.name;
        }
 
        // If there's a tag name, use it for the label.
-       var label = tagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
+       var label = pacTagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
 
        // Otherwise, use the data type. Only do this if the device has also been configured.
        // If not, then this is probably a brand new node, and we should just fall through 
@@ -162,7 +192,7 @@
        return label;
     }
 
-    function tagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
+    function pacTagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
         tagName = tagName.trim();
 
         // First make sure we even have a tag name to work with.
@@ -290,6 +320,16 @@
         <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
         <input type="text" style="width: 6em;" id="node-input-tableLength">
     </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
+        <input type="text" id="node-input-value" style="width:300px">
+        <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" style="width:300px">
+        <input type="hidden" id="node-input-topicType">
+    </div>
    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -375,9 +415,10 @@
     <p><b>API Key ID</b> and <b>Value</b> - must match one of the entries in the controller's API key configuration.</p>
     <h2>HTTPS Settings</h2>    
     <p>If HTTPS is selected for the protocol, then the SSL Certificates  fields must also be configured.</p>
-    <p><b>CA or Self-Signed</b> - the full path to either a Certificate Authority (CA) or self-signed certificate.</p>
-    <p><b>Public Key</b> - the full path to the public key certificate. Leave this field blank if using a self-signed certificate.</p>
+    <p><b>CA or Self-Signed</b> - the full path or filename of either a Certificate Authority (CA) or self-signed certificate.</p>
+    <p><b>Public Key</b> - the full path or filename of the public key certificate. Leave this field blank if using a self-signed certificate.</p>
     <p>The path to a certificate file must be on the same machine as Node-RED itself. It will be loaded directly from the local file system.</p>
+    <p>If using just a filename, it will load from a directory named 'certs' inside the Node-RED user's directory. For example, <i>/home/user/.node-red/certs/filename.crt</i>.
     <p>The certificates must be in PEM format. The corresponding private key certificate must be installed in the controller.</p>
 
 </script>
@@ -393,9 +434,12 @@
          <li>If the <b>length</b> field is 1, then a single element is returned as an object.</p> </li>
        </ul>
     <h2>Returned Values</h2>
-    <p>The result is placed in <code>msg.payload</code>. If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
+    <p>By default, the result is placed in <code>msg.payload</code>. The result may also be placed into any property on the <code>msg</code> object.</p>
+    <p>If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
     <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
     <p>To avoid data loss, <b>Int64</b> variables and <b>Int64</b> table elements are returned as strings.
+    <h2>Topic</h2>
+    <p>The node can either leave the <code>msg.topic</code> alone, or set it to any string value.</p>
     <h2>Dynamic Settings</h2>
         <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
         <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
@@ -480,9 +524,6 @@
         </ul>
     <h2>Dynamic Settings</h2>
         <p>If the incoming message's payload is an object with the following properties, then they will be used over any settings in the node itself.</code> 
-        <p><code>msg.payload.tagName</code> - a string with the tag's name.</p>
-        <p><code>msg.payload.tableStartIndex</code> - a number for the first index to write in the table.</p>
-        <p>As mentioned above, the value itself can also come in on the message, in whatever property you specify.</p>
         <p>For example, here's how a dynamic payload would look for writing several values starting at index <i>5</i> in a table called <i>MyTable</i>, with the Value field specified as <i>msg.payload.values</i>:</p>
 <pre>
 msg.payload = {

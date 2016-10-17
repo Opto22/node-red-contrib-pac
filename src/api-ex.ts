@@ -58,6 +58,7 @@ class RequestOptionsModifier
 
         requestOptions.forever = true;
         requestOptions.agent = this.agent;
+        requestOptions.timeout = 30000;
     }
 }
 

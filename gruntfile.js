@@ -2,34 +2,39 @@ module.exports = function(grunt) {
   grunt.initConfig({
     ts: {
       default : {
-        tsconfig: './ts/tsconfig.json'      
+        tsconfig: './src/tsconfig.json'      
       }
     },
     clean: {
-      build: ['js/**/*.js*'],
-      package: ['package/**/*', '*node-red-contrib-*.tgz']
+      build: ['build'],
+      package: ['package', '*node-red-contrib-*.tgz']
     },
     simplemocha: {
       options: {
       },
-      internal: { src: ['js/test/internal/*.js'] },
-      external: { src: ['js/test/external/*.js'] }
+      internal: { src: ['build/test/internal/*.js'] },
+      external: { src: ['build/test/external/*.js'] }
     },
     copy: {
       testSettings: {
         nonull: true,
-        src: './ts/test/external/settings.json',
-        dest:'./js/test/external/settings.json'
+        src: 'src/test/external/settings.json',
+        dest:'build/test/external/settings.json'
+      },
+      build: {
+        files: [
+          {src: 'src/*.html',      dest: 'build/',       flatten: true, expand:  true},
+          {src: 'src/icons/*.png', dest: 'build/icons/', flatten: true, expand:  true},
+         ]
       },
       package: {
         files: [
-          {src: 'package.json',   dest: 'package/'},
-          {src: 'js/*.html',      dest: 'package/'},
-          {src: 'js/*.js',        dest: 'package/'},
-          {src: 'js/*.d.ts',      dest: 'package/'},
-          {src: 'js/icons/*.png', dest: 'package/'},
-          {src: 'README.md',      dest: 'package/'},
-          {src: 'LICENSE',        dest: 'package/'}
+          {src: 'package.json',       dest: 'package/'},
+          {src: 'build/*.html',       dest: 'package/'},
+          {src: 'build/*.js',         dest: 'package/'},
+          {src: 'build/icons/*.png',  dest: 'package/build/icons/', flatten: true, expand:  true},
+          {src: 'README.md',          dest: 'package/'},
+          {src: 'LICENSE',            dest: 'package/'}
          ]
       }
     },
@@ -47,8 +52,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-npm-command");
   grunt.loadNpmTasks("grunt-ts");
   grunt.loadNpmTasks("grunt-simple-mocha");
-  grunt.registerTask("default", ["ts"]);
+  grunt.registerTask("default", ["clean:build", "copy:build", "ts"]);
   grunt.registerTask("test-internal", 'comment', ['simplemocha:internal']);
-  grunt.registerTask("test-all", 'comment', ['copy:testSettings', 'ts', 'simplemocha:internal', 'simplemocha:external']);
-  grunt.registerTask("package", 'comment', ['clean:package', 'copy:package', 'npm-command:pack']);
+  grunt.registerTask("test-all", 'comment', ['default', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
+  grunt.registerTask("package", 'comment', ['clean:package', 'default', 'copy:package', 'npm-command:pack']);
 };

@@ -6,7 +6,7 @@ Node-RED nodes for Opto 22 SNAP PAC industrial controllers. Allows for the readi
 
 Requires [SNAP PAC controllers](http://www.opto22.com/site/snap_pac_system.aspx) with firmware 9.5 or later and that have the REST API configured.
 
-Please visit this project's homepage at [http://developer.opto22.com/nodered/pac](http://98.112.44.168/nodered/pac).
+Please visit this project's homepage at [http://developer.opto22.com/nodered/pac](http://developer.opto22.com/nodered/pac).
 
 ## Install
 

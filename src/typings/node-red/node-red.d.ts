@@ -73,6 +73,7 @@ declare module "node-red" {
         nodes: Nodes;
         util: Util;
         log: Log;
+        settings?: any;
     }
 
 }
