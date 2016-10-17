@@ -7,6 +7,8 @@ October 17, 2016
  * Read node:
    * Added option to specify on which ```msg``` property that the response will be placed.
    * Added option to allow the topic to be set within the Read node.
+
+ * Read and Write nodes:
    * SSL certificate files can now be specified by just a filename, not only
      a full path. If using just a filename, it will load from a directory
      named 'certs' inside the Node-RED user's directory. For example, 
