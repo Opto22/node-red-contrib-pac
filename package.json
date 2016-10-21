@@ -35,7 +35,11 @@
       "typescript-formatter": "2.1.0",
       "node-red": "0.13.0"
     },
-    "keywords": [ "node-red", "Opto 22", "PAC", "PAC Control", "controllers", "programmable automation controller" ],
+    "keywords": [ "node-red", "Opto 22", "Opto", "PAC", "SNAP", "PAC Control",
+                  "controller", "industrial", 
+                  "programmable automation controller",
+                  "plc", "programmable logic controller"
+                ],
     "node-red"     : {
         "nodes": {
             "pac": "build/node-red-contrib-pac.js"
