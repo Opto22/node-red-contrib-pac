@@ -1,5 +1,12 @@
 # Node-RED for SNAP PAC
 
+### 1.0.2
+
+October 21, 2016
+
+ * Minor changes to the keywords describing the package.
+
+
 ### 1.0.1
 
 October 17, 2016
