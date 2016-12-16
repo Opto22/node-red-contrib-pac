@@ -16,7 +16,9 @@
 
 import * as ApiLib from "./api";
 import * as ApiExLib from "./api-ex";
-import MessageQueue from "./message-queue";
+import * as CertificateUtil from 'opto22-node-red-common/lib/CertificateUtil';
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import MessageQueue from 'opto22-node-red-common/lib/MessageQueue';
 
 import http = require('http');
 import https = require('https');
@@ -24,7 +26,6 @@ import fs = require('fs');
 import path = require('path');
 import events = require('events');
 import request = require('request');
-import NodeRed = require('node-red');
 
 var RED: NodeRed.RED;
 
@@ -47,9 +48,15 @@ export interface DeviceCredentials
 /**
  * Data structure matching what comes from Node-RED for the PAC's configuration via the user interface.
  */
-export interface DeviceConfiguration
+export interface DeviceConfiguration extends NodeRed.NodeConfiguration
 {
-    id: string;
+    address: string;
+    credentials: DeviceCredentials;
+}
+
+
+export interface DeviceNode extends NodeRed.Node
+{
     address: string;
     credentials: DeviceCredentials;
 }
@@ -90,8 +97,8 @@ export function createSnapPacDeviceNode(config: any)
         }
 
         try {
-            publicCertFile = getCertFile(publicCertPath);
-            caCertFile = getCertFile(caCertPath);
+            publicCertFile = CertificateUtil.getCertFile(RED, publicCertPath);
+            caCertFile = CertificateUtil.getCertFile(RED, caCertPath);
         }
         catch (err) {
             if (err.code === 'ENOENT') {
@@ -114,19 +121,6 @@ export function createSnapPacDeviceNode(config: any)
     });
 }
 
-
-function getCertFile(certPath: string): Buffer
-{
-    if (certPath && certPath.length > 0) {
-        // See if we have an absolute or relative path
-        if (!path.isAbsolute(certPath)) {
-            // For relative paths, start from Node-RED's userDir + "/certs".
-            certPath = path.join(RED.settings.userDir, 'certs', certPath);
-        }
-
-        return fs.readFileSync(certPath);
-    }
-}
 
 // Holder for controller connections and message queues.
 class ControllerConnection 

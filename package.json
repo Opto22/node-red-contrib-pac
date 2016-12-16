@@ -8,6 +8,7 @@
       "build": "grunt"
     },
     "dependencies": {
+      "opto22-node-red-common": "1.0.0-beta.3",
       "simple-node-logger":"0.93.12",
       "request": "2.75.0",
       "bluebird": "3.4.6",

@@ -16,7 +16,7 @@
 
 import * as NodeHandlers from "./node-handlers";
 import * as ConfigHandler from "./config-handler";
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import semver = require('semver');
 
 var module: any;

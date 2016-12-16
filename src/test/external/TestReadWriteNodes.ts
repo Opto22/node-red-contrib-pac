@@ -16,17 +16,17 @@
 
 import * as NodeHandlers from "../../node-handlers";
 import * as ConfigHandler from "../../config-handler";
-import * as MockNode from "../node-red/MockNode";
-import * as MockRed from "../node-red/MockRed";
+import { MockNode } from 'opto22-node-red-common/lib/mocks/MockNode';
+import * as MockRed from 'opto22-node-red-common/lib/mocks/MockRed';
 
 var TestSettings = require('./settings.json');
 
 import should = require('should');
 import assert = require('assert');
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
 
-class MockPacReadNode extends MockNode.MockNode
+class MockPacReadNode extends MockNode
 {
     constructor(onSend: (msg: any) => void, onError?: (errorText: any, nodeMessage: any) => void)
     {
@@ -34,7 +34,7 @@ class MockPacReadNode extends MockNode.MockNode
     }
 }
 
-class MockPacWriteNode extends MockNode.MockNode
+class MockPacWriteNode extends MockNode
 {
     constructor(onSend: (msg: any) => void, onError?: (errorText: any, nodeMessage: any) => void)
     {
@@ -70,6 +70,7 @@ describe('SNAP PAC Nodes', function()
     {
         var deviceConfig: ConfigHandler.DeviceConfiguration = {
             id: deviceId,
+            type: 'pac-device',
             address: address,
             credentials:
             {

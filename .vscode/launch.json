@@ -1,0 +1,70 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "node",
+            "request": "launch",
+            "program": "/usr/local/lib/node_modules/node-red/red.js",
+            "stopOnEntry": false,
+            "args": [ ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/build"
+        },
+        {
+            "name": "Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "stopOnEntry": false,
+            "args": [
+                "--no-timeouts",
+                "--recursive",
+                "${workspaceRoot}/build/test/external/TestReadWriteNodes.js"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "testing"
+            },
+            "externalConsole": false,
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/build/test"
+        },
+        {
+            "name": "Attach",
+            "type": "node",
+            "request": "attach",
+            "port": 5858,
+            "address": "localhost",
+            "restart": false,
+            "sourceMaps": false,
+            "outFiles": [],
+            "localRoot": "${workspaceRoot}",
+            "remoteRoot": null
+        },
+        {
+            "name": "Attach to Process",
+            "type": "node",
+            "request": "attach",
+            "processId": "${command.PickProcess}",
+            "port": 5858,
+            "sourceMaps": false,
+            "outFiles": []
+        }
+    ]
+}
