@@ -1,6 +1,6 @@
 {
     "name"         : "node-red-contrib-pac",
-    "version"      : "1.0.1",
+    "version"      : "1.0.2-beta.1",
     "description"  : "Node-RED nodes for Opto 22 SNAP PAC industrial controllers.",
     "homepage"     : "http://developer.opto22.com/nodered/pac/",
     "license"      : "Apache-2.0",
@@ -14,13 +14,13 @@
       "semver": "5.3.0"
     },
     "devDependencies": {
-      "@types/bluebird": "^3.0.33",
+      "@types/bluebird": "3.0.33",
       "@types/form-data": "0.0.32",
       "@types/mocha": "^2.2.32",
-      "@types/node": "^6.0.40",
+      "@types/node": "6.0.40",
       "@types/request": "0.0.31",
       "@types/semver": "^5.3.30",
-      "@types/should": "^8.1.30",
+      "@types/should": "8.1.30",
       "grunt": "1.0.1",
       "grunt-cli": "1.2.0",
       "grunt-ts": "5.5.1",

@@ -30,7 +30,7 @@ var ControllerApi = ApiLib.AllApi;
 // authentication field which we can override and use it as a general extension point.
 class RequestOptionsModifier
 {
-    constructor(private publicCertFile: Buffer, private caCertFile: Buffer, private agent: https.Agent, private https: boolean)
+    constructor(private publicCertFile: Buffer, private caCertFile: Buffer, private agent: https.Agent, private https: boolean, private isLocalhost: boolean)
     {
 
     }
@@ -50,6 +50,11 @@ class RequestOptionsModifier
                 requestOptions.ca = this.caCertFile;
             }
 
+            // Local connections do not require certificates for HTTPS.
+            if (!this.publicCertFile && !this.caCertFile && this.isLocalhost) {
+                (<https.ServerOptions>requestOptions).rejectUnauthorized = false;
+            }
+
             requestOptions.port = 443;
         }
         else {
@@ -65,6 +70,7 @@ class RequestOptionsModifier
 
 export class ControllerApiEx extends ControllerApi
 {
+    private isLocalHost: boolean;
     private apiKeyId: string;
     private apiKeyValue: string;
     private https: boolean;
@@ -74,7 +80,7 @@ export class ControllerApiEx extends ControllerApi
     private event: events.EventEmitter;
     private configError: boolean;
 
-    constructor(username: string, password: string, basePath: string, https: boolean,
+    constructor(username: string, password: string, basePath: string, address: string, https: boolean,
         publicCertFile: Buffer, caCertFile: Buffer)
     {
         super(username, password, basePath);
@@ -83,6 +89,10 @@ export class ControllerApiEx extends ControllerApi
         this.https = https;
         this.publicCertFile = publicCertFile;
         this.caCertFile = caCertFile;
+
+        if (address.trim().toLowerCase() === 'localhost') {
+            this.isLocalHost = true;
+        }
 
         this.replaceDefaultAuthWithCustomRequestOptions();
     }
@@ -105,7 +115,7 @@ export class ControllerApiEx extends ControllerApi
 
             // Replace the default authentication handler.
             this.authentications.default = new RequestOptionsModifier(this.publicCertFile, this.caCertFile,
-                httpsAgent, this.https);
+                httpsAgent, this.https, this.isLocalHost);
         }
         else {
             var httpAgent = new http.Agent(
@@ -117,7 +127,7 @@ export class ControllerApiEx extends ControllerApi
             this.httpAgent = httpAgent;
 
             // Replace the default authentication handler.
-            this.authentications.default = new RequestOptionsModifier(null, null, httpAgent, this.https);
+            this.authentications.default = new RequestOptionsModifier(null, null, httpAgent, this.https, this.isLocalHost);
         }
     }
 
@@ -131,8 +141,10 @@ export class ControllerApiEx extends ControllerApi
             }
             else if (this.https === true) {
                 // Make sure we have at least a CA certificate file, which also covers self-signed certs.
-                if (!this.caCertFile) {
-                    this.configError = true;
+                if (!this.isLocalHost) {
+                    if (!this.caCertFile) {
+                        this.configError = true;
+                    }
                 }
             }
             else {

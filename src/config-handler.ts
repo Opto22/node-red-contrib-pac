@@ -65,6 +65,7 @@ export function createSnapPacDeviceNode(config: any)
     var address = config.address;
     var protocol = config.protocol.toLowerCase();
     var useHttps = protocol !== 'http'; // default to HTTPS unless HTTP is specified.
+    var isLocalhost = address === 'localhost';
 
     var key = this.credentials.key;
     var secret = this.credentials.secret;
@@ -84,7 +85,7 @@ export function createSnapPacDeviceNode(config: any)
         RED.log.error('Missing API key for ' + address);
     }
 
-    if (useHttps) {
+    if (useHttps && !isLocalhost) {
         if (caCertPath.length === 0) {
             RED.log.error('Missing SSL CA certificate for ' + address);
         }
@@ -151,7 +152,7 @@ export class ControllerConnections
         var fullAddress = scheme + '://' + address + '/api/v1';
 
         // Create the connection to the controller.
-        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, useHttps, publicCertFile, caCertFile);
+        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps, publicCertFile, caCertFile);
 
         // Cache it, using the Configuration node's id property.
         this.controllerCache[id] = new ControllerConnection(ctrl, new MessageQueue(500));
