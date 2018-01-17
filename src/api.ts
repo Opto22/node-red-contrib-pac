@@ -236,8 +236,11 @@ export class HttpBasicAuth implements Authentication
     public password: string;
     applyToRequest(requestOptions: request.Options): void
     {
-        requestOptions.auth = {
-            username: this.username, password: this.password
+        // Skip apiKey hack.
+        if (this.username != 'apiKey') {
+            requestOptions.auth = {
+                username: this.username, password: this.password
+            }
         }
     }
 }

@@ -149,7 +149,8 @@ export class ControllerConnections
     public createControllerConnection(address: string, useHttps: boolean, key: string, secret: string, publicCertFile: Buffer, caCertFile: Buffer, id: string): ControllerConnection
     {
         var scheme = useHttps ? 'https' : 'http';
-        var fullAddress = scheme + '://' + address + '/api/v1';
+        var snapPac: boolean = false; // Default to EPIC for this branch
+        var fullAddress = scheme + '://' + address + (snapPac ? '/api/v1' : '/pac');
 
         // Create the connection to the controller.
         var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps, publicCertFile, caCertFile);

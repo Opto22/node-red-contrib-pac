@@ -90,6 +90,11 @@ export class ControllerApiEx extends ControllerApi
         this.publicCertFile = publicCertFile;
         this.caCertFile = caCertFile;
 
+        // Hack in the EPIC apiKey
+        if (username == 'apiKey') {
+            this.defaultHeaders['apiKey'] = password;
+        } 
+
         if (address.trim().toLowerCase() === 'localhost') {
             this.isLocalHost = true;
         }
