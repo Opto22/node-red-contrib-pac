@@ -30,7 +30,9 @@ var ControllerApi = ApiLib.AllApi;
 // authentication field which we can override and use it as a general extension point.
 class RequestOptionsModifier
 {
-    constructor(private publicCertFile: Buffer, private caCertFile: Buffer, private agent: https.Agent, private https: boolean, private isLocalhost: boolean)
+    constructor(private publicCertFile: Buffer, private caCertFile: Buffer,
+        private agent: https.Agent, private https: boolean, private isLocalhost: boolean,
+        private testing: boolean)
     {
 
     }
@@ -51,7 +53,8 @@ class RequestOptionsModifier
             }
 
             // Local connections do not require certificates for HTTPS.
-            if (!this.publicCertFile && !this.caCertFile && this.isLocalhost) {
+            // When testing, ignore HTTPS errors.
+            if ((!this.publicCertFile && !this.caCertFile && this.isLocalhost) || this.testing) {
                 (<https.ServerOptions>requestOptions).rejectUnauthorized = false;
             }
 
@@ -79,9 +82,10 @@ export class ControllerApiEx extends ControllerApi
     private httpAgent: http.Agent; // TODO: do we need to keep this around?
     private event: events.EventEmitter;
     private configError: boolean;
+    private testing: boolean;
 
     constructor(username: string, password: string, basePath: string, address: string, https: boolean,
-        publicCertFile: Buffer, caCertFile: Buffer)
+        publicCertFile: Buffer, caCertFile: Buffer, testing: boolean)
     {
         super(username, password, basePath);
         this.apiKeyId = username;
@@ -89,11 +93,12 @@ export class ControllerApiEx extends ControllerApi
         this.https = https;
         this.publicCertFile = publicCertFile;
         this.caCertFile = caCertFile;
+        this.testing = testing;
 
         // Hack in the EPIC apiKey
         if (username == 'apiKey') {
             this.defaultHeaders['apiKey'] = password;
-        } 
+        }
 
         if (address.trim().toLowerCase() === 'localhost') {
             this.isLocalHost = true;
@@ -120,7 +125,7 @@ export class ControllerApiEx extends ControllerApi
 
             // Replace the default authentication handler.
             this.authentications.default = new RequestOptionsModifier(this.publicCertFile, this.caCertFile,
-                httpsAgent, this.https, this.isLocalHost);
+                httpsAgent, this.https, this.isLocalHost, this.testing);
         }
         else {
             var httpAgent = new http.Agent(
@@ -132,7 +137,8 @@ export class ControllerApiEx extends ControllerApi
             this.httpAgent = httpAgent;
 
             // Replace the default authentication handler.
-            this.authentications.default = new RequestOptionsModifier(null, null, httpAgent, this.https, this.isLocalHost);
+            this.authentications.default = new RequestOptionsModifier(null, null, httpAgent,
+                this.https, this.isLocalHost, this.testing);
         }
     }
 
@@ -145,10 +151,12 @@ export class ControllerApiEx extends ControllerApi
                 this.configError = true; // Bad API key ID or Value
             }
             else if (this.https === true) {
-                // Make sure we have at least a CA certificate file, which also covers self-signed certs.
-                if (!this.isLocalHost) {
-                    if (!this.caCertFile) {
-                        this.configError = true;
+                if (!this.testing) {
+                    // Make sure we have at least a CA certificate file, which also covers self-signed certs.
+                    if (!this.isLocalHost) {
+                        if (!this.caCertFile) {
+                            this.configError = true;
+                        }
                     }
                 }
             }

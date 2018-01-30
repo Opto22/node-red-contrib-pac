@@ -47,15 +47,16 @@ class MockPacWriteNode extends MockNode.MockNode
 describe('SNAP PAC Nodes', function()
 {
     // Create a "pac-device" device configuration.
-    var deviceConfig = createDeviceConfig('deviceId0', TestSettings.pacAddress,
+    var deviceConfig = createDeviceConfig('deviceId0', TestSettings.pacAddress, TestSettings.useHttps,
         TestSettings.pacKeyId, TestSettings.pacKeyValue);
 
 
     before(function()
     {
         ConfigHandler.controllerConnections.createControllerConnection(deviceConfig.address,
-            false, deviceConfig.credentials.key, deviceConfig.credentials.secret, null, null,
-            deviceConfig.id);
+            deviceConfig.protocol.toLowerCase() !== 'http',
+            deviceConfig.credentials.key, deviceConfig.credentials.secret,
+            null, null, deviceConfig.id, true);
 
         should.exist(ConfigHandler.controllerConnections.getController(deviceConfig.id));
 
@@ -65,19 +66,20 @@ describe('SNAP PAC Nodes', function()
         ConfigHandler.setRED(RED);
     });
 
-    function createDeviceConfig(deviceId: string, address: string, key: string,
-        secret: string): ConfigHandler.DeviceConfiguration
+    function createDeviceConfig(deviceId: string, address: string, useHttps: boolean,
+        key: string, secret: string): ConfigHandler.DeviceConfiguration
     {
         var deviceConfig: ConfigHandler.DeviceConfiguration = {
             id: deviceId,
             address: address,
+            protocol: useHttps ? "https" : "http",
             credentials:
-            {
-                key: key,
-                secret: secret,
-                publicCertPath: '',
-                caCertPath: '',
-            }
+                {
+                    key: key,
+                    secret: secret,
+                    publicCertPath: '',
+                    caCertPath: '',
+                }
 
         };
         return deviceConfig;

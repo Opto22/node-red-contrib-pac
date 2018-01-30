@@ -52,12 +52,13 @@ export interface DeviceConfiguration
     id: string;
     address: string;
     credentials: DeviceCredentials;
+    protocol: string
 }
 
 /**
  * Called by Node-RED to create a 'pac-device' node.
  */
-export function createSnapPacDeviceNode(config: any)
+export function createSnapPacDeviceNode(config: DeviceConfiguration)
 {
     // Create the node. This will also return the credential information attached to 'this'.
     RED.nodes.createNode(this, config);
@@ -107,7 +108,8 @@ export function createSnapPacDeviceNode(config: any)
         }
     }
 
-    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret, publicCertFile, caCertFile, config.id);
+    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret, 
+        publicCertFile, caCertFile, config.id, false);
 
     this.on('close', () =>
     {
@@ -146,14 +148,20 @@ export class ControllerConnections
 {
     private controllerCache: ControllerConnection[] = [];
 
-    public createControllerConnection(address: string, useHttps: boolean, key: string, secret: string, publicCertFile: Buffer, caCertFile: Buffer, id: string): ControllerConnection
+    public createControllerConnection(address: string, useHttps: boolean, 
+        key: string, secret: string, 
+        publicCertFile: Buffer, caCertFile: Buffer, 
+        id: string,
+        testing: boolean
+    ): ControllerConnection
     {
         var scheme = useHttps ? 'https' : 'http';
         var snapPac: boolean = false; // Default to EPIC for this branch
         var fullAddress = scheme + '://' + address + (snapPac ? '/api/v1' : '/pac');
 
         // Create the connection to the controller.
-        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps, publicCertFile, caCertFile);
+        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps, 
+            publicCertFile, caCertFile, testing);
 
         // Cache it, using the Configuration node's id property.
         this.controllerCache[id] = new ControllerConnection(ctrl, new MessageQueue(500));
