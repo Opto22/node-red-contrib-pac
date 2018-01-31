@@ -256,7 +256,7 @@ describe('SNAP PAC Nodes', function()
 
     it('#readFloatVariable', function(done)
     {
-        assertRead(deviceConfig.id, 'float-variable', 'fAlways123Dot456', 123.456001);
+        assertRead(deviceConfig.id, 'float-variable', 'fAlways123Dot456', 123.456, undefined, true);
         assertRead(deviceConfig.id, 'float-variable', 'fAlwaysNeg1', -1);
 
         done();
@@ -406,12 +406,16 @@ describe('SNAP PAC Nodes', function()
     });
 
     function assertRead(deviceConfigId: string, tagDataType: string, tagName: string,
-        value: any, done?: () => any)
+        value: any, done?: () => any, doFround?: boolean)
     {
         testReadNode(deviceConfig.id, tagDataType, tagName, (msg: any) =>
         {
-            should(msg.payload).equal(value);
-            should(msg.body.value).equal(value);
+            let msgPayload = doFround ? (<any>Math).fround(msg.payload) : msg.payload;
+            let msgBodyValue = doFround ? (<any>Math).fround(msg.body.value) : msg.body.value;
+            value = doFround ? (<any>Math).fround(value) : value;
+
+            should(msgPayload).equal(value);
+            should(msgBodyValue).equal(value);
 
             if (done) {
                 done(); // Tell Mocha that we're done.
