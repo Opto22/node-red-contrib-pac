@@ -333,14 +333,14 @@ export class AllApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
@@ -3673,14 +3673,14 @@ export class DeviceApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
@@ -3783,14 +3783,14 @@ export class IosApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
@@ -4399,14 +4399,14 @@ export class StrategyApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
@@ -4509,14 +4509,14 @@ export class TablesApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
@@ -6124,14 +6124,14 @@ export class VarsApi
     {
         this.authentications.basicAuth.password = password;
     }
-    private extendObj<T1, T2>(objA: T1, objB: T2)
+    private extendObj<T1, T2>(objA: T1 & T2, objB: T2): T1 & T2
     {
         for (let key in objB) {
             if (objB.hasOwnProperty(key)) {
-                objA[key] = objB[key];
+                objA[key] = (<any>objB[key]);
             }
         }
-        return <T1 & T2>objA;
+        return objA;
     }
     /**
      * 
