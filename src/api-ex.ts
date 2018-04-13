@@ -84,10 +84,22 @@ export class ControllerApiEx extends ControllerApi
     private configError: boolean;
     private testing: boolean;
 
+    private hasDeterminedSystemType: boolean;
+    private isTargetSnap: boolean;
+    private isTargetEpic: boolean;
+
     constructor(username: string, password: string, basePath: string, address: string, https: boolean,
         publicCertFile: Buffer, caCertFile: Buffer, testing: boolean)
     {
-        super(username, password, basePath);
+        // Assume that the target is SNAP, not EPIC.
+        //  + (snapPac ? '/api/v1' : '/pac')
+        let path = '/api/v1';
+        super(username, password, basePath + path);
+
+        this.hasDeterminedSystemType = false;
+        this.isTargetSnap = false;
+        this.isTargetEpic = false;
+
         this.apiKeyId = username;
         this.apiKeyValue = password;
         this.https = https;
@@ -95,10 +107,7 @@ export class ControllerApiEx extends ControllerApi
         this.caCertFile = caCertFile;
         this.testing = testing;
 
-        // Hack in the EPIC apiKey
-        if (username == 'apiKey') {
-            this.defaultHeaders['apiKey'] = password;
-        }
+
 
         if (address.trim().toLowerCase() === 'localhost') {
             this.isLocalHost = true;
@@ -141,6 +150,30 @@ export class ControllerApiEx extends ControllerApi
                 this.https, this.isLocalHost, this.testing);
         }
     }
+
+    public getServerType(callback: (error?: any) => any)
+    {
+        if (this.hasDeterminedSystemType) {
+            process.nextTick(callback);
+        }
+        else {
+            // TODO Add the logic!!!
+            this.isTargetSnap = true;
+            this.hasDeterminedSystemType = true;
+
+            // TODO Once that's been determined, will need to:
+            //
+            // // Hack in the EPIC apiKey
+            // if (username == 'apiKey') {
+            //     this.defaultHeaders['apiKey'] = password;
+            // }
+            //
+            // In HttpBasicAuth, skip apiKey back
+
+            process.nextTick(callback);
+        }
+    }
+
 
     public hasConfigError(): boolean
     {
