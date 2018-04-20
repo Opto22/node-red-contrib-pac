@@ -10,6 +10,6 @@ red-out.txt
 CHANGELOG.html
 README.html
 DEVELOPERS.html
-src/test/external/settings.json
+src/test/external/settings.*.json
 .tscache
 src/.baseDir.ts
