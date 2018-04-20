@@ -51,19 +51,24 @@ describe('SNAP PAC Nodes', function()
         TestSettings.pacKeyId, TestSettings.pacKeyValue);
 
 
-    before(function()
+    before(function(beforeDone: MochaDone)
     {
         ConfigHandler.controllerConnections.createControllerConnection(deviceConfig.address,
             deviceConfig.protocol.toLowerCase() !== 'http',
             deviceConfig.credentials.key, deviceConfig.credentials.secret,
             null, null, deviceConfig.id, true);
 
-        should.exist(ConfigHandler.controllerConnections.getController(deviceConfig.id));
+        let controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
+
+        should.exist(controllerConnection);
 
         var RED = new MockRed.MockRed();
 
+        
         NodeHandlers.setRED(RED);
         ConfigHandler.setRED(RED);
+        
+        controllerConnection.ctrl.getServerType(beforeDone);
     });
 
     function createDeviceConfig(deviceId: string, address: string, useHttps: boolean,

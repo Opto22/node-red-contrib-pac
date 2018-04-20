@@ -25,6 +25,11 @@ import request = require('request');
 
 var ControllerApi = ApiLib.AllApi;
 
+
+const pathForSnap = '/api/v1';
+const pathForEpic = '/pac';
+
+
 // The TypeScript client generated with swagger-codegen does not allow us to add our own
 // options to the Request library. However, there is an empty and useless default 
 // authentication field which we can override and use it as a general extension point.
@@ -70,10 +75,10 @@ class RequestOptionsModifier
     }
 }
 
-
 export class ControllerApiEx extends ControllerApi
 {
     private isLocalHost: boolean;
+    private originalFullAddress: string; // scheme + address ; no path
     private apiKeyId: string;
     private apiKeyValue: string;
     private https: boolean;
@@ -88,13 +93,13 @@ export class ControllerApiEx extends ControllerApi
     private isTargetSnap: boolean;
     private isTargetEpic: boolean;
 
-    constructor(username: string, password: string, basePath: string, address: string, https: boolean,
+    constructor(username: string, password: string, fullAddress: string, address: string, https: boolean,
         publicCertFile: Buffer, caCertFile: Buffer, testing: boolean)
     {
-        // Assume that the target is SNAP, not EPIC.
-        //  + (snapPac ? '/api/v1' : '/pac')
-        let path = '/api/v1';
-        super(username, password, basePath + path);
+        // Assume that the target is SNAP ("/api/v1"), not EPIC ("/pac").
+        super(username, password, fullAddress + pathForSnap);
+
+        this.originalFullAddress = fullAddress;
 
         this.hasDeterminedSystemType = false;
         this.isTargetSnap = false;
@@ -157,20 +162,74 @@ export class ControllerApiEx extends ControllerApi
             process.nextTick(callback);
         }
         else {
-            // TODO Add the logic!!!
-            this.isTargetSnap = true;
-            this.hasDeterminedSystemType = true;
+            this.readDeviceDetails()
+                .then((fullfilledResponse: { response: http.ClientResponse, body: any }) =>
+                {
+                    if (fullfilledResponse.body && fullfilledResponse.body.controllerType) {
+                        this.isTargetSnap = true;
+                        this.hasDeterminedSystemType = true;
+                        callback();
+                    }
+                    else {
+                        // Try the EPIC path
+                        this.basePath = this.originalFullAddress + pathForEpic;
 
-            // TODO Once that's been determined, will need to:
-            //
-            // // Hack in the EPIC apiKey
-            // if (username == 'apiKey') {
-            //     this.defaultHeaders['apiKey'] = password;
-            // }
-            //
-            // In HttpBasicAuth, skip apiKey back
+                        this.readDeviceDetails()
+                            .then(
+                                (fullfilledResponse: { response: http.ClientResponse, body: any }) =>
+                                {
+                                    if (fullfilledResponse.body && fullfilledResponse.body.controllerType) {
+                                        this.isTargetEpic = true;
+                                        this.hasDeterminedSystemType = true;
 
-            process.nextTick(callback);
+                                        this.apiKeyId = 'groov-api-key-hack';
+                                        this.defaultHeaders['apiKey'] = this.apiKeyValue;
+
+                                        callback();
+                                    }
+                                    else {
+                                        // reset to default
+                                        this.basePath = this.originalFullAddress + pathForSnap;
+                                        callback(); // error ?
+                                    }
+                                })
+                            .catch((error: any) =>
+                            {
+                                // Neither worked.
+                                callback(error);
+                            });
+                    }
+                })
+                .catch((error: any) =>
+                {
+                    // Try the EPIC path
+                    this.basePath = this.originalFullAddress + pathForEpic;
+
+                    this.readDeviceDetails()
+                        .then(
+                            (fullfilledResponse: { response: http.ClientResponse, body: any }) =>
+                            {
+                                if (fullfilledResponse.body && fullfilledResponse.body.controllerType) {
+                                    this.isTargetEpic = true;
+                                    this.hasDeterminedSystemType = true;
+
+                                    this.apiKeyId = 'groov-api-key-hack';
+                                    this.defaultHeaders['apiKey'] = this.apiKeyValue;
+
+                                    callback();
+                                }
+                                else {
+                                    // reset to default
+                                    this.basePath = this.originalFullAddress + pathForSnap;
+                                    callback(); // error ?
+                                }
+                            })
+                        .catch((error: any) =>
+                        {
+                            // Neither worked.
+                            callback(error);
+                        });
+                });
         }
     }
 
