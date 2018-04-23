@@ -81,6 +81,8 @@ export class ControllerApiEx extends ControllerApi
     private originalFullAddress: string; // scheme + address ; no path
     private apiKeyId: string;
     private apiKeyValue: string;
+    private origApiKeyId: string;
+    private origApiKeyValue: string;
     private https: boolean;
     private publicCertFile: Buffer;
     private caCertFile: Buffer;
@@ -107,6 +109,8 @@ export class ControllerApiEx extends ControllerApi
 
         this.apiKeyId = username;
         this.apiKeyValue = password;
+        this.origApiKeyId = username;
+        this.origApiKeyValue = password;
         this.https = https;
         this.publicCertFile = publicCertFile;
         this.caCertFile = caCertFile;
@@ -173,6 +177,8 @@ export class ControllerApiEx extends ControllerApi
                     else {
                         // Try the EPIC path
                         this.basePath = this.originalFullAddress + pathForEpic;
+                        this.apiKeyId = 'groov-api-key-hack';
+                        this.defaultHeaders['apiKey'] = this.apiKeyValue;
 
                         this.readDeviceDetails()
                             .then(
@@ -182,14 +188,14 @@ export class ControllerApiEx extends ControllerApi
                                         this.isTargetEpic = true;
                                         this.hasDeterminedSystemType = true;
 
-                                        this.apiKeyId = 'groov-api-key-hack';
-                                        this.defaultHeaders['apiKey'] = this.apiKeyValue;
-
                                         callback();
                                     }
                                     else {
                                         // reset to default
                                         this.basePath = this.originalFullAddress + pathForSnap;
+                                        this.apiKeyId = this.origApiKeyId
+                                        delete this.defaultHeaders.apiKey;
+
                                         callback(); // error ?
                                     }
                                 })
@@ -204,6 +210,8 @@ export class ControllerApiEx extends ControllerApi
                 {
                     // Try the EPIC path
                     this.basePath = this.originalFullAddress + pathForEpic;
+                    this.apiKeyId = 'groov-api-key-hack';
+                    this.defaultHeaders['apiKey'] = this.apiKeyValue;
 
                     this.readDeviceDetails()
                         .then(
@@ -213,19 +221,24 @@ export class ControllerApiEx extends ControllerApi
                                     this.isTargetEpic = true;
                                     this.hasDeterminedSystemType = true;
 
-                                    this.apiKeyId = 'groov-api-key-hack';
-                                    this.defaultHeaders['apiKey'] = this.apiKeyValue;
 
                                     callback();
                                 }
                                 else {
                                     // reset to default
                                     this.basePath = this.originalFullAddress + pathForSnap;
+                                    this.apiKeyId = this.origApiKeyId
+                                    delete this.defaultHeaders.apiKey;
                                     callback(); // error ?
                                 }
                             })
                         .catch((error: any) =>
                         {
+                            // reset to default
+                            this.basePath = this.originalFullAddress + pathForSnap;
+                            this.apiKeyId = this.origApiKeyId
+                            delete this.defaultHeaders.apiKey;
+
                             // Neither worked.
                             callback(error);
                         });

@@ -44,7 +44,7 @@ class MockPacWriteNode extends MockNode.MockNode
 
 
 
-describe('SNAP PAC Nodes', function()
+describe('PAC Nodes', function()
 {
     // Create a "pac-device" device configuration.
     var deviceConfig = createDeviceConfig('deviceId0', TestSettings.pacAddress, TestSettings.useHttps,
@@ -67,7 +67,7 @@ describe('SNAP PAC Nodes', function()
         
         NodeHandlers.setRED(RED);
         ConfigHandler.setRED(RED);
-        
+
         controllerConnection.ctrl.getServerType(beforeDone);
     });
 

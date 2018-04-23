@@ -179,23 +179,25 @@ export abstract class PacNodeBaseImpl
             return;
         }
 
+        this.ctrl.getServerType(() =>
+        {
+            // Add the message to the queue.
+            var queueLength = this.ctrlQueue.add(msg, this.node, this, this.onInput);
 
-        // Add the message to the queue.
-        var queueLength = this.ctrlQueue.add(msg, this.node, this, this.onInput);
-
-        // See if there's room for the message.
-        if (queueLength < 0) {
-            this.node.warn('Message rejected. Queue is full for controller.');
-        }
-
-        // Update the node's status, but don't overwrite the status if this node is currently
-        // being processed.
-        var currentMsgBeingProcessed = this.ctrlQueue.getCurrentMessage();
-        if (currentMsgBeingProcessed.inputEventObject !== this) {
-            if (queueLength !== 0) {
-                this.updateQueuedStatus(queueLength);
+            // See if there's room for the message.
+            if (queueLength < 0) {
+                this.node.warn('Message rejected. Queue is full for controller.');
             }
-        }
+
+            // Update the node's status, but don't overwrite the status if this node is currently
+            // being processed.
+            var currentMsgBeingProcessed = this.ctrlQueue.getCurrentMessage();
+            if (currentMsgBeingProcessed.inputEventObject !== this) {
+                if (queueLength !== 0) {
+                    this.updateQueuedStatus(queueLength);
+                }
+            }
+        });
     }
 
     protected updateQueuedStatus(queueLength: number)
