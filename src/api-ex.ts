@@ -263,7 +263,7 @@ export class ControllerApiEx extends ControllerApi
         if (this.configError === undefined) {
 
             // Check for bad API keys
-            if (!(this.apiKeyId && this.apiKeyValue)) {
+            if (!this.apiKeyValue) {
                 this.configError = true; // Bad API key ID or Value
             }
             else if (this.https === true) {
