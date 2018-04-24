@@ -116,8 +116,6 @@ export class ControllerApiEx extends ControllerApi
         this.caCertFile = caCertFile;
         this.testing = testing;
 
-
-
         if (address.trim().toLowerCase() === 'localhost') {
             this.isLocalHost = true;
         }
@@ -131,7 +129,6 @@ export class ControllerApiEx extends ControllerApi
     private replaceDefaultAuthWithCustomRequestOptions()
     {
         if (this.https) {
-
             var httpsAgent = new https.Agent({
                 keepAlive: true,
                 maxSockets: 1 // might not be needed anymore, since we now use MessageQueue.
@@ -160,8 +157,31 @@ export class ControllerApiEx extends ControllerApi
         }
     }
 
+    private setToSnap()
+    {
+        this.basePath = this.originalFullAddress + pathForSnap;
+        this.apiKeyId = this.origApiKeyId
+        delete this.defaultHeaders.apiKey;
+    }
+
+    private setToGroov()
+    {
+        this.basePath = this.originalFullAddress + pathForEpic;
+        this.apiKeyId = 'groov-epic-pac-skip-reqoptions-auth';
+        this.defaultHeaders['apiKey'] = this.apiKeyValue;
+    }
+
+    /**
+     * Determines the type of PAC we're communicating with.
+     * First tries the SNAP PAC method, and then Groov EPIC PAC method.
+     * Both might fail, since the device may be unreachable.
+     * Once determined, the type is cached.
+     */
     public getServerType(callback: (error?: any) => any)
     {
+
+
+
         if (this.hasDeterminedSystemType) {
             process.nextTick(callback);
         }
@@ -175,11 +195,10 @@ export class ControllerApiEx extends ControllerApi
                         callback();
                     }
                     else {
-                        // Try the EPIC path
-                        this.basePath = this.originalFullAddress + pathForEpic;
-                        this.apiKeyId = 'groov-api-key-hack';
-                        this.defaultHeaders['apiKey'] = this.apiKeyValue;
+                        // Try the Groov EPIC path
+                        this.setToGroov()
 
+                        // See if Groov EPIC works
                         this.readDeviceDetails()
                             .then(
                                 (fullfilledResponse: { response: http.ClientResponse, body: any }) =>
@@ -191,16 +210,15 @@ export class ControllerApiEx extends ControllerApi
                                         callback();
                                     }
                                     else {
-                                        // reset to default
-                                        this.basePath = this.originalFullAddress + pathForSnap;
-                                        this.apiKeyId = this.origApiKeyId
-                                        delete this.defaultHeaders.apiKey;
+                                        this.setToSnap();// Reset to default
 
                                         callback(); // error ?
                                     }
                                 })
                             .catch((error: any) =>
                             {
+                                this.setToSnap();// Reset to default
+
                                 // Neither worked.
                                 callback(error);
                             });
@@ -209,10 +227,9 @@ export class ControllerApiEx extends ControllerApi
                 .catch((error: any) =>
                 {
                     // Try the EPIC path
-                    this.basePath = this.originalFullAddress + pathForEpic;
-                    this.apiKeyId = 'groov-api-key-hack';
-                    this.defaultHeaders['apiKey'] = this.apiKeyValue;
+                    this.setToGroov()
 
+                    // See if Groov EPIC works
                     this.readDeviceDetails()
                         .then(
                             (fullfilledResponse: { response: http.ClientResponse, body: any }) =>
@@ -221,23 +238,17 @@ export class ControllerApiEx extends ControllerApi
                                     this.isTargetEpic = true;
                                     this.hasDeterminedSystemType = true;
 
-
                                     callback();
                                 }
                                 else {
-                                    // reset to default
-                                    this.basePath = this.originalFullAddress + pathForSnap;
-                                    this.apiKeyId = this.origApiKeyId
-                                    delete this.defaultHeaders.apiKey;
+                                    // Reset to SNAP
+                                    this.setToSnap();
                                     callback(); // error ?
                                 }
                             })
                         .catch((error: any) =>
                         {
-                            // reset to default
-                            this.basePath = this.originalFullAddress + pathForSnap;
-                            this.apiKeyId = this.origApiKeyId
-                            delete this.defaultHeaders.apiKey;
+                            this.setToSnap(); // Reset to SNAP
 
                             // Neither worked.
                             callback(error);

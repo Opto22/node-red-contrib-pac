@@ -236,8 +236,10 @@ export class HttpBasicAuth implements Authentication
     public password: string;
     applyToRequest(requestOptions: request.Options): void
     {
-        // Skip apiKey hack.
-        if (this.username != 'groov-api-key-hack') {
+        // Only SNAP PAC needs "requestOptions.auth" to be set.
+        // If we're talking to Groov EPIC, then the username will have been set to a special
+        // value in "api-ex.ts".
+        if (this.username != 'groov-epic-pac-skip-reqoptions-auth') {
             requestOptions.auth = {
                 username: this.username, password: this.password
             }

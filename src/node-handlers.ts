@@ -179,6 +179,7 @@ export abstract class PacNodeBaseImpl
             return;
         }
 
+        // Need to know if it's a SNAP or Groov PAC
         this.ctrl.getServerType(() =>
         {
             // Add the message to the queue.
