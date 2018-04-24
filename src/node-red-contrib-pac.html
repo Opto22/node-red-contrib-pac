@@ -283,7 +283,7 @@
 
 <script type="text/x-red" data-template-name="pac-read">
    <div class="form-row" id="pacAddressRow">
-        <label for="node-input-device"><i class="fa fa-globe"></i> Controller</label>
+        <label for="node-input-device"><i class="fa fa-globe"></i> Device</label>
         <input type="text" id="node-input-device">
    </div>
    <div class="form-row" id="dataTypeRow">
@@ -338,7 +338,7 @@
 
 <script type="text/x-red" data-template-name="pac-write">
    <div class="form-row" id="pacAddressRow">
-        <label for="node-input-device"><i class="fa fa-globe"></i> Controller</label>
+        <label for="node-input-device"><i class="fa fa-globe"></i> Device</label>
         <input type="text" id="node-input-device">
    </div>
    <div class="form-row" id="dataTypeRow">
@@ -470,7 +470,7 @@
       <li><code>msg.pacError</code>, with the following properties:</li>
       <ul>
         <li><code>statusCode</code> - the HTTP status code as a number.</li>
-        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the SNAP-PAC REST API.</li>
+        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the Control Engine REST API.</li>
             <p>For example, an invalid tag name might return the following in <code>msg.pacError.body</code>:</p>
             <pre>
 { 
@@ -562,7 +562,7 @@ msg.payload = {
       <li><code>msg.pacError</code>, with the following properties:</li>
       <ul>
         <li><code>statusCode</code> - the HTTP status code as a number.</li>
-        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the SNAP-PAC REST API.
+        <li><code>body</code> - the body of the response. Likely to be an object with <code>errorCode</code> and <code>message</code> properties as returned from the Control Engine REST API.
             <p>For example, an invalid tag name might return the following in <code>msg.pacError.body</code>:</p>
             <pre>
 { 
