@@ -20,9 +20,9 @@
         outputs:1,
         icon: "pac-read.png",
         label: function() {
-            return pacGetLabel(this, "snap pac read");
+            return pacGetLabel(this, "pac read");
         },
-        paletteLabel: "snap pac read",
+        paletteLabel: "pac read",
         oneditprepare: function() {
           // called when the edit dialog is being built.
           
@@ -73,9 +73,9 @@
         icon: "pac-write.png",
         align: 'right',
         label: function() {
-            return pacGetLabel(this, "snap pac write");
+            return pacGetLabel(this, "pac write");
         },
-        paletteLabel: "snap pac write",
+        paletteLabel: "pac write",
         oneditprepare: function() {
             // called when the edit dialog is being built.
           
@@ -379,7 +379,7 @@
 
 <script type="text/x-red" data-template-name="pac-device">
     <div class="form-row">
-        <label for="node-config-input-protocol" style="width: 110px"><i class="fa fa-globe"></i> PAC Address</label>
+        <label for="node-config-input-protocol" style="width: 110px"><i class="fa fa-globe"></i> Address</label>
         <select type="text" id="node-config-input-protocol" style="width: 6em;">
            <option value="https">HTTPS</option>
            <option value="http">HTTP</option>
@@ -411,24 +411,39 @@
 </script>
 
 <script type="text/x-red" data-help-name="pac-device">
-    <p>Communication settings for Opto 22 PAC controllers.</p>
+    <p>Communication settings for Opto 22 <i>groov</i> EPIC or SNAP PAC control engines.</p>
     <h2>Basic Configuration</h2>
-    <p><b>PAC Address</b> - the protocol and IP address for connecting to a SNAP PAC controller.</p>
-    <p><b>API Key ID</b> and <b>Value</b> - must match one of the entries in the controller's API key configuration.</p>
+    <p><b>Address</b> - the protocol and IP address for connecting to a <i>groov</i> EPIC or SNAP PAC control engine.
+        Use "localhost" for Node-RED and the control engine on the same device, such as a <i>groov</i> EPIC PR1 processor.
+    </p>
+    <p><b>API Key Name</b> - Leave blank for <i>groov</i> EPIC. For SNAP, must match one of the entries in the controller's API key configuration.</p>
+    <p><b>API Key Value</b> - For <i>groov</i> EPIC, enter an API Key for a user with Control Engine REST API permission. For SNAP, enter the Key Value.</p>
     <h2>HTTPS Settings</h2>    
-    <p>If HTTPS is selected for the protocol, then the SSL Certificates  fields must also be configured.</p>
-    <p><b>CA or Self-Signed</b> - the full path or filename of either a Certificate Authority (CA) or self-signed certificate.</p>
+    <p>If HTTPS is selected for the protocol and the address is not "localhost", then the SSL Certificates fields must also be configured.</p>
+    <p><b>CA or Self-Signed</b> - the full path or filename of either a Certificate Authority (CA) or self-signed certificate. Leave blank for "localhost" address.</p>
     <p><b>Public Key</b> - the full path or filename of the public key certificate. Leave this field blank if using a self-signed certificate.</p>
-    <p>The path to a certificate file must be on the same machine as Node-RED itself. It will be loaded directly from the local file system.</p>
-    <p>If using just a filename, it will load from a directory named 'certs' inside the Node-RED user's directory. For example, <i>/home/user/.node-red/certs/filename.crt</i>.
-    <p>The certificates must be in PEM format. The corresponding private key certificate must be installed in the controller.</p>
+
+    <p>Whether the full path or filename is entered depends on where Node-RED is running.
+        <ul>
+            <li><b><i>groov</i> EPIC: </b>If using a <i>groov</i> EPIC PR1 processor to access another<i>groov</i> EPIC or SNAP PAC,
+                upload the certificates with <i>groov</i> Manage, using the Security -> Client SSL page.
+                Enter just the filenames here.</li>
+            <li><b><i>groov</i> Box: </b>If using a GROOV-AR1 to access a <i>groov</i> EPIC or SNAP PAC, upload the certificates 
+            with Node-RED Admin.
+                Enter just the filenames here.</li>
+            <li><b>Computer: </b>If using Node-RED on a computer, enter the path and filenames of the certificates, which must be located
+                on the same computer. They will be loaded directly from the local file system.</li>
+        </ul>
+    <p>The certificates must be in PEM format. The corresponding private key certificate must be installed in the control engine device.</p>
 
 </script>
 
 <script type="text/x-red" data-help-name="pac-read">
-    <p>A node for reading values from Opto 22 PAC controllers.</p>
+    <p>A node for reading values from Opto 22 <i>groov</i> EPIC or SNAP PAC control engines.</p>
     <h2>Basic Usage</h2>
-    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the controller. If the name is left blank, then all tags of the selected data type are returned in an array.</p>
+    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the control engine.
+       If the name is left blank, then all tags of the selected data type are returned in an array.
+    </p>
     <p>For tables, the <b>start index</b> and <b>length</b> fields control how much of the table is returned. 
        <ul>
          <li>If both fields are left blank, then the entire table is returned as an array.</li>
@@ -437,8 +452,8 @@
        </ul>
     <h2>Returned Values</h2>
     <p>By default, the result is placed in <code>msg.payload</code>. The result may also be placed into any property on the <code>msg</code> object.</p>
-    <p>If possible, the node will extract the value from the returned object. For instance, the SNAP-PAC REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
-    <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
+    <p>If possible, the node will extract the value from the returned object. For instance, the Control Engine REST API will often return an object like <b>{ "value" : 123 }</b>. In that case, the node will extact 123 from the returned object and place it in the message payload. Or if an array is returned, it will be placed in the payload.</p>
+    <p>In all cases, the full response body will be placed in <code>msg.body</code>. The responses are defined by the Control Engine REST API and will vary depending upon the data type and other options.</p>
     <p>To avoid data loss, <b>Int64</b> variables and <b>Int64</b> table elements are returned as strings.
     <h2>Topic</h2>
     <p>The node can either leave the <code>msg.topic</code> alone, or set it to any string value.</p>
@@ -470,9 +485,9 @@
 </script/>
 
 <script type="text/x-red" data-help-name="pac-write">
-    <p>A node for writing values to Opto 22 PAC controllers.</p>
+    <p>A node for writing values to Opto 22 <i>groov</i> EPIC or SNAP PAC control engines.</p>
     <h2>Basic Usage</h2>
-    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the controller.</p>
+    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the control engine.</p>
     <p>For tables, the <b>start index</b> field sets the first index to be written.
        If left blank, then 0 is used.
     <h2>Value to Write - Overview</h2>
@@ -538,7 +553,7 @@ msg.payload = {
 };
 </pre> 
     <h2>Response</h2>
-    <p>The full response body will be placed in <code>msg.body</code>. The responses are defined by the SNAP-PAC REST API and will vary depending upon the data type and other options.</p>
+    <p>The full response body will be placed in <code>msg.body</code>. The responses are defined by the Control Engine REST API and will vary depending upon the data type and other options.</p>
     <h2>Error Handling</h2>
     <p>If an error occurs, an error will be thrown that can be caught with a Catch node. No output message will be sent, so the flow will not continue.</p>
     <p>The message sent to the Catch node will have <u>one</u> of the following properties:
