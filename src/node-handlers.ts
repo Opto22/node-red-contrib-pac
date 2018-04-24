@@ -180,7 +180,7 @@ export abstract class PacNodeBaseImpl
         }
 
         // Need to know if it's a SNAP or Groov PAC
-        this.ctrl.getServerType(() =>
+        this.ctrl.getServerType(this.node, () =>
         {
             // Add the message to the queue.
             var queueLength = this.ctrlQueue.add(msg, this.node, this, this.onInput);

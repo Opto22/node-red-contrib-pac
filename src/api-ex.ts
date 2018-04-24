@@ -22,6 +22,7 @@ import https = require('https');
 import fs = require('fs');
 import events = require('events');
 import request = require('request');
+import NodeRed = require('node-red');
 
 var ControllerApi = ApiLib.AllApi;
 
@@ -177,15 +178,15 @@ export class ControllerApiEx extends ControllerApi
      * Both might fail, since the device may be unreachable.
      * Once determined, the type is cached.
      */
-    public getServerType(callback: (error?: any) => any)
+    public getServerType(node: NodeRed.Node | undefined, callback: (error?: any) => any)
     {
-
-
-
         if (this.hasDeterminedSystemType) {
             process.nextTick(callback);
         }
         else {
+            if (node) {
+                node.status({ fill: "green", shape: "ring", text: 'determining device type' });
+            }
             this.readDeviceDetails()
                 .then((fullfilledResponse: { response: http.ClientResponse, body: any }) =>
                 {

@@ -68,7 +68,7 @@ describe('PAC Nodes', function()
         NodeHandlers.setRED(RED);
         ConfigHandler.setRED(RED);
 
-        controllerConnection.ctrl.getServerType(beforeDone);
+        controllerConnection.ctrl.getServerType(undefined, beforeDone);
     });
 
     function createDeviceConfig(deviceId: string, address: string, useHttps: boolean,
