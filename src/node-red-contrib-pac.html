@@ -387,10 +387,12 @@
         <input type="text" id="node-config-input-address" style="width: 50%" placeholder="IP address">
     </div>
     <div class="form-row">
-        <label for="node-config-input-key" style="width: 110px"><i class="fa fa-user"></i> API Key ID</label>
-        <input type="text" autocomplete="off" id="node-config-input-key" style="width: 8em" placeholder="ID">
-        <i class="fa fa-lock" style="margin-left: 15px;"></i><span> Value &nbsp;</span>
-        <input type="password" autocomplete="off" id="node-config-input-secret" style="width: 8em" placeholder="Value (secret)">
+        <label for="node-config-input-key" style="width: 110px"><i class="fa fa-user"></i> API Key Name</label>
+        <input type="text" autocomplete="off" id="node-config-input-key" style="" placeholder="Key name for SNAP; blank for Groov EPIC">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-secret" style="width: 110px"><i class="fa fa-lock"></i> API Key Value</label>
+        <input type="password" autocomplete="off" id="node-config-input-secret" style="" placeholder="Value (secret)">
     </div>
     <div id="sslFields"> 
         <div class="form-row" style="margin-bottom: 0px;" >
