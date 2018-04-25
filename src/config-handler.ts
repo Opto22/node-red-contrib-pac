@@ -17,6 +17,8 @@
 import * as ApiLib from "./api";
 import * as ApiExLib from "./api-ex";
 import MessageQueue from "./message-queue";
+import * as CertificateUtil from 'opto22-node-red-common/lib/CertificateUtil';
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
 import http = require('http');
 import https = require('https');
@@ -24,7 +26,6 @@ import fs = require('fs');
 import path = require('path');
 import events = require('events');
 import request = require('request');
-import NodeRed = require('node-red');
 
 var RED: NodeRed.RED;
 
@@ -92,8 +93,8 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
         }
 
         try {
-            publicCertFile = getCertFile(publicCertPath);
-            caCertFile = getCertFile(caCertPath);
+            publicCertFile = CertificateUtil.getCertFile(RED, publicCertPath);
+            caCertFile = CertificateUtil.getCertFile(RED, caCertPath);
         }
         catch (err) {
             if (err.code === 'ENOENT') {
@@ -108,27 +109,13 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
         }
     }
 
-    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret, 
+    var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret,
         publicCertFile, caCertFile, config.id, false);
 
     this.on('close', () =>
     {
         ctrl.queue.dump(); // dump all but the current in-progress message for this connection.
     });
-}
-
-
-function getCertFile(certPath: string): Buffer
-{
-    if (certPath && certPath.length > 0) {
-        // See if we have an absolute or relative path
-        if (!path.isAbsolute(certPath)) {
-            // For relative paths, start from Node-RED's userDir + "/certs".
-            certPath = path.join(RED.settings.userDir, 'certs', certPath);
-        }
-
-        return fs.readFileSync(certPath);
-    }
 }
 
 // Holder for controller connections and message queues.
@@ -148,9 +135,9 @@ export class ControllerConnections
 {
     private controllerCache: ControllerConnection[] = [];
 
-    public createControllerConnection(address: string, useHttps: boolean, 
-        key: string, secret: string, 
-        publicCertFile: Buffer, caCertFile: Buffer, 
+    public createControllerConnection(address: string, useHttps: boolean,
+        key: string, secret: string,
+        publicCertFile: Buffer, caCertFile: Buffer,
         id: string,
         testing: boolean
     ): ControllerConnection
@@ -159,7 +146,7 @@ export class ControllerConnections
         var fullAddress = scheme + '://' + address;
 
         // Create the connection to the controller.
-        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps, 
+        var ctrl = new ApiExLib.ControllerApiEx(key, secret, fullAddress, address, useHttps,
             publicCertFile, caCertFile, testing);
 
         // Cache it, using the Configuration node's id property.

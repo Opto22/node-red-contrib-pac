@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
 /**
  * Function pointer definition for Node msg 'input' event handlers.

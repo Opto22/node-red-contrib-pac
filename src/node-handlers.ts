@@ -26,7 +26,7 @@ import https = require('https');
 import fs = require('fs');
 import request = require('request');
 import FormData = require('form-data');
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import Promise = require('bluebird');
 
 var RED: NodeRed.RED;
@@ -885,7 +885,8 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
 export function createSnapPacReadNode(nodeConfig: NodeReadConfiguration)
 {
     RED.nodes.createNode(this, nodeConfig);
-    var deviceConfig: ConfigHandler.DeviceConfiguration = RED.nodes.getNode(nodeConfig.device);
+    var deviceConfig: ConfigHandler.DeviceConfiguration =
+        <ConfigHandler.DeviceConfiguration><any>RED.nodes.getNode(nodeConfig.device);
     var node: NodeRed.Node = <NodeRed.Node>this; // for easier reference
 
     // Create the implementation class.
@@ -905,7 +906,8 @@ export function createSnapPacReadNode(nodeConfig: NodeReadConfiguration)
 export function createSnapPacWriteNode(nodeConfig: NodeWriteConfiguration)
 {
     RED.nodes.createNode(this, nodeConfig);
-    var deviceConfig: ConfigHandler.DeviceConfiguration = RED.nodes.getNode(nodeConfig.device);
+    var deviceConfig: ConfigHandler.DeviceConfiguration =
+        <ConfigHandler.DeviceConfiguration><any>RED.nodes.getNode(nodeConfig.device);
     var node: NodeRed.Node = <NodeRed.Node>this; // for easier reference
 
     // Create the implementation class.

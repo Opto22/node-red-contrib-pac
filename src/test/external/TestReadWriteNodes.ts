@@ -23,7 +23,7 @@ var TestSettings = require('./settings.json');
 
 import should = require('should');
 import assert = require('assert');
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
 
 class MockPacReadNode extends MockNode.MockNode
@@ -64,7 +64,7 @@ describe('PAC Nodes', function()
 
         var RED = new MockRed.MockRed();
 
-        
+
         NodeHandlers.setRED(RED);
         ConfigHandler.setRED(RED);
 

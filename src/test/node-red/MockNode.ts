@@ -15,7 +15,7 @@
 */
 import *  as should from 'should';
 
-import NodeRed = require('node-red');
+import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
 export class MockNode implements NodeRed.Node
 {
@@ -30,6 +30,7 @@ export class MockNode implements NodeRed.Node
     type: string;
     z: string;
     name: string;
+    credentials: any;
     onSend: (msg: any) => void;
     onError: (errorText: any, nodeMessage: any) => void;
 
