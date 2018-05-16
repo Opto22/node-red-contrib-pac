@@ -8,7 +8,7 @@
       "build": "grunt"
     },
     "dependencies": {
-      "opto22-node-red-common": "git+https://github.com/jimturner22/opto22-node-red-common-package.git#97f6448cd1fa9bda2a8d7c9a2f331eaf82971c2a",
+      "opto22-node-red-common": "1.0.3",
       "simple-node-logger":"0.93.12",
       "request": "2.75.0",
       "bluebird": "3.4.6",
