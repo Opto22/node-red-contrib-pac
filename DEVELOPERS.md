@@ -1,4 +1,4 @@
-# Node-RED for SNAP PAC
+# Node-RED for Opto 22 Control Engines
 
 ## Source Code
 
@@ -42,7 +42,7 @@ grunt clean
 
 ## Link Nodes
 
-In order for your development version of the SNAP PAC nodes to be used by Node-RED, you
+In order for your development version of the Opto 22 Control Engine nodes to be used by Node-RED, you
 need to link your source directory into the local npm system. Run:
 
 ```
@@ -51,11 +51,11 @@ sudo npm link
 
 ## Tests
 
-There are two types of tests you can run: with or without a PAC.
+There are two types of tests you can run: with or without a physical controller.
 
-### Internal Tests without a PAC
+### Internal Tests Without a Device
 
-To run just the internal unit tests without a PAC, run:
+To run just the internal unit tests without a device, run:
 
 ```
 grunt test-internal
@@ -65,14 +65,14 @@ grunt test-internal
 
 Running all tests requires the following:
 
- 1. A PAC controller with:
-    1. 9.5 or greater firmware.
-    1. REST API configured for HTTP access, and at least one API key.
+ 1. An EPIC or SNAP PAC controller with:
+    1. (SNAP PAC only) 9.5 or greater firmware.
+    1. REST API configured for HTTP or HTTPS access, and at least one API key.
     1. Running the PAC Control Basic strategy named NodeRedTester, which is located in
        the _test/pac_ folder.
  1. A local copy of the _settings.json_ file.
     1. From within _ts/test/exernal_, copy _settings.json.tmpl_ to _settings.json_.
-    1. Adjust the file to use your PAC's address and API key.
+    1. Adjust the file to use your device's address and API key.
 
 To run all the tests, run:
 
