@@ -1,4 +1,4 @@
-# Node-RED for Opto 22 Control Engines
+# Node-RED for PAC Control
 
 ## Source Code
 
@@ -42,7 +42,7 @@ grunt clean
 
 ## Link Nodes
 
-In order for your development version of the Opto 22 Control Engine nodes to be used by Node-RED, you
+In order for your development version of the PAC Control nodes to be used by Node-RED, you
 need to link your source directory into the local npm system. Run:
 
 ```

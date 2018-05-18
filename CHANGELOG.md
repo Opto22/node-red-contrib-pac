@@ -1,10 +1,9 @@
-# Node-RED for Opto 22 Control Engines
-
+# Node-RED for PAC Control
 ### 1.1.0
 
 May 18, 2018
 
- * The nodes now support both _groov_ EPIC and SNAP PAC control engines.
+ * The nodes now support both _groov_ EPIC and SNAP PAC controllers running a PAC Control strategy.
 
 
 ### 1.0.1

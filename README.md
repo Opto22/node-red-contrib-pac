@@ -1,8 +1,8 @@
-# Node-RED for Opto 22 Control Engines
+# Node-RED for PAC Control
 
 ## Overview
 
-Node-RED nodes for Opto 22 Control Engines, including _groov_ EPIC and SNAP PAC industrial controllers. Allows for the reading and writing of PAC Control tags in the control engine's loaded strategy.
+Node-RED nodes for PAC Control strategies running in Opto 22 controllers, including _groov_ EPIC and SNAP PAC industrial controllers.
 
 Requires any _groov_ EPIC processor or a [SNAP PAC controller](http://www.opto22.com/site/snap_pac_system.aspx) with firmware 9.5 or later.
 
