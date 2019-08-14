@@ -18,7 +18,7 @@ import * as NodeHandlers from "../../node-handlers";
 import * as ConfigHandler from "../../config-handler";
 import * as MockNode from "../node-red/MockNode";
 import * as MockRed from "../node-red/MockRed";
-
+import { GroovUtil, UserFullData, PromiseResponse } from "./groov-util";
 var TestSettings = require('./settings.json');
 
 import should = require('should');
@@ -46,13 +46,52 @@ class MockPacWriteNode extends MockNode.MockNode
 
 describe('PAC Nodes', function()
 {
-    // Create a "pac-device" device configuration.
-    var deviceConfig = createDeviceConfig('deviceId0', TestSettings.pacAddress, TestSettings.useHttps,
-        TestSettings.pacKeyId, TestSettings.pacKeyValue);
+    var deviceConfig: ConfigHandler.DeviceConfiguration
 
 
     before(function(beforeDone: MochaDone)
     {
+        if (TestSettings.groovAddress) {
+            updateTestSettingsForGroov(() =>
+            {
+                initTests(beforeDone);
+            });
+        }
+        else {
+            initTests(beforeDone);
+        }
+    });
+
+    // For Groov units, we need to get the API key from the device by using the user's
+    // username and password. This works much better in testing environments when 
+    // API keys get reset whenever a device is reset to defaults. 
+    function updateTestSettingsForGroov(cb: (error?: any) => void)
+    {
+        GroovUtil.getUserData(TestSettings.groovAddress, TestSettings.groovUsername, TestSettings.groovPassword).then(
+            (fullfilledResponse: PromiseResponse) =>
+            {
+                var userData: UserFullData = fullfilledResponse.body;
+
+                // Copy over all the settings to what gets used from here on out.
+                TestSettings.pacAddress = TestSettings.groovAddress;
+                TestSettings.pacKeyId = 'apiKey';
+                TestSettings.pacKeyValue = userData.apiKey;
+
+                cb();
+            },
+            (error: any) =>
+            {
+                console.log('error = ' + JSON.stringify(error));
+                cb(error);
+            })
+    }
+
+    function initTests(cb: () => void)
+    {
+        // Create a "pac-device" device configuration.
+        deviceConfig = createDeviceConfig('deviceId0', TestSettings.pacAddress, TestSettings.useHttps,
+            TestSettings.pacKeyId, TestSettings.pacKeyValue);
+
         ConfigHandler.controllerConnections.createControllerConnection(deviceConfig.address,
             deviceConfig.protocol.toLowerCase() !== 'http',
             deviceConfig.credentials.key, deviceConfig.credentials.secret,
@@ -68,8 +107,8 @@ describe('PAC Nodes', function()
         NodeHandlers.setRED(RED);
         ConfigHandler.setRED(RED);
 
-        controllerConnection.ctrl.getDeviceType(undefined, beforeDone);
-    });
+        controllerConnection.ctrl.getDeviceType(undefined, cb);
+    }
 
     function createDeviceConfig(deviceId: string, address: string, useHttps: boolean,
         key: string, secret: string): ConfigHandler.DeviceConfiguration
@@ -79,12 +118,12 @@ describe('PAC Nodes', function()
             address: address,
             protocol: useHttps ? "https" : "http",
             credentials:
-                {
-                    key: key,
-                    secret: secret,
-                    publicCertPath: '',
-                    caCertPath: '',
-                }
+            {
+                key: key,
+                secret: secret,
+                publicCertPath: '',
+                caCertPath: '',
+            }
 
         };
         return deviceConfig;
