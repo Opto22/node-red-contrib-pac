@@ -117,7 +117,11 @@ export class OptoHost
 
                                 this.sendRecvCmd('ReleaseLC', (releaseLcError: any) =>
                                 {
-                                    cb(err || releaseLcError);
+                                    // Add a short delay.
+                                    setTimeout(() =>
+                                    {
+                                        cb(err || releaseLcError);
+                                    }, 500);
                                 });
                             }
                         );
