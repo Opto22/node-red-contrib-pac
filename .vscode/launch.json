@@ -10,7 +10,7 @@
             "name": "Test",
             "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
             "args": [
-                //"--no-timeouts",
+                "--no-timeouts",
                 "--recursive",
                 "${workspaceRoot}/build/test"
             ],
@@ -21,7 +21,7 @@
             "env": {
                 "NODE_ENV": "testing"
             },
-            "externalConsole": false,
+            "console": "internalConsole",
             "sourceMaps": false,
             "outDir": "${workspaceRoot}/build/test"
         },

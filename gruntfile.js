@@ -11,6 +11,7 @@ module.exports = function(grunt) {
     },
     simplemocha: {
       options: {
+        grep: grunt.option('grep')
       },
       internal: { src: ['build/test/internal/*.js'] },
       external: { src: ['build/test/external/*.js'] }
@@ -73,6 +74,8 @@ module.exports = function(grunt) {
      For SNAP PAC,  uses "src/test/external/settings.snapPac.json". 
      IMPORTANT: THIS WILL COPY OVER THE EXISTING "src/test/external/settings.json" file!!
   */
+  grunt.registerTask("mocha-snap",  'comment', ['copy:testSettingsSnap', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
+  grunt.registerTask("mocha-grov",  'comment', ['copy:testSettingsGroov', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
   grunt.registerTask("test-snap",  'comment', ['copy:testSettingsSnap',  'test']);
   grunt.registerTask("test-groov", 'comment', ['copy:testSettingsGroov', 'test']);
 

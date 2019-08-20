@@ -23,7 +23,9 @@ var TestSettings = require('./settings.json');
 
 import should = require('should');
 import assert = require('assert');
+import * as async from 'async';
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import { PacUtil } from "./pac-util";
 
 
 class MockPacReadNode extends MockNode.MockNode
@@ -51,15 +53,39 @@ describe('PAC Nodes', function()
 
     before(function(beforeDone: MochaDone)
     {
-        if (TestSettings.groovAddress) {
-            updateTestSettingsForGroov(() =>
+        this.timeout(10000);
+
+        async.waterfall([
+            (callback: (error: any) => void) =>
             {
-                initTests(beforeDone);
-            });
-        }
-        else {
-            initTests(beforeDone);
-        }
+                if (TestSettings.groovAddress)
+                    updateTestSettingsForGroov(callback);
+                else
+                    process.nextTick(callback);
+            },
+            (callback: (error: any) => void) =>
+            {
+                PacUtil.downloadStrategy(TestSettings.pacAddress,
+                    'test/pac/NodeRedTester.cdf',
+                    { run: true },
+                    (error: any) =>
+                    {
+                        if (error) {
+                            console.log('downloadStrategy error: ' + error);
+                        }
+                        callback(error);
+                    });
+            },
+            (callback: () => void) =>
+            {
+                initTests(callback);
+            },
+        ],
+            (error: any, result: any) =>
+            {
+                beforeDone(error);
+            }
+        );
     });
 
     // For Groov units, we need to get the API key from the device by using the user's
