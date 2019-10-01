@@ -221,7 +221,8 @@ export abstract class PacNodeBaseImpl
     protected checkMsgOverrides(msg: any, nodeConfig: NodeBaseConfiguration)
     {
         if (msg.payload !== undefined) {
-            if (typeof msg.payload === 'object') {
+            // See if msg.payload is an object (but not null, which is also an object.)
+            if (typeof msg.payload === 'object' && (msg.payload !== null)) {
 
                 if (msg.payload.tagName !== undefined) {
                     nodeConfig.tagName = msg.payload.tagName;

@@ -230,7 +230,7 @@ describe('PAC Nodes', function()
     }
 
     function testReadNodeError(deviceId: string, dataType: string, tagName: string,
-        done: () => any, errorCallback: (errorText: any, nodeMessage: any) => void): any
+        msg: any | undefined, errorCallback: (errorText: any, nodeMessage: any) => void): any
     {
         // Create a node's configuration.
         var nodeConfig = {
@@ -247,7 +247,12 @@ describe('PAC Nodes', function()
         // Create a mock node, which checks the response from the controller.
         var node = new MockPacReadNode(null, errorCallback);
 
-        injectTimestampMsg(nodeConfig, deviceConfig, node);
+        if (msg !== undefined) {
+            injectMsg(nodeConfig, deviceConfig, node, msg);
+        }
+        else {
+            injectTimestampMsg(nodeConfig, deviceConfig, node);
+        }
     }
 
     function testWriteNodeError(deviceId: string, dataType: string, tagName: string,
@@ -428,6 +433,23 @@ describe('PAC Nodes', function()
             }, undefined, 'msg', "data.device.Info");
     });
 
+    it('#reading with msg.payload == null should NOT cause any problems.', function(done)
+    {
+        testReadNode(deviceConfig.id, 'int32-variable', 'nAlways1',
+            (msg: any) =>
+            {
+                // Do the actual checks here.
+                should.exist(msg.payload);
+                should(msg.payload).be.type('number');
+                should.exist(msg.body.value);
+                should(msg.payload).equal(1);
+                should(msg.payload).equal(msg.body.value);
+
+                done(); // Tell Mocha that we're done.
+            }
+        );
+    });
+
     function delayed(done)
     {
         // Intentionally delay so that the TCP reset from the controller will not cause problems
@@ -441,7 +463,7 @@ describe('PAC Nodes', function()
     it('#readVariableMissing',
         function(done)
         {
-            testReadNodeError(deviceConfig.id, 'int32-variable', 'tag not here', done,
+            testReadNodeError(deviceConfig.id, 'int32-variable', 'tag not here', undefined,
                 (errorText: any, msg: any) =>
                 {
                     //console.log('msg = ' + JSON.stringify(msg));
@@ -459,7 +481,7 @@ describe('PAC Nodes', function()
 
     it('#writeVariableMissing', function(done)
     {
-        testReadNodeError(deviceConfig.id, 'int32-variable', 'tag not here', done,
+        testReadNodeError(deviceConfig.id, 'int32-variable', 'tag not here', undefined,
             (errorText: any, msg: any) =>
             {
                 //console.log('msg = ' + JSON.stringify(msg));
@@ -527,6 +549,32 @@ describe('PAC Nodes', function()
             0);
 
         done();
+    });
+
+
+    it('#writeInt32Var with msg.payload == null should cause an error', function(done)
+    {
+        testWriteNodeError(deviceConfig.id, 'int32-variable', 'n1', 'msg.payload', '',
+            { payload: null },
+            (errorText: any, msg: any) =>
+            {
+                should(errorText).be.eql('"null" is not a valid value.');
+                should(msg.payload).be.null();
+                done();
+            });
+    });
+
+
+    it('#writeStringVar with msg.payload == null should cause an error', function(done)
+    {
+        testWriteNodeError(deviceConfig.id, 'string-variable', 's5', 'msg.payload', '',
+            { payload: null },
+            (errorText: any, msg: any) =>
+            {
+                should(errorText).be.eql('"null" is not a valid value.');
+                should(msg.payload).be.null();
+                done();
+            });
     });
 
     it('#writeStringVarFromMsgPayloadNumber', function(done)
