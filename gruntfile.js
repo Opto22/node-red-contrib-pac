@@ -68,6 +68,7 @@ module.exports = function(grunt) {
 
   /* Standard test task. Uses "src/test/external/settings.json". */
   grunt.registerTask("test", 'comment', ['default', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
+  grunt.registerTask("mocha", 'comment', ['copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
 
   /* Extra test tasks to easily test both Groov PAC and SNAP PAC.
      For Groov PAC, uses "src/test/external/settings.groovPac.json". 
