@@ -33,11 +33,8 @@ export class OptoHost
     {
         this.connecting = true;
 
-        console.log('net.createConnection() start');
         this.client = net.createConnection(this.port, this.address, () =>
         {
-            console.log('net.createConnection() cb');
-
             this.connecting = false;
             this.connected = true;
 
@@ -91,18 +88,26 @@ export class OptoHost
 
     downloadCdf(cdfPath: string, cb: (err?: any) => void)
     {
-        console.log('downloadCdf()');
+        console.log('downloadCdf() - AcquireLC');
 
         this.sendRecvCmd('45.0 AcquireLC',
             (error: any, responseCode?: number, responseContent?: Buffer) =>
             {
+                if (error) {
+                    cb(error);
+                    return;
+                }
+                if (responseCode !== 0) {
+                    cb(new Error('Could not acquire a lock on the controller.'));
+                    return;
+                }
 
                 fs.readFile(cdfPath, 'utf8', (error: NodeJS.ErrnoException, data: string) =>
                 {
-
                     if (error)
                         cb(error)
                     else {
+                        console.log('downloadCdf() - downloading CDF file');
                         var lines = data.split(os.EOL);
 
                         async.eachSeries(lines,
@@ -113,13 +118,13 @@ export class OptoHost
                             },
                             (err?: any) =>
                             {
-                                console.log('err = ' + JSON.stringify(err, undefined, 2));
-
+                                console.log('downloadCdf() - ReleaseLC');
                                 this.sendRecvCmd('ReleaseLC', (releaseLcError: any) =>
                                 {
                                     // Add a short delay.
                                     setTimeout(() =>
                                     {
+                                        console.log('downloadCdf() - Done');
                                         cb(err || releaseLcError);
                                     }, 500);
                                 });

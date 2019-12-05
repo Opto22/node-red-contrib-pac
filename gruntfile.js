@@ -76,7 +76,7 @@ module.exports = function(grunt) {
      IMPORTANT: THIS WILL COPY OVER THE EXISTING "src/test/external/settings.json" file!!
   */
   grunt.registerTask("mocha-snap",  'comment', ['copy:testSettingsSnap', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
-  grunt.registerTask("mocha-grov",  'comment', ['copy:testSettingsGroov', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
+  grunt.registerTask("mocha-groov",  'comment', ['copy:testSettingsGroov', 'copy:testSettings', 'simplemocha:internal', 'simplemocha:external']);
   grunt.registerTask("test-snap",  'comment', ['copy:testSettingsSnap',  'test']);
   grunt.registerTask("test-groov", 'comment', ['copy:testSettingsGroov', 'test']);
 
