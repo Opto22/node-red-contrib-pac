@@ -573,39 +573,42 @@
                 </ul>
             <li><b>Int32 and Float Tables</b>
                 <ul>
-                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> 
+                    <li><b>Boolean value:</b> Converted to a single-element array, with <i>false</i> 
                         written as <i>[ 0 ]</i>  and <i>true</i> written as <i>[ 1 ]</i>.
-                    <li><b>Numeric values:</b> Converted to a single-element array containing the value.
-                    <li><b>String values:</b> Should be a comma-separated list of numbers. For example, 
+                    <li><b>Numeric value:</b> Converted to a single-element array containing the value.
+                    <li><b>String value:</b> Should be a comma-separated list of numbers. For example, 
                         '0, 1, 2, 3'. Square brackets around the list are optional. The string is 
                         parsed as an array using the standard JSON.parse() function.
-                    <li><b>Array objects:</b> Used as-is without further processing. The API expects 
+                    <li><b>Array object:</b> Used as-is without further processing. The API expects 
                         all elements to contain numbers.</li>
                 </ul>
             <li><b>Int64 Tables</b>
                 <ul>
-                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> 
+                    <li><b>Boolean value:</b> Converted to a single-element array, with <i>false</i> 
                         written as <i>[ "0" ]</i>  and <i>true</i> written as <i>[ "1" ]</i>.
-                    <li><b>Numeric values:</b> Converted to a single-element array containing the value.
-                    <li><b>String values:</b> Should be a comma-separated list of strings. Strings 
+                    <li><b>Numeric value:</b> Converted to a single-element array containing the value.
+                    <li><b>String value:</b> Should be a comma-separated list of strings. Strings 
                         are used to avoid data loss. For example, <i>"0", "1", "2", "3"</i>. Square 
                         brackets around the list are optional. The string is parsed as an array using 
                         the standard JSON.parse() function.
-                    <li><b>Array objects:</b> Used as-is without further processing. The API expects 
+                    <li><b>Array object:</b> Used as-is without further processing. The API expects 
                         all elements to contain strings.</li>
                 </ul>
             <li><b>String Tables</b>
                 <ul>
-                    <li><b>Boolean values:</b> Converted to a single-element array, with <i>false</i> 
+                    <li><b>Boolean value:</b> Converted to a single-element array, with <i>false</i> 
                         written as <i>[ "0" ]</i>  and <i>true</i> written as <i>[ "1" ]</i>.
-                    <li><b>Numeric values:</b> Converted to a single-element array containing the 
+                    <li><b>Numeric value:</b> Converted to a single-element array containing the 
                         value as a string.
-                    <li><b>String values:</b> The value should be a comma-separated list of strings. 
+                    <li><b>String value:</b> The string value should be a JSON representation of an 
+                        array of strings. A string containing a JSON array of comma-separated strings
+                        to write at the given index. 
                         The elements must use double-quotes, not single-quotes. For example, as 
-                        entered for the Value field, <i>"alpha", "beta", "gamma"</i>. From a Function 
-                        block, the string itself would need single-quotes, e.g. <i>' "alpha", "beta", 
-                            "gamma" '</i>. Square brackets around the list are optional. It will be 
+                        entered for the Value field, <i>["alpha", "beta", "gamma"]</i>. From a Function 
+                        block, the string itself would need single-quotes, e.g. <i>'["alpha", "beta", 
+                            "gamma"]'</i>. Square brackets around the list are optional. The JSON string will be 
                             processed by the <i>JSON.parse()</i> command.
+                    <li><b>Array of strings:</b> Used as-is without further processing.</li>
                 </ul>
         </ul>
     <h2>Dynamic Settings</h2>
