@@ -88,10 +88,6 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
     }
 
     if (useHttps && !isLocalhost) {
-        if (caCertPath.length === 0) {
-            RED.log.error('Missing SSL CA certificate for ' + address);
-        }
-
         try {
             publicCertFile = CertificateUtil.getCertFile(RED, publicCertPath);
             caCertFile = CertificateUtil.getCertFile(RED, caCertPath);

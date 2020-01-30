@@ -277,16 +277,6 @@ export class ControllerApiEx extends ControllerApi
             if (!this.apiKeyValue) {
                 this.configError = true; // Bad API key ID or Value
             }
-            else if (this.https === true) {
-                if (!this.testing) {
-                    // Make sure we have at least a CA certificate file, which also covers self-signed certs.
-                    if (!this.isLocalHost) {
-                        if (!this.caCertFile) {
-                            this.configError = true;
-                        }
-                    }
-                }
-            }
             else {
                 this.configError = false;
             }

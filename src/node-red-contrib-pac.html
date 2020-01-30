@@ -431,17 +431,23 @@
        Certificates fields must also be configured.
     </p>
     <p><b>CA or Self-Signed</b> - the full path or filename of either a Certificate Authority (CA) 
-        or self-signed certificate. Leave blank when address is "localhost".
+        or self-signed certificate. Leave blank when address is "localhost" or if using a 
+        <i>groov</i> RIO module.
     </p>
     <p><b>Public Key</b> - the full path or filename of the public key certificate. Leave this field
          blank if using a self-signed certificate.
     </p>
 
-    <p>Whether the full path or filename is entered depends on where Node-RED is running.
+    <p>Whether the full path or just a filename is entered depends on where Node-RED is running.
         <ul>
-            <li><b><i>groov</i> EPIC: </b>If using a <i>groov</i> EPIC PR1 processor to access 
+            <li><b><i>groov</i> EPIC: </b>If using a <i>groov</i> EPIC processor to access 
                 another <i>groov</i> EPIC or SNAP PAC, upload the certificates with <i>groov</i> Manage, 
                 using the Security -> Client SSL page. Enter just the filenames here.
+            </li>
+            <li><b><i>groov</i> RIO: </b>If using a <i>groov</i> RIO module to access 
+                a <i>groov</i> EPIC or SNAP PAC, upload the certificates with <i>groov</i> Manage, 
+                using the Security -> Client SSL page. That will import the certificate into the system's
+                CA store. Nothing needs to be entered.
             </li>
             <li><b><i>groov</i> Box: </b>If using a GROOV-AR1 to access a <i>groov</i> EPIC or 
                 SNAP PAC, upload the certificates with Node-RED Admin.
