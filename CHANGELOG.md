@@ -5,7 +5,7 @@
 May 27, 2020
 
  * Removed the "Public Key" option from the communication settings.
-   The name was incorrect and it was never supported by _groov_ View.
+   The name was incorrect and it was never supported.
  * Add Groov RIO support for CA certs being in the system's store
  * Fix #1: A msg.payload of null will result in crash
  * Documentation fixes and improvements.
