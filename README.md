@@ -26,7 +26,7 @@ For more detailed information, see the [online documentation](http://developer.o
 
 ## Copyright and License
 
-Copyright 2016-2018 Opto 22
+Copyright 2016-2020 Opto 22
 
 Licensed under the Apache 2.0 license.
 
