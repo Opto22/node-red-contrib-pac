@@ -51,7 +51,8 @@ class ResponseErrorMessages
         'EAI_AGAIN': 'Address not found',
 
         // SSL errors
-        'DEPTH_ZERO_SELF_SIGNED_CERT': 'Problem with the security certificate',
+        'DEPTH_ZERO_SELF_SIGNED_CERT': 'Security certificate problem',
+        'ERR_TLS_CERT_ALTNAME_INVALID': "Address does not match certificate"
     };
 
     /**
@@ -71,7 +72,19 @@ class ResponseErrorMessages
                 longError = 'Error code: ' + error.code;
             }
             else {
-                longError = shortError + '. Error code: ' + error.code;
+                // A few common error codes need more details in the longError message.
+                if (error.code == 'DEPTH_ZERO_SELF_SIGNED_CERT') {
+                    longError = 'There is a problem with the SSL public certificate for the target device. ' +
+                        'It may not be installed in this device or it may not match the private key in the target device. Error code: ' +
+                        error.code;
+                }
+                else if (error.code == 'ERR_TLS_CERT_ALTNAME_INVALID') {
+                    longError = 'The device address does not exactly match the address in the installed SSL certicate. Error code: ' +
+                        error.code;
+                }
+                else {
+                    longError = shortError + '. Error code: ' + error.code;
+                }
             }
 
             // See if there's a syscall property to tag on. It might be helpfull.
