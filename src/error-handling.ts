@@ -166,7 +166,7 @@ class StatusCodeMessages
 /**
  * Hanldes errors for the given message and node.
  */
-export function handleErrorResponse(error: any, msg: any, node: NodeRed.Node)
+export function handleErrorResponse(error: any, msg: any, node: NodeRed.Node, previousError?: ErrorDetails): ErrorDetails | undefined
 {
     var errorDetails: ErrorDetails;
 
@@ -200,6 +200,15 @@ export function handleErrorResponse(error: any, msg: any, node: NodeRed.Node)
     // Update the node's status.
     node.status({ fill: "red", shape: "dot", text: errorDetails.nodeShortErrorMsg });
 
-    // Announce the error and move on.
-    node.error(errorDetails.logLongErrorMsg, msg);
+    // If the error is new or different, then send it to the log.
+    if (previousError && (previousError.logLongErrorMsg == errorDetails.logLongErrorMsg)) {
+        // Skip a duplicate error, which is probably that the device is unreachable.
+        // This avoids flooding the log when there's an ongoing problem.
+    }
+    else {
+        // Announce the error and move on.
+        node.error(errorDetails.logLongErrorMsg, msg);
+    }
+
+    return errorDetails;
 }

@@ -143,6 +143,8 @@ export abstract class PacNodeBaseImpl
     // The node object.
     protected node: NodeRed.Node;
 
+    protected previousResponseError: ErrorHanding.ErrorDetails | undefined;
+
     constructor(nodeConfig: NodeBaseConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
     {
         this.nodeConfig = nodeConfig;
@@ -183,7 +185,8 @@ export abstract class PacNodeBaseImpl
         this.ctrl.getDeviceType(this.node, (error: any) =>
         {
             if (error) {
-                ErrorHanding.handleErrorResponse(error, msg, this.node);
+                this.previousResponseError = ErrorHanding.handleErrorResponse(error, msg, this.node,
+                    this.previousResponseError);
                 return;
             }
 
@@ -208,11 +211,20 @@ export abstract class PacNodeBaseImpl
 
     protected updateQueuedStatus(queueLength: number)
     {
-        if (queueLength >= 1) {
-            this.node.status({ fill: "green", shape: "ring", text: queueLength + ' queued' });
+        if (this.previousResponseError) {
+            // If there's an existing error, make sure we combine the status and messages.
+            this.node.status({
+                fill: "red", shape: "ring",
+                text: "queued [" + this.previousResponseError.nodeShortErrorMsg + "]"
+            });
         }
-        else if (queueLength < 0) {
-            this.node.status({ fill: "yellow", shape: "ring", text: "queue full" });
+        else {
+            if (queueLength >= 1) {
+                this.node.status({ fill: "green", shape: "ring", text: queueLength + ' queued' });
+            }
+            else if (queueLength < 0) {
+                this.node.status({ fill: "yellow", shape: "ring", text: "queue full" });
+            }
         }
     }
 
@@ -266,7 +278,15 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
     // Handler for 'input' events from Node-RED.
     public onInput(msg: any)
     {
-        this.node.status({ fill: "green", shape: "dot", text: "reading" });
+        if (this.previousResponseError) {
+            this.node.status({
+                fill: "red", shape: "dot",
+                text: "reading [" + this.previousResponseError.nodeShortErrorMsg + "]"
+            });
+        }
+        else {
+            this.node.status({ fill: "green", shape: "dot", text: "reading" });
+        }
 
         var promise: Promise<PromiseResponse>;
 
@@ -282,6 +302,8 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
             // onFullfilled handler
             (fullfilledResponse: PromiseResponse) =>
             {
+                this.previousResponseError = undefined;
+
                 this.node.status({});
 
                 // Always attach the response's body to msg.
@@ -297,7 +319,9 @@ export class PacReadNodeImpl extends PacNodeBaseImpl
             // onRejected handler
             (error: any) =>
             {
-                ErrorHanding.handleErrorResponse(error, msg, this.node);
+                this.previousResponseError = ErrorHanding.handleErrorResponse(error, msg, this.node,
+                    this.previousResponseError);
+
                 this.ctrlQueue.done(50);
             }
         );
@@ -495,7 +519,15 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
     {
         PacWriteNodeImpl.activeMessageCount++;
 
-        this.node.status({ fill: "green", shape: "dot", text: "writing" });
+        if (this.previousResponseError) {
+            this.node.status({
+                fill: "red", shape: "dot",
+                text: "writing [" + this.previousResponseError.nodeShortErrorMsg + "]"
+            });
+        }
+        else {
+            this.node.status({ fill: "green", shape: "dot", text: "writing" });
+        }
 
         var promise: Promise<PromiseResponse>;
 
@@ -564,6 +596,8 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
             {
                 PacWriteNodeImpl.activeMessageCount--;
 
+                this.previousResponseError = undefined;
+
                 this.node.status({});
                 msg.body = fullfilledResponse.body;
                 this.node.send(msg);
@@ -574,7 +608,10 @@ export class PacWriteNodeImpl extends PacNodeBaseImpl
             (error: any) =>
             {
                 PacWriteNodeImpl.activeMessageCount--;
-                ErrorHanding.handleErrorResponse(error, msg, this.node);
+
+                this.previousResponseError = ErrorHanding.handleErrorResponse(error, msg, this.node,
+                    this.previousResponseError);
+
                 this.ctrlQueue.done(50);
             }
         );
