@@ -1,5 +1,12 @@
 # Node-RED for PAC Control
 
+### 1.1.3
+
+October 19, 2020
+
+ * Don't flood the log with identical error messages coming from a single node.
+   This mostly helps with an ongoing issue, such as an offline device or a misconfigured node.
+   
 ### 1.1.2
 
 October 2, 2020
