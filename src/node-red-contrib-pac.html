@@ -474,7 +474,13 @@
     <p>The certificate must be in PEM format. The corresponding private key certificate must be 
        installed in the controller.
     </p>
-
+    <h2>Message Queue</h2>
+    <p>The Read and Write nodes use a shared message queue. One message will be processed at a time.
+       The message queue helps to throttle communcation to the controller and prevents unlimited memory
+       growth when a device is disconnected.
+    </p>
+    <p>If the queue fills up with message, it can either <b>reject new</b> or <b>drop old</b> messages.
+    </p>
 </script>
 
 <script type="text/x-red" data-help-name="pac-read">
