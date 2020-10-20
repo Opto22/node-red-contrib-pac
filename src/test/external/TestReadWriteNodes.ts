@@ -121,7 +121,7 @@ describe('PAC Nodes', function()
         ConfigHandler.controllerConnections.createControllerConnection(deviceConfig.address,
             deviceConfig.protocol.toLowerCase() !== 'http',
             deviceConfig.credentials.key, deviceConfig.credentials.secret,
-            null, null, deviceConfig.id, true);
+            null, null, 'REJECT_NEW', deviceConfig.id, true);
 
         let controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
 
@@ -142,6 +142,7 @@ describe('PAC Nodes', function()
         var deviceConfig: ConfigHandler.DeviceConfiguration = {
             id: deviceId,
             address: address,
+            msgQueueFullBehavior: 'REJECT_NEW',
             protocol: useHttps ? "https" : "http",
             credentials:
             {

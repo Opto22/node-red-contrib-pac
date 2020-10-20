@@ -16,7 +16,7 @@
 
 import * as ApiLib from "./api";
 import * as ApiExLib from "./api-ex";
-import MessageQueue from "./message-queue";
+import * as  MessageQueue from 'opto22-node-red-common/lib/MessageQueue';
 import * as CertificateUtil from 'opto22-node-red-common/lib/CertificateUtil';
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 
@@ -53,7 +53,8 @@ export interface DeviceConfiguration
     id: string;
     address: string;
     credentials: DeviceCredentials;
-    protocol: string
+    protocol: string;
+    msgQueueFullBehavior: MessageQueue.FullQueueBehaviorType;
 }
 
 /**
@@ -106,7 +107,7 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
     }
 
     var ctrl = controllerConnections.createControllerConnection(address, useHttps, key, secret,
-        publicCertFile, caCertFile, config.id, false);
+        publicCertFile, caCertFile, config.msgQueueFullBehavior, config.id, false);
 
     this.on('close', () =>
     {
@@ -118,9 +119,9 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
 class ControllerConnection 
 {
     public ctrl: ApiExLib.ControllerApiEx;
-    public queue: MessageQueue;
+    public queue: MessageQueue.default;
 
-    constructor(ctrl: ApiExLib.ControllerApiEx, queue: MessageQueue)
+    constructor(ctrl: ApiExLib.ControllerApiEx, queue: MessageQueue.default)
     {
         this.ctrl = ctrl;
         this.queue = queue;
@@ -134,6 +135,7 @@ export class ControllerConnections
     public createControllerConnection(address: string, useHttps: boolean,
         key: string, secret: string,
         publicCertFile: Buffer, caCertFile: Buffer,
+        msgQueueFullBehavior: MessageQueue.FullQueueBehaviorType,
         id: string,
         testing: boolean
     ): ControllerConnection
@@ -146,7 +148,8 @@ export class ControllerConnections
             publicCertFile, caCertFile, testing);
 
         // Cache it, using the Configuration node's id property.
-        this.controllerCache[id] = new ControllerConnection(ctrl, new MessageQueue(500));
+        this.controllerCache[id] = new ControllerConnection(ctrl,
+            new MessageQueue.default(500, msgQueueFullBehavior));
 
         return this.controllerCache[id];
     }

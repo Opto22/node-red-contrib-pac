@@ -105,7 +105,8 @@
         // The defaults object should match the GroovDevice class in groov.ts.
         defaults: {
             address: {value:"", required:true},
-            protocol: {value:"https"}
+            protocol: {value:"https"},
+            msgQueueFullBehavior: { value: "DROP_OLD", required: true} // Added in 1.1.4
         },
         credentials: {
             key:            {type:"text"},
@@ -123,6 +124,11 @@
             $("#node-config-input-protocol").change(function() {
                 updateSslFields();
             });
+
+            // Added in 1.1.4, so set the original behavior here, in case it's missing.
+            // The new default (see above) is different than the original behavior.
+            // This is to match the Groov I/O nodes, which introduced the option.
+            $('#node-config-input-msgQueueFullBehavior').val(this.msgQueueFullBehavior || 'REJECT_NEW');
         }
 
 
@@ -409,7 +415,15 @@
         </div>
         -->
     </div>
-        
+    <hr/>
+    <div class="form-row">
+        <label for="node-config-input-msgQueueFullBehavior" style="width: auto"><i class="fa fa-align-justify"></i> When full, message queue should  </label>
+        <select type="text" id="node-config-input-msgQueueFullBehavior" style="width: auto">
+            <option value="REJECT_NEW">reject new</option>
+            <option value="DROP_OLD">drop old</option>
+        </select>
+        <span> messages.</span>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="pac-device">

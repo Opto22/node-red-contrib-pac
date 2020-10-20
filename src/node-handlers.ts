@@ -18,7 +18,7 @@
 import * as ApiExLib from "./api-ex";
 import * as ErrorHanding from "./error-handling";
 import * as ConfigHandler from "./config-handler";
-import MessageQueue from "./message-queue";
+import * as  MessageQueue from 'opto22-node-red-common/lib/MessageQueue';
 
 // Import external modules
 import http = require('http');
@@ -132,7 +132,7 @@ export abstract class PacNodeBaseImpl
     protected ctrl: ApiExLib.ControllerApiEx;
 
     // Message queue to help throttle messages going to the controller.
-    protected ctrlQueue: MessageQueue;
+    protected ctrlQueue: MessageQueue.default;
 
     // The user's node configuration.
     protected nodeConfig: NodeBaseConfiguration;
