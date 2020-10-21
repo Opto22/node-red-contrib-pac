@@ -1,0 +1,3 @@
+[submodule "submodules/opto22-node-red-common"]
+	path = submodules/opto22-node-red-common
+	url = https://github.com/Opto22/opto22-node-red-common.git

@@ -21,7 +21,7 @@ import https = require('https');
 import fs = require('fs');
 import events = require('events');
 import request = require('request');
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../submodules/opto22-node-red-common/typings/nodered';
 
 var ControllerApi = ApiLib.AllApi;
 

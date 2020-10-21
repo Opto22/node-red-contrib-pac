@@ -15,7 +15,7 @@
 */
 import *  as should from 'should';
 
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 
 export class MockNode implements NodeRed.Node
 {

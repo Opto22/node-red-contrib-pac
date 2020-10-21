@@ -13,14 +13,14 @@ module.exports = function(grunt) {
       options: {
         grep: grunt.option('grep')
       },
-      internal: { src: ['build/test/internal/*.js'] },
-      external: { src: ['build/test/external/*.js'] }
+      internal: { src: ['build/src/test/internal/*.js'] },
+      external: { src: ['build/src/test/external/*.js'] }
     },
     copy: {
       testSettings: {
         nonull: true,
         src: 'src/test/external/settings.json',
-        dest:'build/test/external/settings.json'
+        dest:'build/src/test/external/settings.json'
       },
       testSettingsSnap: {
         nonull: true,
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
       },      
       build: {
         files: [
-          {src: 'src/*.html',      dest: 'build/',       flatten: true, expand:  true},
+          {src: 'src/*.html',      dest: 'build/src',       flatten: true, expand:  true},
           {src: 'src/icons/*.png', dest: 'build/icons/', flatten: true, expand:  true},
          ]
       },

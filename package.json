@@ -9,7 +9,6 @@
     },
     "dependencies": {
         "bluebird": "3.4.6",
-        "opto22-node-red-common": "1.0.6",
         "request": "2.75.0",
         "semver": "5.3.0",
         "simple-node-logger": "0.93.12"
@@ -48,7 +47,7 @@
     ],
     "node-red": {
         "nodes": {
-            "pac": "build/node-red-contrib-pac.js"
+            "pac": "build/src/node-red-contrib-pac.js"
         }
     },
     "author": {

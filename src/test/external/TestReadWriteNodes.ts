@@ -25,7 +25,7 @@ var TestSettings = require('./settings.json');
 import should = require('should');
 import assert = require('assert');
 import * as async from 'async';
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 import { PacUtil } from "./pac-util";
 import { PacNodeBaseImpl } from "../../nodes/base-node";
 

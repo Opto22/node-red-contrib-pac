@@ -14,7 +14,7 @@
    limitations under the License.
 */
 
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../submodules/opto22-node-red-common/typings/nodered';
 
 export class ErrorDetails
 {

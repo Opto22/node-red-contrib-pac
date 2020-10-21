@@ -16,7 +16,7 @@
 import * as events from 'events';
 
 var NodeRedUtil = require('node-red/red/runtime/util');
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 
 // Not sure if we need to create a mock RED or can use the real thing.
 // At least initially only Util functions were needed.

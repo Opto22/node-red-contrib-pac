@@ -16,9 +16,9 @@
 
 import * as ApiLib from "./api";
 import * as ApiExLib from "./api-ex";
-import * as  MessageQueue from 'opto22-node-red-common/lib/MessageQueue';
-import * as CertificateUtil from 'opto22-node-red-common/lib/CertificateUtil';
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as  MessageQueue from '../submodules/opto22-node-red-common/src/MessageQueue';
+import * as CertificateUtil from '../submodules/opto22-node-red-common/src/CertificateUtil';
+import * as NodeRed from '../submodules/opto22-node-red-common/typings/nodered';
 
 import http = require('http');
 import https = require('https');

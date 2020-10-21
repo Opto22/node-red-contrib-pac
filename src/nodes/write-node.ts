@@ -16,7 +16,7 @@
 
 import http = require('http');
 
-import * as NodeRed from 'opto22-node-red-common/typings/nodered';
+import * as NodeRed from '../../submodules/opto22-node-red-common/typings/nodered';
 import * as ConfigHandler from "../config-handler";
 import * as ErrorHanding from "../error-handling";
 import { NodeBaseConfiguration, PacNodeBaseImpl, PromiseResponse } from './base-node';

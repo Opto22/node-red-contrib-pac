@@ -15,7 +15,7 @@
 */
 import http = require('http');
 
-import * as MessageQueue from 'opto22-node-red-common/lib/MessageQueue';
+import * as MessageQueue from '../../submodules/opto22-node-red-common/src/MessageQueue';
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import * as ApiExLib from "../api-ex";
 import * as ConfigHandler from "../config-handler";
