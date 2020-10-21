@@ -14,8 +14,9 @@
    limitations under the License.
 */
 
-import * as NodeHandlers from "../../node-handlers";
 import * as ConfigHandler from "../../config-handler";
+import * as ReadNodeHandler from "../../nodes/read-node";
+import * as WriteNodeHandler from "../../nodes/write-node";
 import * as MockNode from "../node-red/MockNode";
 import * as MockRed from "../node-red/MockRed";
 import { GroovUtil, UserFullData, PromiseResponse } from "./groov-util";
@@ -26,6 +27,7 @@ import assert = require('assert');
 import * as async from 'async';
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import { PacUtil } from "./pac-util";
+import { PacNodeBaseImpl } from "../../nodes/base-node";
 
 
 class MockPacReadNode extends MockNode.MockNode
@@ -130,7 +132,8 @@ describe('PAC Nodes', function()
         var RED = new MockRed.MockRed();
 
 
-        NodeHandlers.setRED(RED);
+        ReadNodeHandler.setRED(RED);
+        WriteNodeHandler.setRED(RED);
         ConfigHandler.setRED(RED);
 
         controllerConnection.ctrl.getDeviceType(undefined, cb);
@@ -164,12 +167,12 @@ describe('PAC Nodes', function()
     function injectMsg(nodeConfig, deviceConfig, node, msg)
     {
         // Create the node's worker implementation.
-        var nodeHandlerImpl: NodeHandlers.PacNodeBaseImpl;
+        var nodeHandlerImpl: PacNodeBaseImpl;
         if (nodeConfig.type === 'pac-read') {
-            nodeHandlerImpl = new NodeHandlers.PacReadNodeImpl(nodeConfig, deviceConfig, node);
+            nodeHandlerImpl = new ReadNodeHandler.PacReadNodeImpl(nodeConfig, deviceConfig, node);
         }
         else if (nodeConfig.type === 'pac-write') {
-            nodeHandlerImpl = new NodeHandlers.PacWriteNodeImpl(nodeConfig, deviceConfig, node);
+            nodeHandlerImpl = new WriteNodeHandler.PacWriteNodeImpl(nodeConfig, deviceConfig, node);
         }
 
         // Send it a basic message, like an Inject Timestamp node does.

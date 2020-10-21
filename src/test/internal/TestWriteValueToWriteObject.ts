@@ -14,12 +14,12 @@
    limitations under the License.
 */
 
-import * as NodeHandlers from "../../node-handlers";
 
 import should = require('should');
 import assert = require('assert');
+import { PacWriteNodeImpl } from '../../nodes/write-node';
 
-var writeValueToWriteObject = NodeHandlers.PacWriteNodeImpl.writeValueToWriteObject;
+var writeValueToWriteObject = PacWriteNodeImpl.writeValueToWriteObject;
 
 describe('NODE', function()
 {

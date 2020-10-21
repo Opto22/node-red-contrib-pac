@@ -14,8 +14,9 @@
    limitations under the License.
 */
 
-import * as NodeHandlers from "./node-handlers";
 import * as ConfigHandler from "./config-handler";
+import * as ReadNodeHandler from "./nodes/read-node";
+import * as WriteNodeHandler from "./nodes/write-node";
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import semver = require('semver');
 
@@ -38,12 +39,13 @@ module.exports = function(RED: NodeRed.RED)
     checkVersion(RED);
 
     // Pass in the global RED object to our modules. 
-    NodeHandlers.setRED(RED);
+    ReadNodeHandler.setRED(RED);
+    WriteNodeHandler.setRED(RED);
     ConfigHandler.setRED(RED);
 
     // Register the nodes and their handlers.
-    RED.nodes.registerType("pac-read", NodeHandlers.createSnapPacReadNode);
-    RED.nodes.registerType("pac-write", NodeHandlers.createSnapPacWriteNode);
+    RED.nodes.registerType("pac-read", ReadNodeHandler.createSnapPacReadNode);
+    RED.nodes.registerType("pac-write", WriteNodeHandler.createSnapPacWriteNode);
     RED.nodes.registerType("pac-device", ConfigHandler.createSnapPacDeviceNode,
         {
             credentials: {
