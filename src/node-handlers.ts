@@ -211,19 +211,16 @@ export abstract class PacNodeBaseImpl
 
     protected updateQueuedStatus(queueLength: number)
     {
-        if (this.previousResponseError) {
-            // If there's an existing error, make sure we combine the status and messages.
-            this.node.status({
-                fill: "red", shape: "ring",
-                text: "queued [" + this.previousResponseError.nodeShortErrorMsg + "]"
-            });
-        }
-        else {
-            if (queueLength >= 1) {
-                this.node.status({ fill: "green", shape: "ring", text: queueLength + ' queued' });
+        if (queueLength != 0) {
+            if (this.previousResponseError) {
+                // If there's an existing error, make sure we combine the status and messages.
+                this.node.status({
+                    fill: "red", shape: "ring",
+                    text: "queued [" + this.previousResponseError.nodeShortErrorMsg + "]"
+                });
             }
-            else if (queueLength < 0) {
-                this.node.status({ fill: "yellow", shape: "ring", text: "queue full" });
+            else {
+                this.node.status({ fill: "green", shape: "ring", text: 'queued' });
             }
         }
     }
