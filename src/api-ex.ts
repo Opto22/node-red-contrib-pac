@@ -15,7 +15,6 @@
 */
 
 import * as ApiLib from "./api";
-import MessageQueue from "./message-queue";
 
 import http = require('http');
 import https = require('https');
