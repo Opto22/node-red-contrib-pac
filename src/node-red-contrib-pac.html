@@ -54,6 +54,7 @@
               ]
           });
 
+          $('#scanTimeRow').hide(); // Hide for now. Not a public feature yet.
         }
     });
 
@@ -370,6 +371,20 @@
         <input type="text" id="node-input-value" style="width:300px">
         <input type="hidden" id="node-input-valueType">
     </div>
+    <div class="form-row hidden" id="deadbandRow">
+        <label for="node-input-deadband" ><i class="fa fa-crosshairs"></i> Deadband</label>
+        <input id ="node-input-deadband"       type="text" style="width: 75px;">
+    </div>
+    <div class="form-row" id="sendInitialValueRow">
+        <label>&nbsp;</label>
+        <input id ="node-input-sendInitialValue" type="checkbox"  style="display:inline-block; width:15px; vertical-align:baseline;">
+        <label for="node-input-sendInitialValue" style="width: 10em;">Send initial value</label>
+    </div>
+    <div class="form-row hidden" id="scanTimeRow">
+        <label for="node-input-scanTimeSec" ><i class="fa fa-thumb-tack"></i> Scantime</label>
+        <input id ="node-input-scanTimeSec" type="text" style="width: 75px;"> seconds
+    </div>
+    <p></p>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width:300px">
