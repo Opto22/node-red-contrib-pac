@@ -19,7 +19,7 @@ import http = require('http');
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
 import * as ConfigHandler from "../config-handler";
 import * as ErrorHanding from "../error-handling";
-import { NodeBaseConfiguration, PacNodeBaseImpl, PromiseResponse } from './base-node';
+import { NodeBaseConfiguration, FunctionNodeBaseImpl, PromiseResponse } from './base-node';
 
 
 var RED: NodeRed.RED;
@@ -77,7 +77,7 @@ interface ReadOneTableFunc
 /**
  * The implementation class for the SNAP PAC Read nodes.
  */
-export class PacReadNodeImpl extends PacNodeBaseImpl
+export class PacReadNodeImpl extends FunctionNodeBaseImpl
 {
     private nodeReadConfig: NodeReadConfiguration
 

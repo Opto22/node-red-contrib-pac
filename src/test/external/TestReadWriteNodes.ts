@@ -27,7 +27,7 @@ import assert = require('assert');
 import * as async from 'async';
 import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 import { PacUtil } from "./pac-util";
-import { PacNodeBaseImpl } from "../../nodes/base-node";
+import { FunctionNodeBaseImpl } from "../../nodes/base-node";
 
 
 class MockPacReadNode extends MockNode.MockNode
@@ -167,7 +167,7 @@ describe('PAC Nodes', function()
     function injectMsg(nodeConfig, deviceConfig, node, msg)
     {
         // Create the node's worker implementation.
-        var nodeHandlerImpl: PacNodeBaseImpl;
+        var nodeHandlerImpl: FunctionNodeBaseImpl;
         if (nodeConfig.type === 'pac-read') {
             nodeHandlerImpl = new ReadNodeHandler.PacReadNodeImpl(nodeConfig, deviceConfig, node);
         }

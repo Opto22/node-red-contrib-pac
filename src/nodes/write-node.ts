@@ -19,7 +19,7 @@ import http = require('http');
 import * as NodeRed from '../../submodules/opto22-node-red-common/typings/nodered';
 import * as ConfigHandler from "../config-handler";
 import * as ErrorHanding from "../error-handling";
-import { NodeBaseConfiguration, PacNodeBaseImpl, PromiseResponse } from './base-node';
+import { NodeBaseConfiguration, FunctionNodeBaseImpl, PromiseResponse } from './base-node';
 
 var RED: NodeRed.RED;
 
@@ -57,7 +57,7 @@ interface WriteOneTableFunc
 /**
  * The implementation class for the SNAP PAC Write nodes.
  */
-export class PacWriteNodeImpl extends PacNodeBaseImpl
+export class PacWriteNodeImpl extends FunctionNodeBaseImpl
 {
     private nodeWriteConfig: NodeWriteConfiguration
     static activeMessageCount: number = 0;

@@ -40,17 +40,10 @@ export interface NodeBaseConfiguration
     name: string;
 }
 
-
-/**
- * Base class for SNAP PAC nodes.
- */
-export abstract class PacNodeBaseImpl
+export abstract class NodeBaseImpl
 {
     // The controller connection. 
     protected ctrl: ApiExLib.ControllerApiEx;
-
-    // Message queue to help throttle messages going to the controller.
-    protected ctrlQueue: MessageQueue.default;
 
     // The user's node configuration.
     protected nodeConfig: NodeBaseConfiguration;
@@ -58,9 +51,11 @@ export abstract class PacNodeBaseImpl
     // The user's controller device configurations (IP address and HTTPS settings)
     protected deviceConfig: ConfigHandler.DeviceConfiguration;
 
+
     // The node object.
     protected node: NodeRed.Node;
 
+    protected controllerConnection: ConfigHandler.ControllerConnection;
     protected previousResponseError: ErrorHanding.ErrorDetails | undefined;
 
     constructor(nodeConfig: NodeBaseConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
@@ -70,12 +65,33 @@ export abstract class PacNodeBaseImpl
         this.node = node;
 
         if (deviceConfig) {
-            var controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
-            this.ctrl = controllerConnection.ctrl;
-            this.ctrlQueue = controllerConnection.queue;
+            this.controllerConnection = ConfigHandler.controllerConnections.getController(deviceConfig.id);
+            this.ctrl = this.controllerConnection.ctrl;
         }
         else {
             this.node.error('Missing controller configuration', '');
+        }
+    }
+}
+
+/**
+ * Base class for SNAP PAC nodes.
+ */
+export abstract class FunctionNodeBaseImpl extends NodeBaseImpl
+{
+    // Message queue to help throttle messages going to the controller.
+    protected ctrlQueue: MessageQueue.default;
+
+    constructor(nodeConfig: NodeBaseConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
+    {
+        super(nodeConfig, deviceConfig, node);
+
+        this.nodeConfig = nodeConfig;
+        this.deviceConfig = deviceConfig;
+        this.node = node;
+
+        if (deviceConfig) {
+            this.ctrlQueue = this.controllerConnection.queue;
         }
     }
 
