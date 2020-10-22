@@ -1,143 +1,35 @@
 <script type="text/javascript">
 
-    RED.nodes.registerType('pac-input',{
+    RED.nodes.registerType('pac-input', {
         category: 'Opto22',
         color: '#e87070',
         defaults: {
-          // This should match the NodeConfiguration interface in the corresponding "ts" file.
-          device: {value:"", type:"pac-device", required:true},
-          dataType: {value:"device-info"},
-          tagName: {value:""},
-          tableStartIndex: {value: null},
-          tableLength: {value: null},
-          value: {value: ""},
-          valueType: {value: "msg.payload"},
-          topic: {value: ""},
-          topicType: {value: "none"},
-          sendInitialValue: {value: true},
-          deadband: { value: '1' },
-          scanTimeSec: { value: '1.0' },
-          name: {value:""}
+            // This should match the NodeConfiguration interface in the corresponding "ts" file.
+            device: { value: "", type: "pac-device", required: true },
+            dataType: { value: "device-info" },
+            tagName: { value: "" },
+            tableStartIndex: { value: null },
+            tableLength: { value: null },
+            value: { value: "" },
+            valueType: { value: "msg.payload" },
+            topic: { value: "" },
+            topicType: { value: "none" },
+            sendInitialValue: { value: true },
+            deadband: { value: '1' },
+            scanTimeSec: { value: '1.0' },
+            name: { value: "" }
         },
-        outputs:1,
+        outputs: 1,
         icon: "pac-read.png",
-        label: function() {
+        label: function () {
             return pacGetLabel(this, "pac input");
         },
         paletteLabel: "pac input",
-        oneditprepare: function() {
-          // called when the edit dialog is being built.
-          
-          $("#node-input-dataType").change(function() {
-                updateNameField();
-                // updateTableFields();
-          });
-
-          $("#node-input-valueType").val(this.valueType);
-
-          $("#node-input-value").typedInput({
-              default: 'msg.payload',
-              typeField: $("#node-input-valueType"),
-              types:[
-                'msg', 
-                {value:"msg.payload", label:"msg.payload", hasValue: false}
-              ]
-          });
-
-          $("#node-input-topic").typedInput({
-              default: 'none',
-              typeField: $("#node-input-topicType"),
-              types:[
-                {value:"none", label:"Do not alter", hasValue: false},
-                /* {value:"auto", label:"Automatic", hasValue: false}, */
-                {value:"user", label:"Custom", hasValue: true}
-              ]
-          });
-
-          $('#scanTimeRow').hide(); // Hide for now. Not a public feature yet.
-        }
-    });
-
-    RED.nodes.registerType('pac-read',{
-        category: 'Opto22',
-        color: '#e87070',
-        defaults: {
-          // This should match the NodeConfiguration interface in the corresponding "ts" file.
-          device: {value:"", type:"pac-device", required:true},
-          dataType: {value:"device-info"},
-          tagName: {value:""},
-          tableStartIndex: {value: null},
-          tableLength: {value: null},
-          value: {value: ""},
-          valueType: {value: "msg.payload"},
-          topic: {value: ""},
-          topicType: {value: "none"},
-          name: {value:""}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "pac-read.png",
-        label: function() {
-            return pacGetLabel(this, "pac read");
-        },
-        paletteLabel: "pac read",
-        oneditprepare: function() {
-          // called when the edit dialog is being built.
-          
-          $("#node-input-dataType").change(function() {
-                updateNameField();
-                updateTableFields();
-          });
-
-          $("#node-input-valueType").val(this.valueType);
-
-          $("#node-input-value").typedInput({
-              default: 'msg.payload',
-              typeField: $("#node-input-valueType"),
-              types:[
-                'msg', 
-                {value:"msg.payload", label:"msg.payload", hasValue: false}
-              ]
-          });
-
-          $("#node-input-topic").typedInput({
-              default: 'none',
-              typeField: $("#node-input-topicType"),
-              types:[
-                {value:"none", label:"Do not alter", hasValue: false},
-                /* {value:"auto", label:"Automatic", hasValue: false}, */
-                {value:"user", label:"Custom", hasValue: true}
-              ]
-          });
-
-        }
-    });
-
-    RED.nodes.registerType('pac-write',{
-        category: 'Opto22',
-        color: '#e87070',
-        defaults: {
-          // This should match the NodeConfiguration interface in the corresponding "ts" file.
-          device: {value:"", type:"pac-device", required:true},
-          dataType: {value:"dig-output"},
-          tagName: {value:""},
-          tableStartIndex: {value: null},
-          value: {value: ""},
-          valueType: {value: "msg.payload"},
-          name: {value:""}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "pac-write.png",
-        align: 'right',
-        label: function() {
-            return pacGetLabel(this, "pac write");
-        },
-        paletteLabel: "pac write",
-        oneditprepare: function() {
+        oneditprepare: function () {
             // called when the edit dialog is being built.
-          
-            $("#node-input-dataType").change(function() {
+
+            $("#node-input-dataType").change(function () {
+                updateNameField();
                 updateTableFields();
             });
 
@@ -147,39 +39,147 @@
                 default: 'msg.payload',
                 typeField: $("#node-input-valueType"),
                 types: [
-                  'msg', 
-                  {value:"msg.payload", label:"msg.payload", hasValue: false},
-                  {value:"value",       label:"Value",       hasValue: true}
+                    'msg',
+                    { value: "msg.payload", label: "msg.payload", hasValue: false }
                 ]
             });
 
-            $("#node-input-value").typedInput('type',this.valueType);
+            $("#node-input-topic").typedInput({
+                default: 'none',
+                typeField: $("#node-input-topicType"),
+                types: [
+                    { value: "none", label: "Do not alter", hasValue: false },
+                    /* {value:"auto", label:"Automatic", hasValue: false}, */
+                    { value: "user", label: "Custom", hasValue: true }
+                ]
+            });
+
+            $('#scanTimeRow').hide(); // Hide for now. Not a public feature yet.
+        }
+    });
+
+    RED.nodes.registerType('pac-read', {
+        category: 'Opto22',
+        color: '#e87070',
+        defaults: {
+            // This should match the NodeConfiguration interface in the corresponding "ts" file.
+            device: { value: "", type: "pac-device", required: true },
+            dataType: { value: "device-info" },
+            tagName: { value: "" },
+            tableStartIndex: { value: null },
+            tableLength: { value: null },
+            value: { value: "" },
+            valueType: { value: "msg.payload" },
+            topic: { value: "" },
+            topicType: { value: "none" },
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "pac-read.png",
+        label: function () {
+            return pacGetLabel(this, "pac read");
+        },
+        paletteLabel: "pac read",
+        oneditprepare: function () {
+            // called when the edit dialog is being built.
+
+            $("#node-input-dataType").change(function () {
+                updateNameField();
+                updateTableFields();
+            });
+
+            $("#node-input-valueType").val(this.valueType);
+
+            $("#node-input-value").typedInput({
+                default: 'msg.payload',
+                typeField: $("#node-input-valueType"),
+                types: [
+                    'msg',
+                    { value: "msg.payload", label: "msg.payload", hasValue: false }
+                ]
+            });
+
+            $("#node-input-topic").typedInput({
+                default: 'none',
+                typeField: $("#node-input-topicType"),
+                types: [
+                    { value: "none", label: "Do not alter", hasValue: false },
+                    /* {value:"auto", label:"Automatic", hasValue: false}, */
+                    { value: "user", label: "Custom", hasValue: true }
+                ]
+            });
 
         }
     });
 
-    RED.nodes.registerType('pac-device',{
+    RED.nodes.registerType('pac-write', {
+        category: 'Opto22',
+        color: '#e87070',
+        defaults: {
+            // This should match the NodeConfiguration interface in the corresponding "ts" file.
+            device: { value: "", type: "pac-device", required: true },
+            dataType: { value: "dig-output" },
+            tagName: { value: "" },
+            tableStartIndex: { value: null },
+            value: { value: "" },
+            valueType: { value: "msg.payload" },
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "pac-write.png",
+        align: 'right',
+        label: function () {
+            return pacGetLabel(this, "pac write");
+        },
+        paletteLabel: "pac write",
+        oneditprepare: function () {
+            // called when the edit dialog is being built.
+
+            $("#node-input-dataType").change(function () {
+                updateTableFields();
+            });
+
+            $("#node-input-valueType").val(this.valueType);
+
+            $("#node-input-value").typedInput({
+                default: 'msg.payload',
+                typeField: $("#node-input-valueType"),
+                types: [
+                    'msg',
+                    { value: "msg.payload", label: "msg.payload", hasValue: false },
+                    { value: "value", label: "Value", hasValue: true }
+                ]
+            });
+
+            $("#node-input-value").typedInput('type', this.valueType);
+
+        }
+    });
+
+    RED.nodes.registerType('pac-device', {
         category: 'config',
         // The defaults object should match the GroovDevice class in groov.ts.
         defaults: {
-            address: {value:"", required:true},
-            protocol: {value:"https"},
-            msgQueueFullBehavior: { value: "DROP_OLD", required: true} // Added in 1.1.4
+            address: { value: "", required: true },
+            protocol: { value: "https" },
+            msgQueueFullBehavior: { value: "DROP_OLD", required: true } // Added in 1.1.4
         },
         credentials: {
-            key:            {type:"text"},
-            secret:         {type:"password", required:true},
-            publicCertPath: {type:"text"},
-            caCertPath:     {type:"text"}
+            key: { type: "text" },
+            secret: { type: "password", required: true },
+            publicCertPath: { type: "text" },
+            caCertPath: { type: "text" }
         },
-        label: function() {
+        label: function () {
             return this.address;
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
 
             updateSslFields();
 
-            $("#node-config-input-protocol").change(function() {
+            $("#node-config-input-protocol").change(function () {
                 updateSslFields();
             });
 
@@ -192,8 +192,7 @@
 
     });
 
-    function updateNameField()
-    {
+    function updateNameField() {
         var dataTypeId = $("#node-input-dataType option:selected").val();
 
         // See if a Table type is selected.
@@ -203,27 +202,27 @@
             $("#tagNameRow").show();
     }
 
-    function updateTableFields()
-    {
-        var dataTypeId = $("#node-input-dataType option:selected").val();
+    function updateTableFields() {
+        var dataTypeElement = $("#node-input-dataType option:selected");
 
-        // See if a Table type is selected.
-        if (dataTypeId.indexOf('table') >= 0)
-        {
-            $("#tableFields").show();
-            return;
+        if (dataTypeElement) {
+            var dataTypeId = dataTypeElement.val();
+
+            // See if a Table type is selected.
+            if (dataTypeId && dataTypeId.indexOf('table') >= 0) {
+                $("#tableFields").show();
+                return;
+            }
         }
 
         $("#tableFields").hide();
     }
 
-    function updateSslFields()
-    {
+    function updateSslFields() {
         var protocolType = $("#node-config-input-protocol option:selected").val();
 
         // See if a Table type is selected.
-        if (protocolType === 'https')
-        {
+        if (protocolType === 'https') {
             $("#sslFields").show();
             return;
         }
@@ -231,29 +230,29 @@
         $("#sslFields").hide();
     }
 
-    
+
     function pacGetLabel(node, defaultLabel) {
-       // Always go with a node's name, if it's been configured.
-       if (node.name) {
-           return node.name;
-       }
+        // Always go with a node's name, if it's been configured.
+        if (node.name) {
+            return node.name;
+        }
 
-       // If there's a tag name, use it for the label.
-       var label = pacTagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
+        // If there's a tag name, use it for the label.
+        var label = pacTagNametoLabel(node.tagName, node.dataType, node.tableStartIndex, node.tableLength);
 
-       // Otherwise, use the data type. Only do this if the device has also been configured.
-       // If not, then this is probably a brand new node, and we should just fall through 
-       // and go with the default name.
-       if (!label && node.device !== '') {
-           label = dataTypeToLabel(node.dataType);
-       }
-       
-       // If all else fails, use the default label.
-       if (!label) {
-           label = defaultLabel;
-       }
+        // Otherwise, use the data type. Only do this if the device has also been configured.
+        // If not, then this is probably a brand new node, and we should just fall through 
+        // and go with the default name.
+        if (!label && node.device !== '') {
+            label = dataTypeToLabel(node.dataType);
+        }
 
-       return label;
+        // If all else fails, use the default label.
+        if (!label) {
+            label = defaultLabel;
+        }
+
+        return label;
     }
 
     function pacTagNametoLabel(tagName, dataType, tableStartIndex, tableLength) {
@@ -296,7 +295,7 @@
                 }
                 else if (tableStartIndex) {
                     index = '[' + tableStartIndex + ']';
-                } 
+                }
                 label = tagName + index;
                 break;
         }
@@ -789,5 +788,3 @@ msg.payload = {
     </ul>
 
 </script/>
-
-
