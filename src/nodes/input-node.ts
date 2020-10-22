@@ -164,58 +164,68 @@ export class PacInputNodeImpl extends NodeBaseImpl
     // Callback used by the scanner's timer.
     public onScan = () =>
     {
-        // Start the Request Delayed timeout
-        this.requestDelayedTimer = setTimeout(this.scanNotDoneCallback, 3000);
-
-        var reqInfo = this.getReadRequest();
-
-        if (!reqInfo || !reqInfo.promise) {
-            this.node.status({ fill: "red", shape: "dot", text: "error" });
-            return;
-        }
-
-        reqInfo.promise.then(
-            // onFullfilled handler
-            (fullfilledResponse: PromiseResponse) =>
-            {
-                this.previousResponseError = undefined;
-
-                this.node.status({});
-
-                // Clear the Request Delayed timeout
-                clearTimeout(this.requestDelayedTimer);
-                this.requestDelayedTimer = null;
-
-                this.node.status({ fill: "green", shape: "dot", text: "scanning" });
-                this.previousResponseError = undefined;
-
-                let newValue = fullfilledResponse.body[reqInfo.valueName];
-
-                if (this.inputNodeHelper.updateValue(newValue)) {
-                    let msg: any = {
-                        payload: newValue,
-                        body: fullfilledResponse.body,
-                        inputType: this.nodeInputConfig.dataType
-                        // topic: ????
-                    };
-
-                    this.node.send(msg);
-                }
-
-            },
-            // onRejected handler
-            (error: any) =>
-            {
-                // Clear the Request Delayed timeout
-                clearTimeout(this.requestDelayedTimer);
-                this.requestDelayedTimer = null;
-
+        // Need to know if it's a SNAP or Groov PAC
+        this.ctrl.getDeviceType(this.node, (error: any) =>
+        {
+            if (error) {
                 this.previousResponseError = ErrorHanding.handleErrorResponse(error, {}, this.node,
                     this.previousResponseError);
-
-                this.inputNodeHelper.updateError();
+                return;
             }
-        );
+
+            // Start the Request Delayed timeout
+            this.requestDelayedTimer = setTimeout(this.scanNotDoneCallback, 3000);
+
+            var reqInfo = this.getReadRequest();
+
+            if (!reqInfo || !reqInfo.promise) {
+                this.node.status({ fill: "red", shape: "dot", text: "error" });
+                return;
+            }
+
+            reqInfo.promise.then(
+                // onFullfilled handler
+                (fullfilledResponse: PromiseResponse) =>
+                {
+                    this.previousResponseError = undefined;
+
+                    this.node.status({});
+
+                    // Clear the Request Delayed timeout
+                    clearTimeout(this.requestDelayedTimer);
+                    this.requestDelayedTimer = null;
+
+                    this.node.status({ fill: "green", shape: "dot", text: "scanning" });
+                    this.previousResponseError = undefined;
+
+                    let newValue = fullfilledResponse.body[reqInfo.valueName];
+
+                    if (this.inputNodeHelper.updateValue(newValue)) {
+                        let msg: any = {
+                            payload: newValue,
+                            body: fullfilledResponse.body,
+                            inputType: this.nodeInputConfig.dataType
+                            // topic: ????
+                        };
+
+                        this.node.send(msg);
+                    }
+
+                },
+                // onRejected handler
+                (error: any) =>
+                {
+                    // Clear the Request Delayed timeout
+                    clearTimeout(this.requestDelayedTimer);
+                    this.requestDelayedTimer = null;
+
+                    this.previousResponseError = ErrorHanding.handleErrorResponse(error, {}, this.node,
+                        this.previousResponseError);
+
+                    this.inputNodeHelper.updateError();
+                }
+            );
+        });
     }
 
 
