@@ -1,5 +1,62 @@
 <script type="text/javascript">
 
+    RED.nodes.registerType('pac-input',{
+        category: 'Opto22',
+        color: '#e87070',
+        defaults: {
+          // This should match the NodeConfiguration interface in the corresponding "ts" file.
+          device: {value:"", type:"pac-device", required:true},
+          dataType: {value:"device-info"},
+          tagName: {value:""},
+          tableStartIndex: {value: null},
+          tableLength: {value: null},
+          value: {value: ""},
+          valueType: {value: "msg.payload"},
+          topic: {value: ""},
+          topicType: {value: "none"},
+          sendInitialValue: {value: true},
+          deadband: { value: '1' },
+          scanTimeSec: { value: '1.0' },
+          name: {value:""}
+        },
+        outputs:1,
+        icon: "pac-read.png",
+        label: function() {
+            return pacGetLabel(this, "pac input");
+        },
+        paletteLabel: "pac input",
+        oneditprepare: function() {
+          // called when the edit dialog is being built.
+          
+          $("#node-input-dataType").change(function() {
+                updateNameField();
+                // updateTableFields();
+          });
+
+          $("#node-input-valueType").val(this.valueType);
+
+          $("#node-input-value").typedInput({
+              default: 'msg.payload',
+              typeField: $("#node-input-valueType"),
+              types:[
+                'msg', 
+                {value:"msg.payload", label:"msg.payload", hasValue: false}
+              ]
+          });
+
+          $("#node-input-topic").typedInput({
+              default: 'none',
+              typeField: $("#node-input-topicType"),
+              types:[
+                {value:"none", label:"Do not alter", hasValue: false},
+                /* {value:"auto", label:"Automatic", hasValue: false}, */
+                {value:"user", label:"Custom", hasValue: true}
+              ]
+          });
+
+        }
+    });
+
     RED.nodes.registerType('pac-read',{
         category: 'Opto22',
         color: '#e87070',
@@ -285,6 +342,43 @@
         }
     }
 
+</script>
+
+<script type="text/x-red" data-template-name="pac-input">
+   <div class="form-row" id="pacAddressRow">
+        <label for="node-input-device"><i class="fa fa-globe"></i> Device</label>
+        <input type="text" id="node-input-device">
+   </div>
+   <div class="form-row" id="dataTypeRow">
+       <label for="node-input-dataType"><i class="fa fa-tasks"></i> Data Type</label>
+       <select type="text" id="node-input-dataType">
+           <option value="int32-variable">Int32 Variable</option>
+       </select>
+   </div>
+   <div class="form-row" id="tagNameRow">
+        <label for="node-input-tagName"><i class="fa fa-tag"></i> Tag Name</label>
+        <input type="text" id="node-input-tagName" placeholder="Leave blank to get all tags">
+    </div>
+    <div class="form-row hidden" id="tableFields">
+        <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
+        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for all">
+        <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
+        <input type="text" style="width: 6em;" id="node-input-tableLength">
+    </div>
+    <div class="form-row">
+        <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
+        <input type="text" id="node-input-value" style="width:300px">
+        <input type="hidden" id="node-input-valueType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" style="width:300px">
+        <input type="hidden" id="node-input-topicType">
+    </div>
+   <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
 </script>
 
 <script type="text/x-red" data-template-name="pac-read">

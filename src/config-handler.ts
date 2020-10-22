@@ -116,7 +116,7 @@ export function createSnapPacDeviceNode(config: DeviceConfiguration)
 }
 
 // Holder for controller connections and message queues.
-class ControllerConnection 
+export class ControllerConnection 
 {
     public ctrl: ApiExLib.ControllerApiEx;
     public queue: MessageQueue.default;

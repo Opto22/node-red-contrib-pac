@@ -15,6 +15,7 @@
 */
 
 import * as ConfigHandler from "./config-handler";
+import * as InputNodeHandler from "./nodes/input-node";
 import * as ReadNodeHandler from "./nodes/read-node";
 import * as WriteNodeHandler from "./nodes/write-node";
 import * as NodeRed from 'opto22-node-red-common/typings/nodered';
@@ -39,11 +40,13 @@ module.exports = function(RED: NodeRed.RED)
     checkVersion(RED);
 
     // Pass in the global RED object to our modules. 
+    InputNodeHandler.setRED(RED);
     ReadNodeHandler.setRED(RED);
     WriteNodeHandler.setRED(RED);
     ConfigHandler.setRED(RED);
 
     // Register the nodes and their handlers.
+    RED.nodes.registerType("pac-input", InputNodeHandler.createSnapPacInputNode);
     RED.nodes.registerType("pac-read", ReadNodeHandler.createSnapPacReadNode);
     RED.nodes.registerType("pac-write", WriteNodeHandler.createSnapPacWriteNode);
     RED.nodes.registerType("pac-device", ConfigHandler.createSnapPacDeviceNode,
