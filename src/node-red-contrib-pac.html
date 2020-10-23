@@ -31,6 +31,7 @@
             $("#node-input-dataType").change(function () {
                 updateNameField();
                 updateTableFields();
+                updateDeadbandFields();
             });
 
             $("#node-input-valueType").val(this.valueType);
@@ -218,6 +219,26 @@
         $("#tableFields").hide();
     }
 
+
+    function updateDeadbandFields() {
+        var dataTypeElement = $("#node-input-dataType option:selected");
+        var deadbandRowElement = $("#deadbandRow");
+
+        if (dataTypeElement && deadbandRowElement) {
+            var dataTypeId = dataTypeElement.val();
+
+            // See if a Table type is selected.
+            if (dataTypeId &&
+                (dataTypeId == 'int32-variable') ||
+                (dataTypeId == 'float-variable')) {
+                    deadbandRowElement.show();
+                return;
+            }
+        }
+
+        deadbandRowElement.hide();
+    }
+
     function updateSslFields() {
         var protocolType = $("#node-config-input-protocol option:selected").val();
 
@@ -353,6 +374,9 @@
        <label for="node-input-dataType"><i class="fa fa-tasks"></i> Data Type</label>
        <select type="text" id="node-input-dataType">
            <option value="int32-variable">Int32 Variable</option>
+           <option value="int64-variable">Int64 Variable</option>
+           <option value="float-variable">Float Variable</option>
+           <option value="string-variable">String Variable</option>
        </select>
    </div>
    <div class="form-row" id="tagNameRow">

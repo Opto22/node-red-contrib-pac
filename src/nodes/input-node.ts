@@ -109,7 +109,10 @@ export class PacInputNodeImpl extends NodeBaseImpl
         else
             this.scanTimeMs = this.scanTimeMs * 1000.0;
 
-        if ((this.nodeInputConfig.dataType == 'int32-variable')) {
+        if ((this.nodeInputConfig.dataType == 'int32-variable') ||
+            // (this.nodeInputConfig.dataType == 'int64-variable') ||
+            (this.nodeInputConfig.dataType == 'float-variable')
+        ) {
             nodeChangeType = InputNodeChangeType.Deadband;
 
             deadband = parseFloat(nodeConfig.deadband);
@@ -371,12 +374,24 @@ export class PacInputNodeImpl extends NodeBaseImpl
                     dataType: nodeConfig.dataType,
                     valueName: 'value'
                 }
-            // case 'int64-variable':
-            //     return this.createVariableReadPromise(ctrl.readInt64VarsAsStrings, ctrl.readInt64VarAsString);
-            // case 'float-variable':
-            //     return this.createVariableReadPromise(ctrl.readFloatVars, ctrl.readFloatVar);
-            // case 'string-variable':
-            //     return this.createVariableReadPromise(ctrl.readStringVars, ctrl.readStringVar);
+            case 'int64-variable':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readInt64VarsAsStrings, ctrl.readInt64VarAsString),
+                    dataType: nodeConfig.dataType,
+                    valueName: 'value'
+                }
+            case 'float-variable':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readFloatVars, ctrl.readFloatVar),
+                    dataType: nodeConfig.dataType,
+                    valueName: 'value'
+                }
+            case 'string-variable':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readStringVars, ctrl.readStringVar),
+                    dataType: nodeConfig.dataType,
+                    valueName: 'value'
+                }
             // case 'down-timer-variable':
             //     return this.createVariableReadPromise(ctrl.readDownTimerVars, ctrl.readDownTimerValue);
             // case 'up-timer-variable':
