@@ -230,7 +230,10 @@
             // See if a Table type is selected.
             if (dataTypeId &&
                 (dataTypeId == 'int32-variable') ||
-                (dataTypeId == 'float-variable')) {
+                (dataTypeId == 'float-variable') ||
+                (dataTypeId == 'int32-table') ||
+                (dataTypeId == 'float-table')
+                ) {
                     deadbandRowElement.show();
                 return;
             }
@@ -377,7 +380,12 @@
            <option value="int64-variable">Int64 Variable</option>
            <option value="float-variable">Float Variable</option>
            <option value="string-variable">String Variable</option>
-       </select>
+           <option value="" disabled>————————————————</option>
+           <option value="int32-table">Int32 Table</option>
+           <option value="int64-table">Int64 Table</option>
+           <option value="float-table">Float Table</option>
+           <option value="string-table">String Table</option>
+        </select>
    </div>
    <div class="form-row" id="tagNameRow">
         <label for="node-input-tagName"><i class="fa fa-tag"></i> Tag Name</label>

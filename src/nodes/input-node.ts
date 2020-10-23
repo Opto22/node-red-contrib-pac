@@ -43,9 +43,7 @@ interface NodeInputConfiguration extends NodeBaseConfiguration
 
 export interface RequestInfo
 {
-    promise: Promise<PromiseResponse>,
-    dataType: string,
-    valueName: string,
+    promise: Promise<PromiseResponse>
 }
 
 
@@ -110,8 +108,9 @@ export class PacInputNodeImpl extends NodeBaseImpl
             this.scanTimeMs = this.scanTimeMs * 1000.0;
 
         if ((this.nodeInputConfig.dataType == 'int32-variable') ||
-            // (this.nodeInputConfig.dataType == 'int64-variable') ||
-            (this.nodeInputConfig.dataType == 'float-variable')
+            (this.nodeInputConfig.dataType == 'float-variable') ||
+            (this.nodeInputConfig.dataType == 'int32-table') ||
+            (this.nodeInputConfig.dataType == 'float-tiable')
         ) {
             nodeChangeType = InputNodeChangeType.Deadband;
 
@@ -132,8 +131,6 @@ export class PacInputNodeImpl extends NodeBaseImpl
         else {
             this.node.status({ fill: "red", shape: "dot", text: "No device" });
         }
-
-
     }
 
     // Handler for 'close' events from Node-RED.
@@ -201,7 +198,7 @@ export class PacInputNodeImpl extends NodeBaseImpl
                     this.node.status({ fill: "green", shape: "dot", text: "scanning" });
                     this.previousResponseError = undefined;
 
-                    let newValue = fullfilledResponse.body[reqInfo.valueName];
+                    let newValue = this.getValueOutOfResponse(fullfilledResponse);
 
                     if (this.inputNodeHelper.updateValue(newValue)) {
                         let msg: any = {
@@ -213,7 +210,6 @@ export class PacInputNodeImpl extends NodeBaseImpl
 
                         this.node.send(msg);
                     }
-
                 },
                 // onRejected handler
                 (error: any) =>
@@ -284,30 +280,33 @@ export class PacInputNodeImpl extends NodeBaseImpl
     //     );
     // }
 
-    // private setValue(msg: any, fullfilledResponse: any) 
-    // {
-    //     var newValue;
+    private getValueOutOfResponse(fullfilledResponse: any): any
+    {
+        var newValue;
 
-    //     // See if we can unwrap the value.
-    //     if (typeof fullfilledResponse.body === 'object') {
+        // See if we can unwrap the value.
+        if (typeof fullfilledResponse.body === 'object') {
 
-    //         // If an array, just use it directly.
-    //         if (Array.isArray(fullfilledResponse.body)) {
-    //             newValue = fullfilledResponse.body;
-    //         }
-    //         else {
-    //             // If there's a 'value' property in the body, then go ahead and unwrap
-    //             // the value in the msg.payload.
-    //             if (fullfilledResponse.body.value !== undefined) {
-    //                 newValue = fullfilledResponse.body.value;
-    //             } else {
-    //                 newValue = fullfilledResponse.body;
-    //             }
-    //         }
-    //     } else {
-    //         // Not an object or array, so just use it directly.
-    //         newValue = fullfilledResponse.body;
-    //     }
+            // If an array, just use it directly.
+            if (Array.isArray(fullfilledResponse.body)) {
+                newValue = fullfilledResponse.body;
+            }
+            else {
+                // If there's a 'value' property in the body, then go ahead and unwrap
+                // the value in the msg.payload.
+                if (fullfilledResponse.body.value !== undefined) {
+                    newValue = fullfilledResponse.body.value;
+                } else {
+                    newValue = fullfilledResponse.body;
+                }
+            }
+        } else {
+            // Not an object or array, so just use it directly.
+            newValue = fullfilledResponse.body;
+        }
+
+        return newValue;
+    }
 
     //     // See where the value should be placed.
     //     // valueType was added in v1.0.1, so will not exist on 1.0.0 nodes.
@@ -370,40 +369,40 @@ export class PacInputNodeImpl extends NodeBaseImpl
             //     return this.createVariableReadPromise(ctrl.readAnalogOutputs, ctrl.readAnalogOutputEu);
             case 'int32-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readInt32Vars, ctrl.readInt32Var),
-                    dataType: nodeConfig.dataType,
-                    valueName: 'value'
+                    promise: this.createVariableReadPromise(ctrl.readInt32Vars, ctrl.readInt32Var)
                 }
             case 'int64-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readInt64VarsAsStrings, ctrl.readInt64VarAsString),
-                    dataType: nodeConfig.dataType,
-                    valueName: 'value'
+                    promise: this.createVariableReadPromise(ctrl.readInt64VarsAsStrings, ctrl.readInt64VarAsString)
                 }
             case 'float-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readFloatVars, ctrl.readFloatVar),
-                    dataType: nodeConfig.dataType,
-                    valueName: 'value'
+                    promise: this.createVariableReadPromise(ctrl.readFloatVars, ctrl.readFloatVar)
                 }
             case 'string-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readStringVars, ctrl.readStringVar),
-                    dataType: nodeConfig.dataType,
-                    valueName: 'value'
+                    promise: this.createVariableReadPromise(ctrl.readStringVars, ctrl.readStringVar)
                 }
             // case 'down-timer-variable':
             //     return this.createVariableReadPromise(ctrl.readDownTimerVars, ctrl.readDownTimerValue);
             // case 'up-timer-variable':
             //     return this.createVariableReadPromise(ctrl.readUpTimerVars, ctrl.readUpTimerValue);
-            // case 'int32-table':
-            //     return this.createTableReadPromise(ctrl.readInt32Tables, ctrl.readInt32Table);
-            // case 'int64-table':
-            //     return this.createTableReadPromise(ctrl.readInt64Tables, ctrl.readInt64TableAsString);
-            // case 'float-table':
-            //     return this.createTableReadPromise(ctrl.readFloatTables, ctrl.readFloatTable);
-            // case 'string-table':
-            //     return this.createTableReadPromise(ctrl.readStringTables, ctrl.readStringTable);
+            case 'int32-table':
+                return {
+                    promise: this.createTableReadPromise(ctrl.readInt32Tables, ctrl.readInt32Table)
+                }
+            case 'int64-table':
+                return {
+                    promise: this.createTableReadPromise(ctrl.readInt64Tables, ctrl.readInt64TableAsString)
+                }
+            case 'float-table':
+                return {
+                    promise: this.createTableReadPromise(ctrl.readFloatTables, ctrl.readFloatTable)
+                }
+            case 'string-table':
+                return {
+                    promise: this.createTableReadPromise(ctrl.readStringTables, ctrl.readStringTable)
+                }
         }
 
         return null;
