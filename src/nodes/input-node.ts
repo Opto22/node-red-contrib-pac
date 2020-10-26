@@ -355,6 +355,10 @@ export class PacInputNodeImpl extends NodeBaseImpl
         var nodeConfig = this.nodeConfig;
         var ctrl = this.ctrl;
 
+        // Make sure we have a tag name.
+        if (nodeConfig.tagName.trim() == '')
+            return;
+
         // Map the node's data type to the API path.
         switch (nodeConfig.dataType) {
             // case 'device-info':
@@ -363,35 +367,35 @@ export class PacInputNodeImpl extends NodeBaseImpl
             //     return ctrl.readStrategyDetails();
             case 'dig-input':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readDigitalInputs, ctrl.readDigitalInputState)
+                    promise: this.createVariableReadPromise(ctrl.readDigitalInputState)
                 }
             case 'dig-output':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readDigitalOutputs, ctrl.readDigitalOutputState)
+                    promise: this.createVariableReadPromise(ctrl.readDigitalOutputState)
                 }
             case 'ana-input':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readAnalogInputs, ctrl.readAnalogInputEu)
+                    promise: this.createVariableReadPromise(ctrl.readAnalogInputEu)
                 }
             case 'ana-output':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readAnalogOutputs, ctrl.readAnalogOutputEu)
+                    promise: this.createVariableReadPromise(ctrl.readAnalogOutputEu)
                 }
             case 'int32-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readInt32Vars, ctrl.readInt32Var)
+                    promise: this.createVariableReadPromise(ctrl.readInt32Var)
                 }
             case 'int64-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readInt64VarsAsStrings, ctrl.readInt64VarAsString)
+                    promise: this.createVariableReadPromise(ctrl.readInt64VarAsString)
                 }
             case 'float-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readFloatVars, ctrl.readFloatVar)
+                    promise: this.createVariableReadPromise(ctrl.readFloatVar)
                 }
             case 'string-variable':
                 return {
-                    promise: this.createVariableReadPromise(ctrl.readStringVars, ctrl.readStringVar)
+                    promise: this.createVariableReadPromise(ctrl.readStringVar)
                 }
             // case 'down-timer-variable':
             //     return this.createVariableReadPromise(ctrl.readDownTimerVars, ctrl.readDownTimerValue);
@@ -399,19 +403,19 @@ export class PacInputNodeImpl extends NodeBaseImpl
             //     return this.createVariableReadPromise(ctrl.readUpTimerVars, ctrl.readUpTimerValue);
             case 'int32-table':
                 return {
-                    promise: this.createTableReadPromise(ctrl.readInt32Tables, ctrl.readInt32Table)
+                    promise: this.createTableReadPromise(ctrl.readInt32Table)
                 }
             case 'int64-table':
                 return {
-                    promise: this.createTableReadPromise(ctrl.readInt64Tables, ctrl.readInt64TableAsString)
+                    promise: this.createTableReadPromise(ctrl.readInt64TableAsString)
                 }
             case 'float-table':
                 return {
-                    promise: this.createTableReadPromise(ctrl.readFloatTables, ctrl.readFloatTable)
+                    promise: this.createTableReadPromise(ctrl.readFloatTable)
                 }
             case 'string-table':
                 return {
-                    promise: this.createTableReadPromise(ctrl.readStringTables, ctrl.readStringTable)
+                    promise: this.createTableReadPromise(ctrl.readStringTable)
                 }
         }
 
@@ -419,52 +423,36 @@ export class PacInputNodeImpl extends NodeBaseImpl
     }
 
 
-    private createVariableReadPromise(readAllFunc: InputAllVarsFunc, readOneFunc: InputOneVarFunc)
+    private createVariableReadPromise(readOneFunc: InputOneVarFunc)
     {
-        var promise: Promise<PromiseResponse>;
-
-        if (this.nodeConfig.tagName == '') {
-            promise = readAllFunc.call(this.ctrl);
-        }
-        else {
-            promise = readOneFunc.call(this.ctrl, this.nodeConfig.tagName);
-        }
-
-        return promise;
+        return readOneFunc.call(this.ctrl, this.nodeConfig.tagName);
     }
 
     // Creates a Promise for the Table reads.
-    private createTableReadPromise(readAllTablesFunc: InputAllTablesFunc, readOneTableFunc: InputOneTableFunc)
+    private createTableReadPromise(readOneTableFunc: InputOneTableFunc)
     {
-
         var promise: Promise<PromiseResponse>;
 
-        if (this.nodeConfig.tagName == '') {
-            promise = readAllTablesFunc.call(this.ctrl);
-        }
+        // Parse the start index and table length. We can't assume that they're numbers.
+        var tableStartIndex = parseInt(this.nodeConfig.tableStartIndex);
+        var tableLength = parseInt(this.nodeConfig.tableLength);
+
+        // Make sure we have a number.
+        if (isNaN(tableStartIndex))
+            tableStartIndex = null;
+        if (isNaN(tableLength))
+            tableLength = null;
+
+        // Call the appropriate "version" of the function.
+        // We can't just pass null objects for these functions.
+        // The parameters need to be undefined for the function to work correctly.
+        if (tableStartIndex == null)
+            promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName);
         else {
-
-            // Parse the start index and table length. We can't assume that they're numbers.
-            var tableStartIndex = parseInt(this.nodeConfig.tableStartIndex);
-            var tableLength = parseInt(this.nodeConfig.tableLength);
-
-            // Make sure we have a number.
-            if (isNaN(tableStartIndex))
-                tableStartIndex = null;
-            if (isNaN(tableLength))
-                tableLength = null;
-
-            // Call the appropriate "version" of the function.
-            // We can't just pass null objects for these functions.
-            // The parameters need to be undefined for the function to work correctly.
-            if (tableStartIndex == null)
-                promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName);
-            else {
-                if (tableLength == null)
-                    promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex);
-                else
-                    promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex, tableLength);
-            }
+            if (tableLength == null)
+                promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex);
+            else
+                promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex, tableLength);
         }
 
         return promise;

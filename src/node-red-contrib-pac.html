@@ -7,7 +7,7 @@
             // This should match the NodeConfiguration interface in the corresponding "ts" file.
             device: { value: "", type: "pac-device", required: true },
             dataType: { value: "device-info" },
-            tagName: { value: "" },
+            tagName: { value: "", required: true },
             tableStartIndex: { value: null },
             tableLength: { value: null },
             value: { value: "" },
@@ -396,7 +396,7 @@
    </div>
    <div class="form-row" id="tagNameRow">
         <label for="node-input-tagName"><i class="fa fa-tag"></i> Tag Name</label>
-        <input type="text" id="node-input-tagName" placeholder="Leave blank to get all tags">
+        <input type="text" id="node-input-tagName">
     </div>
     <div class="form-row hidden" id="tableFields">
         <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
