@@ -231,6 +231,8 @@
             if (dataTypeId &&
                 (dataTypeId == 'int32-variable') ||
                 (dataTypeId == 'float-variable') ||
+                (dataTypeId == 'ana-input') ||
+                (dataTypeId == 'ana-output') ||
                 (dataTypeId == 'int32-table') ||
                 (dataTypeId == 'float-table')
                 ) {
@@ -376,6 +378,11 @@
    <div class="form-row" id="dataTypeRow">
        <label for="node-input-dataType"><i class="fa fa-tasks"></i> Data Type</label>
        <select type="text" id="node-input-dataType">
+           <option value="dig-input">Digital Input</option>
+           <option value="dig-output">Digital Output</option>
+           <option value="ana-input">Analog Input</option>
+           <option value="ana-output">Analog Output</option>
+           <option value="" disabled>————————————————</option>
            <option value="int32-variable">Int32 Variable</option>
            <option value="int64-variable">Int64 Variable</option>
            <option value="float-variable">Float Variable</option>

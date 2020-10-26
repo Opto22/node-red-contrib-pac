@@ -109,6 +109,8 @@ export class PacInputNodeImpl extends NodeBaseImpl
 
         if ((this.nodeInputConfig.dataType == 'int32-variable') ||
             (this.nodeInputConfig.dataType == 'float-variable') ||
+            (this.nodeInputConfig.dataType == 'ana-input') ||
+            (this.nodeInputConfig.dataType == 'ana-output') ||
             (this.nodeInputConfig.dataType == 'int32-table') ||
             (this.nodeInputConfig.dataType == 'float-tiable')
         ) {
@@ -359,14 +361,22 @@ export class PacInputNodeImpl extends NodeBaseImpl
             //     return ctrl.readDeviceDetails();
             // case 'strategy-info':
             //     return ctrl.readStrategyDetails();
-            // case 'dig-input':
-            //     return this.createVariableReadPromise(ctrl.readDigitalInputs, ctrl.readDigitalInputState);
-            // case 'dig-output':
-            //     return this.createVariableReadPromise(ctrl.readDigitalOutputs, ctrl.readDigitalOutputState);
-            // case 'ana-input':
-            //     return this.createVariableReadPromise(ctrl.readAnalogInputs, ctrl.readAnalogInputEu);
-            // case 'ana-output':
-            //     return this.createVariableReadPromise(ctrl.readAnalogOutputs, ctrl.readAnalogOutputEu);
+            case 'dig-input':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readDigitalInputs, ctrl.readDigitalInputState)
+                }
+            case 'dig-output':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readDigitalOutputs, ctrl.readDigitalOutputState)
+                }
+            case 'ana-input':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readAnalogInputs, ctrl.readAnalogInputEu)
+                }
+            case 'ana-output':
+                return {
+                    promise: this.createVariableReadPromise(ctrl.readAnalogOutputs, ctrl.readAnalogOutputEu)
+                }
             case 'int32-variable':
                 return {
                     promise: this.createVariableReadPromise(ctrl.readInt32Vars, ctrl.readInt32Var)
