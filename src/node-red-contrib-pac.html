@@ -10,8 +10,6 @@
             tagName: { value: "", required: true },
             tableStartIndex: { value: null },
             tableLength: { value: null },
-            value: { value: "" },
-            valueType: { value: "msg.payload" },
             topic: { value: "" },
             topicType: { value: "none" },
             sendInitialValue: { value: true },
@@ -32,17 +30,6 @@
                 updateNameField();
                 updateTableFields();
                 updateDeadbandFields();
-            });
-
-            $("#node-input-valueType").val(this.valueType);
-
-            $("#node-input-value").typedInput({
-                default: 'msg.payload',
-                typeField: $("#node-input-valueType"),
-                types: [
-                    'msg',
-                    { value: "msg.payload", label: "msg.payload", hasValue: false }
-                ]
             });
 
             $("#node-input-topic").typedInput({
@@ -424,14 +411,9 @@
     </div>
     <div class="form-row hidden" id="tableFields">
         <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
-        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for all">
+        <input type="text" style="width: 7em;" id="node-input-tableStartIndex" placeholder="Blank for all">
         <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
-        <input type="text" style="width: 6em;" id="node-input-tableLength">
-    </div>
-    <div class="form-row">
-        <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
-        <input type="text" id="node-input-value" style="width:300px">
-        <input type="hidden" id="node-input-valueType">
+        <input type="text" style="width: 7em;" id="node-input-tableLength">
     </div>
     <div class="form-row hidden" id="deadbandRow">
         <label for="node-input-deadband" ><i class="fa fa-crosshairs"></i> Deadband</label>
@@ -493,9 +475,9 @@
     </div>
     <div class="form-row hidden" id="tableFields">
         <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
-        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for all">
+        <input type="text" style="width: 7em;" id="node-input-tableStartIndex" placeholder="Blank for all">
         <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
-        <input type="text" style="width: 6em;" id="node-input-tableLength">
+        <input type="text" style="width: 7em;" id="node-input-tableLength">
     </div>
     <div class="form-row">
         <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>
@@ -541,7 +523,7 @@
     </div>
     <div class="form-row hidden" id="tableFields">
         <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
-        <input type="text" style="width: 6em;" id="node-input-tableStartIndex" placeholder="Blank for 0">
+        <input type="text" style="width: 7em;" id="node-input-tableStartIndex" placeholder="Blank for 0">
     </div>
     <div class="form-row">
         <label for="node-input-value"><i class="fa fa-pencil"></i> Value</label>

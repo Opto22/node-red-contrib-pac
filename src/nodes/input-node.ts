@@ -32,8 +32,6 @@ export function setRED(globalRED: NodeRed.RED)
 
 interface NodeInputConfiguration extends NodeBaseConfiguration
 {
-    value: string;
-    valueType: string; // 'msg' or 'msg.payload'
     sendInitialValue: boolean;
     deadband: string;
     scanTimeSec: string;
@@ -324,22 +322,6 @@ export class PacInputNodeImpl extends NodeBaseImpl
 
         return newValue;
     }
-
-    //     // See where the value should be placed.
-    //     // valueType was added in v1.0.1, so will not exist on 1.0.0 nodes.
-    //     var valueType = this.NodeInputConfig.valueType === undefined ?
-    //         'msg.payload' : this.NodeInputConfig.valueType;
-    //     switch (valueType) {
-    //         case 'msg':
-    //             RED.util.setMessageProperty(msg, this.NodeInputConfig.value, newValue, true);;
-    //             break;
-    //         case 'msg.payload':
-    //             msg.payload = newValue;
-    //             break;
-    //         default:
-    //             throw new Error('Unexpected value type - ' + valueType);
-    //     }
-    // }
 
     // private setTopic(msg: any)
     // {
