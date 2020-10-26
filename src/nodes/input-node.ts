@@ -35,8 +35,8 @@ interface NodeInputConfiguration extends NodeBaseConfiguration
     sendInitialValue: boolean;
     deadband: string;
     scanTimeSec: string;
-    topic: string;
-    topicType: string; // 'none', 'auto', or 'user'
+    //topic: string;
+    //topicType: string; // 'none', 'auto', or 'user'
 }
 
 export interface RequestInfo

@@ -10,8 +10,8 @@
             tagName: { value: "", required: true },
             tableStartIndex: { value: null },
             tableLength: { value: null },
-            topic: { value: "" },
-            topicType: { value: "none" },
+            //topic: { value: "" },
+            //topicType: { value: "none" },
             sendInitialValue: { value: true },
             deadband: { value: '1' },
             scanTimeSec: { value: '1.0' },
@@ -32,15 +32,15 @@
                 updateDeadbandFields();
             });
 
-            $("#node-input-topic").typedInput({
-                default: 'none',
-                typeField: $("#node-input-topicType"),
-                types: [
-                    { value: "none", label: "Do not alter", hasValue: false },
-                    /* {value:"auto", label:"Automatic", hasValue: false}, */
-                    { value: "user", label: "Custom", hasValue: true }
-                ]
-            });
+            // $("#node-input-topic").typedInput({
+            //     default: 'none',
+            //     typeField: $("#node-input-topicType"),
+            //     types: [
+            //         { value: "none", label: "Do not alter", hasValue: false },
+            //         /* {value:"auto", label:"Automatic", hasValue: false}, */
+            //         { value: "user", label: "Custom", hasValue: true }
+            //     ]
+            // });
 
             $('#scanTimeRow').hide(); // Hide for now. Not a public feature yet.
         }
@@ -429,11 +429,13 @@
         <input id ="node-input-scanTimeSec" type="text" style="width: 75px;"> seconds
     </div>
     <p></p>
+    <!--
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width:300px">
         <input type="hidden" id="node-input-topicType">
     </div>
+    -->
    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-info-circle"></i> Node Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
