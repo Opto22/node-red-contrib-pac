@@ -120,6 +120,14 @@ export class PacInputNodeImpl extends NodeBaseImpl
             if (isNaN(deadband))
                 deadband = 1;
         }
+        else if ((this.nodeInputConfig.dataType == 'dig-input-turn-on') ||
+            (this.nodeInputConfig.dataType == 'dig-output-turn-on')) {
+            nodeChangeType = InputNodeChangeType.RisingEdgeOnly;
+        }
+        else if ((this.nodeInputConfig.dataType == 'dig-input-turn-off') ||
+            (this.nodeInputConfig.dataType == 'dig-output-turn-off')) {
+            nodeChangeType = InputNodeChangeType.FallingEdgeOnly;
+        }
 
         this.inputNodeHelper = new InputNodeScanner(this.scanTimeMs, nodeChangeType, deadband,
             nodeConfig.sendInitialValue, this.onScan);
@@ -368,11 +376,15 @@ export class PacInputNodeImpl extends NodeBaseImpl
             //     return ctrl.readDeviceDetails();
             // case 'strategy-info':
             //     return ctrl.readStrategyDetails();
-            case 'dig-input':
+            case 'dig-input-state':
+            case 'dig-input-turn-on':
+            case 'dig-input-turn-off':
                 return {
                     promise: this.createVariableReadPromise(ctrl.readDigitalInputState)
                 }
-            case 'dig-output':
+            case 'dig-output-state':
+            case 'dig-output-turn-on':
+            case 'dig-output-turn-off':
                 return {
                     promise: this.createVariableReadPromise(ctrl.readDigitalOutputState)
                 }
