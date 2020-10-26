@@ -175,15 +175,22 @@ export class PacInputNodeImpl extends NodeBaseImpl
                 return;
             }
 
-            // Start the Request Delayed timeout
-            this.requestDelayedTimer = setTimeout(this.scanNotDoneCallback, 3000);
+            // Make sure we have a tag name.
+            if (this.nodeConfig.tagName.trim() == '') {
+                this.node.status({ fill: "red", shape: "dot", text: "Tag name missing" });
+                return;
+            }
 
             var reqInfo = this.getReadRequest();
 
             if (!reqInfo || !reqInfo.promise) {
-                this.node.status({ fill: "red", shape: "dot", text: "error" });
+                // Very likely only an issue during development.
+                this.node.status({ fill: "red", shape: "dot", text: "Internal error" });
                 return;
             }
+
+            // Start the Request Delayed timeout
+            this.requestDelayedTimer = setTimeout(this.scanNotDoneCallback, 3000);
 
             reqInfo.promise.then(
                 // onFullfilled handler
@@ -354,10 +361,6 @@ export class PacInputNodeImpl extends NodeBaseImpl
     {
         var nodeConfig = this.nodeConfig;
         var ctrl = this.ctrl;
-
-        // Make sure we have a tag name.
-        if (nodeConfig.tagName.trim() == '')
-            return;
 
         // Map the node's data type to the API path.
         switch (nodeConfig.dataType) {
