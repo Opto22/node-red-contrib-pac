@@ -8,8 +8,8 @@
             device: { value: "", type: "pac-device", required: true },
             dataType: { value: "int32-variable" },
             tagName: { value: "", required: true },
-            tableStartIndex: { value: null },
-            tableLength: { value: null },
+            tableStartIndex: { value: 0 },
+            //tableLength: { value: null },
             //topic: { value: "" },
             //topicType: { value: "none" },
             sendInitialValue: { value: true },
@@ -410,10 +410,8 @@
         <input type="text" id="node-input-tagName">
     </div>
     <div class="form-row hidden" id="tableFields">
-        <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Start Index</label>
-        <input type="text" style="width: 7em;" id="node-input-tableStartIndex" placeholder="Blank for all">
-        <i class="fa fa-arrows-h" style="margin-left: 15px;"></i><span> Length &nbsp;</span>
-        <input type="text" style="width: 7em;" id="node-input-tableLength">
+        <label for="node-input-tableStartIndex"><i class="fa fa-thumb-tack"></i> Index</label>
+        <input type="text" style="width: 7em;" id="node-input-tableStartIndex" placeholder="Blank for 0">
     </div>
     <div class="form-row hidden" id="deadbandRow">
         <label for="node-input-deadband" ><i class="fa fa-crosshairs"></i> Deadband</label>
@@ -664,24 +662,19 @@
         <li><b>Integer 32 Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
         <li><b>Integer 64 Variable:</b> a message is sent when the variable's value changes, with the payload set to the new value. To avoid data loss, the value is returned as a string.</li>
         <li><b>Float Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
-        <li><b>String Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
-        <li><b>Integer 32 Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of numeric values.</li>
-        <li><b>Integer 64 Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of values. To avoid data loss, the values are returned as strings.</li>
-        <li><b>Float Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of numeric values.</li>
-        <li><b>String Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of string values.</li>
+        <li><b>String Variable:</b> a message is sent when the variable's value changes, with the payload set to the new string value.</li>
+        <li><b>Integer 32 Table:</b> a message is sent when the table element's value changes, with the payload set to the new numeric value.</li>
+        <li><b>Integer 64 Table:</b> a message is sent when the table element's value changes, with the payload set to the new value. To avoid data loss, the value is returned as a string.</li>
+        <li><b>Float Table:</b> a message is sent when the table element's value changes, with the payload set to the new numeric value.</li>
+        <li><b>String Table:</b> a message is sent when the table element's value changes, with the payload set to the new string value.</li>
     </ul>
     <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the 
         controller.
     </p>
-    <p>For tables, the <b>start index</b> and <b>length</b> fields control how much of the table is returned. 
-       <ul>
-         <li>If both fields are left blank, then the entire table is returned as an array.</li>
-         <li>If only the <b>start index</b> is used, then the remaining part of the table will be 
-            returned as an array.</li>
-       </ul>
-    <p>For numeric values, the <b>Deadband</b> setting controls the generation of new messages. A message is
+    <p>For tables, the <b>index</b> field specifies which table element is polled.</p>
+    <p>For most numeric values, the <b>Deadband</b> setting controls the generation of new messages. A message is
        only generated if the new value is beyond the deadband compared to the previous sent value 
-       (or the initial value if just starting up).
+       (or the initial value if just starting up). Not used for Integer 64 values.
     </p>
     <p>When the <b>Send initial value</b> is selected, the node will send a message with the first value.
         This is useful when needing to capture the current value rather than wait for a value to change before a message

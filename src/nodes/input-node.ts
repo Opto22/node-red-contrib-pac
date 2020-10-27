@@ -302,9 +302,9 @@ export class PacInputNodeImpl extends NodeBaseImpl
         // See if we can unwrap the value.
         if (typeof fullfilledResponse.body === 'object') {
 
-            // If an array, just use it directly.
+            // If an array, get the single element out of it.
             if (Array.isArray(fullfilledResponse.body)) {
-                newValue = fullfilledResponse.body;
+                newValue = fullfilledResponse.body[0];
             }
             else {
                 // If there's a 'value' property in the body, then go ahead and unwrap
@@ -432,13 +432,13 @@ export class PacInputNodeImpl extends NodeBaseImpl
 
         // Parse the start index and table length. We can't assume that they're numbers.
         var tableStartIndex = parseInt(this.nodeConfig.tableStartIndex);
-        var tableLength = parseInt(this.nodeConfig.tableLength);
+        var tableLength = 1; //parseInt(this.nodeConfig.tableLength);
 
         // Make sure we have a number.
         if (isNaN(tableStartIndex))
             tableStartIndex = null;
-        if (isNaN(tableLength))
-            tableLength = null;
+        // if (isNaN(tableLength))
+        //     tableLength = null;
 
         // Call the appropriate "version" of the function.
         // We can't just pass null objects for these functions.
@@ -446,10 +446,10 @@ export class PacInputNodeImpl extends NodeBaseImpl
         if (tableStartIndex == null)
             promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName);
         else {
-            if (tableLength == null)
-                promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex);
-            else
-                promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex, tableLength);
+            // if (tableLength == null)
+            //     promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex);
+            // else
+            promise = readOneTableFunc.call(this.ctrl, this.nodeConfig.tagName, tableStartIndex, tableLength);
         }
 
         return promise;
