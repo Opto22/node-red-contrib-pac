@@ -391,7 +391,7 @@
            <option value="dig-output-turn-on">Digital Output Turn On</option>
            <option value="dig-output-turn-off">Digital Output Turn Off</option>
            <option value="" disabled>————————————————</option>
-           <option value="ana-input">Analog Input</option>
+           <option value="ana-input">Analog Input</option> 
            <option value="ana-output">Analog Output</option>
            <option value="" disabled>————————————————</option>
            <option value="int32-variable">Int32 Variable</option>
@@ -645,17 +645,31 @@
     <h2>Outputs</h2>
     <dl class="message-properties">
         <dt>payload <span class="property-type">boolean | number | string | array</span></dt>
-        <dd> <p>The value read for the given type.</p>
-             <p><b>Int32</b> and <b>Float</b> variables and table elemenets and <b>Analog</b> channels are returned as numeric values.</p>
-             <p><b>String</b> variables and table elements are returned as strings.</p>
-             <p>To avoid data loss, <b>Int64</b> variables and table elements are returned as strings.</p>
-             <p><b>Digital</b> channels are returned as boolean values.</p>
-             <p>Tables are returned as arrays.</p>
-        </dd>
+          <dd> The value read for the given type. Details for each value type are below.</dd>
         <dt>body <span class="property-type">object</span></dt>
-        <dd> The full response for the underlying REST API call. May include additional information than the main value in the payload.</dd>
+          <dd> The full response for the underlying REST API call.
+               May include additional information than the main value in the payload.</dd>
     </dl>
     <h2>Basic Usage</h2>
+    <p>Various type of values can be polled:</p>
+    <ul>
+        <li><b>Digital Input State Change:</b> a message is sent when the digital channel's state changes, with the payload set to <code>true</code> or <code>false</code>.</li>
+        <li><b>Digital Input Turned On:</b> a message is sent when the digital channel is turned on, with the payload set to <code>true</code>.</li>
+        <li><b>Digital Input Turned Off:</b> a message is sent when the digital channel is turned off, with the payload set to <code>false</code>.</li>
+        <li><b>Digital Output State Change:</b> a message is sent when the digital channel's state changes, with the payload set to <code>true</code> or <code>false</code>.</li>
+        <li><b>Digital Output Turned On:</b> a message is sent when the digital channel is turned on, with the payload set to <code>true</code>.</li>
+        <li><b>Digital Output Turned Off:</b> a message is sent when the digital channel is turned off, with the payload set to <code>false</code>.</li>
+        <li><b>Analog Input:</b> a message is sent when the analog channel's value changes, with the payload set to the new numeric value.</li>
+        <li><b>Analog Output:</b> a message is sent when the analog channel's value changes, with the payload set to the new numeric value.</li>
+        <li><b>Integer 32 Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
+        <li><b>Integer 64 Variable:</b> a message is sent when the variable's value changes, with the payload set to the new value. To avoid data loss, the value is returned as a string.</li>
+        <li><b>Float Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
+        <li><b>String Variable:</b> a message is sent when the variable's value changes, with the payload set to the new numeric value.</li>
+        <li><b>Integer 32 Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of numeric values.</li>
+        <li><b>Integer 64 Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of values. To avoid data loss, the values are returned as strings.</li>
+        <li><b>Float Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of numeric values.</li>
+        <li><b>String Table:</b> a message is sent when any element changes within the specified portion of the table, with the payload set to an array of string values.</li>
+    </ul>
     <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the 
         controller.
     </p>
