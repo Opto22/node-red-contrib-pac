@@ -649,7 +649,7 @@
                May include additional information than the main value in the payload.</dd>
     </dl>
     <h2>Basic Usage</h2>
-    <p>Various type of values can be polled:</p>
+    <p>The <b>Data Type</b> specifies the type of PAC Control value to be polled:</p>
     <ul>
         <li><b>Digital Input State Change:</b> a message is sent when the digital channel's state changes, with the payload set to <code>true</code> or <code>false</code>.</li>
         <li><b>Digital Input Turned On:</b> a message is sent when the digital channel is turned on, with the payload set to <code>true</code>.</li>
@@ -668,10 +668,10 @@
         <li><b>Float Table:</b> a message is sent when the table element's value changes, with the payload set to the new numeric value.</li>
         <li><b>String Table:</b> a message is sent when the table element's value changes, with the payload set to the new string value.</li>
     </ul>
-    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the 
+    <p>The <b>Tag Name</b> must be a valid PAC Control tag name in the strategy running in the 
         controller.
     </p>
-    <p>For tables, the <b>index</b> field specifies which table element is polled.</p>
+    <p>For tables, the <b>Index</b> field specifies which table element is polled.</p>
     <p>For most numeric values, the <b>Deadband</b> setting controls the generation of new messages. A message is
        only generated if the new value is beyond the deadband compared to the previous sent value 
        (or the initial value if just starting up). Not used for Integer 64 values.
@@ -709,16 +709,16 @@
 <script type="text/x-red" data-help-name="pac-read">
     <p>A node for reading values from a PAC Control strategy running in an Opto 22 <i>groov</i> EPIC or SNAP PAC controller.</p>
     <h2>Basic Usage</h2>
-    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the 
+    <p>The <b>Tag Name</b> must be a valid PAC Control tag name in the strategy running in the 
         controller. If the name is left blank, then all tags of the selected data type are 
         returned in an array.
     </p>
-    <p>For tables, the <b>start index</b> and <b>length</b> fields control how much of the table is returned. 
+    <p>For tables, the <b>Start Index</b> and <b>Length</b> fields control how much of the table is returned. 
        <ul>
          <li>If both fields are left blank, then the entire table is returned as an array.</li>
-         <li>If only the <b>start index</b> is used, then the remaining part of the table will be 
+         <li>If only the <b>Start Index</b> is used, then the remaining part of the table will be 
             returned as an array.</li>
-         <li>If the <b>length</b> field is 1, then a single element is returned as an object.</li>
+         <li>If the <b>Length</b> field is 1, then a single element is returned as an object.</li>
        </ul>
     <h2>Returned Values</h2>
     <p>By default, the result is placed in <code>msg.payload</code>. The result may also be placed
@@ -768,12 +768,12 @@
 <script type="text/x-red" data-help-name="pac-write">
     <p>A node for writing values to a PAC Control strategy running in an Opto 22 <i>groov</i> EPIC or SNAP PAC controller.</p>
     <h2>Basic Usage</h2>
-    <p>The <b>tag name</b> must be a valid PAC Control tag name in the strategy running in the 
+    <p>The <b>Tag Name</b> must be a valid PAC Control tag name in the strategy running in the 
         controller.</p>
-    <p>For tables, the <b>start index</b> field sets the first index to be written.
+    <p>For tables, the <b>Start Index</b> field sets the first index to be written.
        If left blank, then 0 is used.
     <h2>Value to Write - Overview</h2>
-    <p>The <b>value</b> can either come from a property on the incoming message (dynamic) or as 
+    <p>The <b>Value</b> can either come from a property on the incoming message (dynamic) or as 
         entered in the Value field (static).</p>
     <h2>Value to Write - Dynamic</h2>
     <p>When the value is coming in a <code>msg</code> property (including <code>msg.payload</code>), 
