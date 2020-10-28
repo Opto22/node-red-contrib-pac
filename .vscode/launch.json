@@ -12,7 +12,7 @@
             "args": [
                 "--no-timeouts",
                 "--recursive",
-                "${workspaceRoot}/build/test"
+                "${workspaceRoot}/build/src/test"
             ],
             "cwd": "${workspaceRoot}",
             "runtimeArgs": [
@@ -23,7 +23,7 @@
             },
             "console": "internalConsole",
             "sourceMaps": false,
-            "outDir": "${workspaceRoot}/build/test"
+            "outDir": "${workspaceRoot}/build/src/test"
         },
         {
             "type": "node",
