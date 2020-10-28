@@ -88,7 +88,7 @@ export class OptoHost
 
     downloadCdf(cdfPath: string, cb: (err?: any) => void)
     {
-        console.log('downloadCdf() - AcquireLC');
+        // console.log('downloadCdf() - AcquireLC');
 
         this.sendRecvCmd('45.0 AcquireLC',
             (error: any, responseCode?: number, responseContent?: Buffer) =>
@@ -107,7 +107,7 @@ export class OptoHost
                     if (error)
                         cb(error)
                     else {
-                        console.log('downloadCdf() - downloading CDF file');
+                        // console.log('downloadCdf() - downloading CDF file');
                         var lines = data.split(os.EOL);
 
                         async.eachSeries(lines,
@@ -118,13 +118,13 @@ export class OptoHost
                             },
                             (err?: any) =>
                             {
-                                console.log('downloadCdf() - ReleaseLC');
+                                // console.log('downloadCdf() - ReleaseLC');
                                 this.sendRecvCmd('ReleaseLC', (releaseLcError: any) =>
                                 {
                                     // Add a short delay.
                                     setTimeout(() =>
                                     {
-                                        console.log('downloadCdf() - Done');
+                                        // console.log('downloadCdf() - Done');
                                         cb(err || releaseLcError);
                                     }, 500);
                                 });
