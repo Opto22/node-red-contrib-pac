@@ -67,15 +67,18 @@ export class GroovUtil
                         // First resolve the response
                         resolve({ response: response, body: body });
 
+                        // TODO: replace this with a cookie-based request. The API Key
+                        // won't work for logging out a session.
+                        //
                         // Then log out the user's session. Not really needed for the test, but keeps
                         // the list of sessions to a minimum on the device.
                         // Ignore responses.
-                        GroovUtil.logoutUser(address, body.apiKey).then(
-                            (fullfilledResponse: PromiseResponse) => { },
-                            (error: any) => { 
-                                console.error(console.log('Could not log out user, error = ' + JSON.stringify(error, undefined, 2)));
-                            }
-                        );
+                        // GroovUtil.logoutUser(address, body.apiKey).then(
+                        //     (fullfilledResponse: PromiseResponse) => { },
+                        //     (error: any) => { 
+                        //         console.error(console.log('Could not log out user, error = ' + JSON.stringify(error, undefined, 2)));
+                        //     }
+                        // );
                     } else {
                         reject({ response: response, body: body });
                     }
