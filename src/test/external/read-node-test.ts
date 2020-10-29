@@ -20,15 +20,13 @@ import * as WriteNodeHandler from "../../nodes/write-node";
 import * as MockNode from "../node-red/MockNode";
 import * as MockRed from "../node-red/MockRed";
 
-
-
 import should = require('should');
 import assert = require('assert');
 import * as async from 'async';
 import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 import { PacUtil } from "./pac-util";
 import { FunctionNodeBaseImpl } from "../../nodes/base-node";
-import { TestSettings, testReadNode, testReadNodeError, assertRead, delayed, updateTestSettingsForGroov, initTests } from "./test-util";
+import { TestSettings, beforeWorker, createDeviceConfig, testReadNode, testReadNodeError, assertRead, delayed, updateTestSettingsForGroov, initTests } from "./test-util";
 
 
 
@@ -37,47 +35,21 @@ describe('PAC Read Node', function()
 {
     var deviceConfig: ConfigHandler.DeviceConfiguration;
 
-
     before(function(beforeDone: MochaDone)
     {
         this.timeout(10000);
 
-        async.waterfall([
-            (callback: (error: any) => void) =>
-            {
-                if (TestSettings.groovAddress)
-                    updateTestSettingsForGroov(callback);
-                else
-                    process.nextTick(callback);
-            },
-            (callback: (error: any) => void) =>
-            {
-                PacUtil.downloadStrategy(TestSettings.pacAddress,
-                    'test/pac/NodeRedTester.cdf',
-                    { run: true },
-                    (error: any) =>
-                    {
-                        if (error) {
-                            console.log('downloadStrategy error: ' + error);
-                        }
-                        callback(error);
-                    });
-            },
-            (callback: () => void) =>
-            {
-                deviceConfig = initTests(callback);
-            },
-        ],
-            (error: any, result: any) =>
-            {
-                beforeDone(error);
-            }
-        );
+        beforeWorker((error: any, deviceConfigResult?: ConfigHandler.DeviceConfiguration) =>
+        {
+            deviceConfig = deviceConfigResult;
+            beforeDone();
+        });
     });
 
 
     it('#readStrategyInfo', function(done)
     {
+        this.timeout(5000);
         testReadNode(deviceConfig, 'strategy-info', '',
             (msg: any) =>
             {

@@ -1,5 +1,7 @@
-
+import * as async from 'async';
+import { PacUtil } from "./pac-util";
 import should = require('should');
+import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 import * as ConfigHandler from "../../config-handler";
 import * as ReadNodeHandler from "../../nodes/read-node";
 import * as WriteNodeHandler from "../../nodes/write-node";
@@ -71,6 +73,50 @@ export function updateTestSettingsForGroov(cb: (error?: any) => void)
             cb(error);
         })
 }
+
+
+export function beforeWorker(
+    cb: (error: any, deviceConfig?: ConfigHandler.DeviceConfiguration) => void)
+{
+    var deviceConfig: ConfigHandler.DeviceConfiguration;
+
+    async.waterfall([
+        (callback: (error: any) => void) =>
+        {
+            if (TestSettings.groovAddress)
+                updateTestSettingsForGroov(callback);
+            else
+                process.nextTick(callback);
+        },
+        (callback: (error: any) => void) =>
+        {
+            PacUtil.downloadStrategy(TestSettings.pacAddress,
+                'test/pac/NodeRedTester.cdf',
+                { run: true },
+                (error: any) =>
+                {
+                    if (error) {
+                        console.log('downloadStrategy error: ' + error);
+                    }
+
+                    callback(error);
+                });
+        },
+        (callback: () => void) =>
+        {
+            deviceConfig = initTests(callback);
+        },
+    ],
+        (error: any, result: any) =>
+        {
+            if (error)
+                console.log('beforeWorker: DONE, error: ', error.toString());
+
+            cb(error, deviceConfig);
+        }
+    );
+}
+
 
 export function initTests(cb: () => void)
 {

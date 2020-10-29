@@ -28,49 +28,22 @@ import * as async from 'async';
 import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
 import { PacUtil } from "./pac-util";
 import { FunctionNodeBaseImpl } from "../../nodes/base-node";
-import { injectMsg, assertWrite, testWriteNodeError, delayed, initTests, testReadNodeError } from "./test-util";
+import { beforeWorker, injectMsg, assertWrite, testWriteNodeError, delayed, createDeviceConfig, initTests, testReadNodeError } from "./test-util";
 
 
 describe('PAC Write Node', function()
 {
-    var deviceConfig: ConfigHandler.DeviceConfiguration
-
+    var deviceConfig: ConfigHandler.DeviceConfiguration;
 
     before(function(beforeDone: MochaDone)
     {
         this.timeout(10000);
 
-        async.waterfall([
-            (callback: (error: any) => void) =>
-            {
-                if (TestSettings.groovAddress)
-                    updateTestSettingsForGroov(callback);
-                else
-                    process.nextTick(callback);
-            },
-            (callback: (error: any) => void) =>
-            {
-                PacUtil.downloadStrategy(TestSettings.pacAddress,
-                    'test/pac/NodeRedTester.cdf',
-                    { run: true },
-                    (error: any) =>
-                    {
-                        if (error) {
-                            console.log('downloadStrategy error: ' + error);
-                        }
-                        callback(error);
-                    });
-            },
-            (callback: () => void) =>
-            {
-                deviceConfig = initTests(callback);
-            },
-        ],
-            (error: any, result: any) =>
-            {
-                beforeDone(error);
-            }
-        );
+        beforeWorker((error: any, deviceConfigResult?: ConfigHandler.DeviceConfiguration) =>
+        {
+            deviceConfig = deviceConfigResult;
+            beforeDone();
+        });
     });
 
     // For Groov units, we need to get the API key from the device by using the user's

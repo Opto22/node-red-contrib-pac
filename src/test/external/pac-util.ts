@@ -162,10 +162,10 @@ export class PacUtil
 
             client.sendRecvCmd('A', (error: any, responseCode?: number, responseContent?: Buffer) =>
             {
-                // console.log('A response = ', response.toString());
+                // console.log('A response = ', responseContent.toString());
 
                 if (responseCode === 0) {
-                    // console.log(response.toString());
+                    // console.log(responseContent.toString());
 
                     client.downloadCdf(path.join(process.cwd(), pathCdf),
                         (err: any) =>
@@ -176,6 +176,8 @@ export class PacUtil
                             }
                             else {
                                 if (options.run) {
+                                    // console.log('downloadStrategy() - _RUN');
+
                                     client.sendRecvCmd('_RUN', (error: any) =>
                                     {
                                         if (error) {
@@ -184,8 +186,9 @@ export class PacUtil
                                         else {
                                             setTimeout(() =>
                                             {
+                                                // console.log('downloadStrategy() - closing the client');
                                                 client.close(cb);
-                                            }, 1000);
+                                            }, 5000);
                                         }
                                     });
                                 }
