@@ -30,7 +30,7 @@ export function setRED(globalRED: NodeRed.RED)
     RED = globalRED;
 }
 
-interface NodeInputConfiguration extends NodeBaseConfiguration
+export interface NodeInputConfiguration extends NodeBaseConfiguration
 {
     sendInitialValue: boolean;
     deadband: string;
@@ -89,6 +89,7 @@ export class PacInputNodeImpl extends NodeBaseImpl
     private nodeInputConfig: NodeInputConfiguration;
     private inputNodeHelper: InputNodeScanner;
     private scanTimeMs: number;
+    private deadband: number;
     private requestDelayedTimer: NodeJS.Timer;
 
     constructor(nodeConfig: NodeInputConfiguration, deviceConfig: ConfigHandler.DeviceConfiguration, node: NodeRed.Node)
@@ -96,7 +97,6 @@ export class PacInputNodeImpl extends NodeBaseImpl
         super(nodeConfig, deviceConfig, node);
         this.nodeInputConfig = nodeConfig;
 
-        var deadband: number;
         var nodeChangeType: InputNodeChangeType = InputNodeChangeType.None;
 
         this.scanTimeMs = parseFloat(nodeConfig.scanTimeSec);
@@ -114,9 +114,9 @@ export class PacInputNodeImpl extends NodeBaseImpl
         ) {
             nodeChangeType = InputNodeChangeType.Deadband;
 
-            deadband = parseFloat(nodeConfig.deadband);
-            if (isNaN(deadband))
-                deadband = 1;
+            this.deadband = parseFloat(nodeConfig.deadband);
+            if (isNaN(this.deadband))
+                this.deadband = 1;
         }
         else if ((this.nodeInputConfig.dataType == 'dig-input-turn-on') ||
             (this.nodeInputConfig.dataType == 'dig-output-turn-on')) {
@@ -127,8 +127,8 @@ export class PacInputNodeImpl extends NodeBaseImpl
             nodeChangeType = InputNodeChangeType.FallingEdgeOnly;
         }
 
-        this.inputNodeHelper = new InputNodeScanner(this.scanTimeMs, nodeChangeType, deadband,
-            nodeConfig.sendInitialValue, this.onScan);
+        this.inputNodeHelper = new InputNodeScanner(this.scanTimeMs, nodeChangeType,
+            this.deadband, nodeConfig.sendInitialValue, this.onScan);
 
         // Make sure the device was configured before starting the scan.
         if (this.ctrl) {
@@ -458,7 +458,8 @@ export class PacInputNodeImpl extends NodeBaseImpl
 
 
 
-export function createSnapPacInputNode(nodeConfig: NodeInputConfiguration)
+export function createSnapPacInputNode(nodeConfig: NodeInputConfiguration,
+    returnImpl?: boolean): PacInputNodeImpl | undefined
 {
     RED.nodes.createNode(this, nodeConfig);
     var deviceConfig: ConfigHandler.DeviceConfiguration =
@@ -469,4 +470,9 @@ export function createSnapPacInputNode(nodeConfig: NodeInputConfiguration)
     var impl = new PacInputNodeImpl(nodeConfig, deviceConfig, node);
 
     this.on('close', impl.onClose);
+
+    // The unit tests need the implementation object too.
+    if (returnImpl) {
+        return impl;
+    }
 }

@@ -17,8 +17,9 @@
 import * as ConfigHandler from "../../config-handler";
 import * as ReadNodeHandler from "../../nodes/read-node";
 import * as WriteNodeHandler from "../../nodes/write-node";
-import * as MockNode from "../node-red/MockNode";
-import * as MockRed from "../node-red/MockRed";
+import * as MockRed from "../../../submodules/opto22-node-red-common/src/mocks/MockRed";
+import * as MockNode from "../../../submodules/opto22-node-red-common/src/mocks/MockNode";
+
 import { GroovUtil, UserFullData, PromiseResponse } from "./groov-util";
 var TestSettings = require('./settings.json');
 

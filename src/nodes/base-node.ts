@@ -32,6 +32,8 @@ export interface PromiseResponse
 // There's no way to directly connect the two.
 export interface NodeBaseConfiguration
 {
+    id: string;
+    type: string;
     device: string;
     dataType: string;
     tagName: string;

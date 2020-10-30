@@ -2,16 +2,27 @@ import * as async from 'async';
 import { PacUtil } from "./pac-util";
 import should = require('should');
 import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
+import * as MockRed from "../../../submodules/opto22-node-red-common/src/mocks/MockRed";
+import * as MockNode from "../../../submodules/opto22-node-red-common/src/mocks/MockNode";
+
 import * as ConfigHandler from "../../config-handler";
 import * as ReadNodeHandler from "../../nodes/read-node";
 import * as WriteNodeHandler from "../../nodes/write-node";
-import * as MockNode from "../node-red/MockNode";
-import * as MockRed from "../node-red/MockRed";
+import * as InputNodeHandler from "../../nodes/input-node";
 import { FunctionNodeBaseImpl } from "../../nodes/base-node";
 import { GroovUtil, UserFullData, PromiseResponse } from "./groov-util";
 
 export var TestSettings = require('./settings.json');
 
+var RED = new MockRed.MockRed();
+
+export class MockPacInputNode extends MockNode.MockNode
+{
+    constructor(onSend: (msg: any) => void, onError?: (errorText: any, nodeMessage: any) => void)
+    {
+        super('pac-input', onSend, onError);
+    }
+}
 export class MockPacReadNode extends MockNode.MockNode
 {
     constructor(onSend: (msg: any) => void, onError?: (errorText: any, nodeMessage: any) => void)
@@ -27,6 +38,32 @@ export class MockPacWriteNode extends MockNode.MockNode
         super('pac-write', onSend, onError);
     }
 }
+
+
+export class MockDeviceNode extends MockNode.MockNode implements ConfigHandler.DeviceConfiguration
+{
+    address: string;
+    credentials: ConfigHandler.DeviceCredentials;
+    protocol: string;
+    msgQueueFullBehavior: 'REJECT_NEW';
+
+    constructor(id: string,
+        address: string,
+        credentials:
+            {
+                key: string,
+                secret: string,
+                publicCertPath: string,
+                caCertPath: string,
+            })
+    {
+        super('pac-device');
+        this.id = id;
+        this.address = address;
+        this.credentials = credentials;
+    }
+}
+
 
 export function injectTimestampMsg(nodeConfig, deviceConfig, node)
 {
@@ -133,14 +170,17 @@ export function initTests(cb: () => void)
 
     should.exist(controllerConnection);
 
-    var RED = new MockRed.MockRed();
-
-
+    InputNodeHandler.setRED(RED);
     ReadNodeHandler.setRED(RED);
     WriteNodeHandler.setRED(RED);
     ConfigHandler.setRED(RED);
 
-    controllerConnection.ctrl.getDeviceType(undefined, cb);
+    RED.nodes.addCredentials('deviceId0', deviceConfig.credentials);
+
+    controllerConnection.ctrl.getDeviceType(undefined, () =>
+    {
+        cb();
+    });
 
     return deviceConfig;
 }
@@ -163,6 +203,15 @@ export function createDeviceConfig(deviceId: string, address: string, useHttps: 
 
     };
     return deviceConfig;
+}
+
+
+export function createDeviceConfigNode(deviceConfig: ConfigHandler.DeviceConfiguration): MockNode.MockNode
+{
+    var newNode = new MockDeviceNode(deviceConfig.id, deviceConfig.address, deviceConfig.credentials);
+    RED.nodes.addNode(newNode);
+
+    return newNode; 
 }
 
 export function assertRead(deviceConfig: ConfigHandler.DeviceConfiguration, tagDataType: string, tagName: string,
@@ -311,4 +360,34 @@ export function delayed(done)
     {
         done(); // Tell Mocha that we're done.
     }, 100);
+}
+
+
+
+export function createFullInputNode(deviceId: string,
+    nodeConfigPartial: Partial<InputNodeHandler.NodeInputConfiguration>,
+    onSendCallback: (msg: any) => void,
+    onErrorCallback?: (errorText: string, nodeMessage: any) => void)
+{
+
+    // Create a node's configuration.
+    var nodeConfig: InputNodeHandler.NodeInputConfiguration = {
+        id: "930e8d11.9abbf", // This is just an example ID. Nothing special about it.
+        type: 'pac-input',
+        device: deviceId,
+        dataType: nodeConfigPartial.dataType || 'int32-variable',
+        tagName: nodeConfigPartial.tagName || '',
+        tableStartIndex: nodeConfigPartial.tableStartIndex || '0',
+        tableLength: nodeConfigPartial.tableLength || '1',
+        sendInitialValue: nodeConfigPartial.sendInitialValue || false,
+        deadband: nodeConfigPartial.deadband || '1',
+        scanTimeSec: nodeConfigPartial.scanTimeSec || '1',
+        name: nodeConfigPartial.name || ''
+    };
+
+    var node = new MockPacInputNode(onSendCallback, onErrorCallback);
+
+    var nodeImpl = InputNodeHandler.createSnapPacInputNode.call(node, nodeConfig, true);
+
+    return { node, nodeImpl };
 }
