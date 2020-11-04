@@ -196,8 +196,6 @@ describe('PAC Input Node', function()
             ], (err?: Error) =>
             {
                 should(err).be.null();
-
-                testDone(); // REMOVE LATER
             });
         });
     });
