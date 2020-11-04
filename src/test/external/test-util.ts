@@ -11,12 +11,13 @@ import * as WriteNodeHandler from "../../nodes/write-node";
 import * as InputNodeHandler from "../../nodes/input-node";
 import { FunctionNodeBaseImpl } from "../../nodes/base-node";
 import { GroovUtil, UserFullData, PromiseResponse } from "./groov-util";
+import { MockNodeEx } from './mock-pac-nodes';
 
 export var TestSettings = require('./settings.json');
 
 var RED = new MockRed.MockRed();
 
-export class MockPacInputNode extends MockNode.MockNode
+export class MockPacInputNode extends MockNodeEx
 {
     constructor(onSend: (msg: any) => void, onError?: (errorText: any, nodeMessage: any) => void)
     {
@@ -206,7 +207,7 @@ export function createDeviceConfig(deviceId: string, address: string, useHttps: 
 }
 
 
-export function createDeviceConfigNode(deviceConfig: ConfigHandler.DeviceConfiguration): MockNode.MockNode
+export function createDeviceConfigNode(deviceConfig: ConfigHandler.DeviceConfiguration): MockDeviceNode
 {
     var newNode = new MockDeviceNode(deviceConfig.id, deviceConfig.address, deviceConfig.credentials);
     RED.nodes.addNode(newNode);

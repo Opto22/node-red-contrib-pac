@@ -15,8 +15,7 @@
 */
 
 import * as ConfigHandler from "../../config-handler";
-import * as ReadNodeHandler from "../../nodes/read-node";
-import * as WriteNodeHandler from "../../nodes/write-node";
+import * as InputNodeHandler from "../../nodes/input-node";
 import * as MockRed from "../../../submodules/opto22-node-red-common/src/mocks/MockRed";
 import * as MockNode from "../../../submodules/opto22-node-red-common/src/mocks/MockNode";
 
@@ -24,16 +23,113 @@ import should = require('should');
 import assert = require('assert');
 import * as async from 'async';
 import * as NodeRed from '../../../submodules/opto22-node-red-common/typings/nodered';
-import { PacUtil } from "./pac-util";
+import * as PacUtil from "./pac-util";
 import { FunctionNodeBaseImpl } from "../../nodes/base-node";
-import { TestSettings, createFullInputNode, beforeWorker, createDeviceConfig, testReadNode, testReadNodeError, assertRead, delayed, updateTestSettingsForGroov, initTests, createDeviceConfigNode } from "./test-util";
+import { MockDeviceNode, TestSettings, createFullInputNode, beforeWorker, createDeviceConfig, testReadNode, testReadNodeError, assertRead, delayed, updateTestSettingsForGroov, initTests, createDeviceConfigNode, MockPacInputNode } from "./test-util";
+
+var showLogs = false;
+function log(msg: string)
+{
+    if (showLogs)
+        console.log(msg);
+}
+
+class AsyncIoTestHelper
+{
+    public msgCount = 0;
+    public inputNodeImpl: InputNodeHandler.PacInputNodeImpl;
+    public inputNode: MockPacInputNode;
+
+    constructor(
+        public deviceConfig: ConfigHandler.DeviceConfiguration,
+        public nodeDataType: string,
+        public tagName: string,
+        public hostClient: PacUtil.OptoHost)
+    {
+    }
 
 
+    writeInt32 = (value: number, done: (err: any) => void) =>
+    {
+        // log('setAnalogValue, value=' + value);
+        this.hostClient.sendRecvCmd(value + ' ^' + this.tagName + ' @!', done);
+    }
 
+    createInputNode = (useScannerTimer: boolean, done: (err: any) => void) =>
+    {
+        log('createInputNode');
+        var nodeAndImpl = createFullInputNode(this.deviceConfig.id,
+            {
+                dataType: this.nodeDataType,
+                tagName: this.tagName,
+                scanTimeSec: useScannerTimer ? '0.25' : '-1'
+            },
+            // Wrap the callback so that the test can replace it as needed.
+            (msg: any) =>
+            {
+                log('new msg, payload=' + msg.payload);
+                this.msgCount++;
+                this.msgCallback(msg);
+            });
+
+        this.inputNode = nodeAndImpl.node;
+        this.inputNodeImpl = nodeAndImpl.nodeImpl;
+
+        process.nextTick(done);
+    }
+
+
+    public msgCallback = (done: () => void) =>
+    {
+        // start empty
+        process.nextTick(done);
+    };
+
+    setMsgCallback(msgCallback: (msg: any) => void)
+    {
+        // Replace the callback
+        this.msgCallback = msgCallback;
+    }
+
+    forceScan = (next: () => void) =>
+    {
+        log('forceScan');
+        this.inputNodeImpl.onScan();
+        setTimeout(next, 100); // Wait a moment before continuing
+    }
+
+
+    setAssertForNextMsg_Int32Read(expected: any, //Partial<ApiLib.AnalogChannelRead>,
+        expectedMsgCount: number, done?: () => void)
+    {
+
+        log('setAssertForNextMsg_Int32Read');
+
+        this.setMsgCallback((actualMsg: any) =>
+        {
+
+            log('setAssertForNextMsg_Int32Read, actualMsg=' + JSON.stringify(actualMsg, undefined, 2));
+
+            //TestUtil.assertAnalogChannelRead(actualMsg, expected);
+            should(actualMsg.payload).be.eql(expected);
+            should(actualMsg.body).be.eql({ value: expected });
+            should(actualMsg.inputType).be.eql(this.nodeDataType);
+            should(this.msgCount).be.eql(expectedMsgCount);
+
+            if (done) {
+                this.inputNode.onClose();
+                done();
+            }
+        });
+    }
+}
 
 describe('PAC Input Node', function()
 {
     var deviceConfig: ConfigHandler.DeviceConfiguration;
+    var deviceConfigNode: MockDeviceNode;
+    var hostClient: PacUtil.OptoHost;
+
 
     before(function(beforeDone: MochaDone)
     {
@@ -42,9 +138,14 @@ describe('PAC Input Node', function()
         beforeWorker((error: any, deviceConfigResult?: ConfigHandler.DeviceConfiguration) =>
         {
             deviceConfig = deviceConfigResult;
-            var deviceConfigNode = createDeviceConfigNode(deviceConfig);
+            deviceConfigNode = createDeviceConfigNode(deviceConfig);
 
-            beforeDone();
+            hostClient = new PacUtil.OptoHost(deviceConfig.address, 22001, true);
+
+            hostClient.connect((err: Error) =>
+            {
+                beforeDone();
+            });
         });
     });
 
@@ -54,7 +155,8 @@ describe('PAC Input Node', function()
         var inputNodeAndImpl = createFullInputNode(deviceConfig.id, {
             scanTimeSec: 'not a number',
             deadband: 'not a number'
-        }, (msg) => {
+        }, (msg) =>
+        {
         });
 
         var inputNodeImpl = inputNodeAndImpl.nodeImpl;
@@ -63,6 +165,41 @@ describe('PAC Input Node', function()
         testDone();
     });
 
-   
+    describe('Variables', function()
+    {
+
+        it('sends message when INT32 value changes', function(testDone)
+        {
+            this.timeout(8000);
+
+            var testValue = 456;
+            var tagName = 'n2';
+            var asyncTestHelper = new AsyncIoTestHelper(deviceConfigNode, 'int32-variable', tagName, hostClient);
+
+            async.series([
+                // Set output to 0 and reset input values
+                (next: () => void) => { asyncTestHelper.writeInt32(22, next) },
+                // Create the node
+                (next: () => void) => { asyncTestHelper.createInputNode(false, next); },
+                // // Force a scan (to capture the initial state).
+                (next: () => void) => { asyncTestHelper.forceScan(next); },
+                // // Register the assert for the expected next message.
+                (next: () => void) =>
+                {
+                    asyncTestHelper.setAssertForNextMsg_Int32Read(testValue, 1, testDone);
+                    process.nextTick(next);
+                },
+                // Set the output's value
+                (next: () => void) => { asyncTestHelper.writeInt32(testValue, next) },
+                // Force a scan
+                (next: () => void) => { asyncTestHelper.forceScan(next); },
+            ], (err?: Error) =>
+            {
+                should(err).be.null();
+
+                testDone(); // REMOVE LATER
+            });
+        });
+    });
 
 });
