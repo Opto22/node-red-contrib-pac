@@ -51,9 +51,15 @@ class AsyncIoTestHelper
 
     writeInt32 = (value: number, done: (err: any) => void) =>
     {
-        // log('setAnalogValue, value=' + value);
         this.hostClient.sendRecvCmd(value + ' ^' + this.tagName + ' @!', done);
     }
+
+    setDigitalInputIval = (state: boolean, done: (err: any) => void) =>
+    {
+        this.hostClient.sendRecvCmd('~' + this.tagName + (state ? ' IN.ON' :  ' IN.OFF'), done);
+    }
+
+    
 
     createInputNode = (useScannerTimer: boolean, done: (err: any) => void) =>
     {
@@ -99,10 +105,32 @@ class AsyncIoTestHelper
     }
 
 
+    setAssertForNextMsg_Digital(expected: any, //Partial<ApiLib.AnalogChannelRead>,
+        expectedMsgCount: number, done?: () => void)
+    {
+        log('setAssertForNextMsg_Digital');
+
+        this.setMsgCallback((actualMsg: any) =>
+        {
+
+            log('setAssertForNextMsg_Digital, actualMsg=' + JSON.stringify(actualMsg, undefined, 2));
+
+            //TestUtil.assertAnalogChannelRead(actualMsg, expected);
+            should(actualMsg.payload).be.eql(expected);
+            should(actualMsg.body).be.eql({ value: expected });
+            should(actualMsg.inputType).be.eql(this.nodeDataType);
+            should(this.msgCount).be.eql(expectedMsgCount);
+
+            if (done) {
+                this.inputNode.onClose();
+                done();
+            }
+        });
+    }
+
     setAssertForNextMsg_Int32Read(expected: any, //Partial<ApiLib.AnalogChannelRead>,
         expectedMsgCount: number, done?: () => void)
     {
-
         log('setAssertForNextMsg_Int32Read');
 
         this.setMsgCallback((actualMsg: any) =>
@@ -191,6 +219,46 @@ describe('PAC Input Node', function()
                 },
                 // Set the output's value
                 (next: () => void) => { asyncTestHelper.writeInt32(testValue, next) },
+                // Force a scan
+                (next: () => void) => { asyncTestHelper.forceScan(next); },
+            ], (err?: Error) =>
+            {
+                should(err).be.null();
+            });
+        });
+
+        it('sends message when Digital Input state changes', function(testDone)
+        {
+            this.timeout(8000);
+
+            var tagName = 'diSwitchD0';
+            var asyncTestHelper = new AsyncIoTestHelper(deviceConfigNode, 'dig-input-state', tagName, hostClient);
+
+            async.series([
+                // Set output to 0 and reset input values
+                (next: () => void) => { asyncTestHelper.setDigitalInputIval(false, next) },
+                // Create the node
+                (next: () => void) => { asyncTestHelper.createInputNode(false, next); },
+                // // Force a scan (to capture the initial state).
+                (next: () => void) => { asyncTestHelper.forceScan(next); },
+                // // Register the assert for the expected next message.
+                (next: () => void) =>
+                {
+                    asyncTestHelper.setAssertForNextMsg_Digital(true, 1);
+                    process.nextTick(next);
+                },
+                // Set the output's value
+                (next: () => void) => { asyncTestHelper.setDigitalInputIval(true, next) },
+                // Force a scan
+                (next: () => void) => { asyncTestHelper.forceScan(next); },
+                // // Register the assert for the expected next message.
+                (next: () => void) =>
+                {
+                    asyncTestHelper.setAssertForNextMsg_Digital(false, 2, testDone);
+                    process.nextTick(next);
+                },
+                // Set the output's value
+                (next: () => void) => { asyncTestHelper.setDigitalInputIval(false, next) },
                 // Force a scan
                 (next: () => void) => { asyncTestHelper.forceScan(next); },
             ], (err?: Error) =>
